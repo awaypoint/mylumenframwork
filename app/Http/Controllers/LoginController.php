@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Session;
 use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Modules\User\UserRepository;
 use Illuminate\Http\Request;
@@ -28,8 +29,8 @@ class LoginController extends BaseController
             'username' => 'required',
             'password' => 'required',
         ]);
+        var_export(Session::all());die;
         $params = $request->all();
-        $params['grant_type'] = 'password';
         $result = $this->_userRepository->loginByPassword($params);
         return responseTo($result);
     }
