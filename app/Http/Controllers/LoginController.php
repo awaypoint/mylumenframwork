@@ -29,7 +29,6 @@ class LoginController extends BaseController
             'username' => 'required',
             'password' => 'required',
         ]);
-        var_export(Session::all());die;
         $params = $request->all();
         $result = $this->_userRepository->loginByPassword($params);
         return responseTo($result);
