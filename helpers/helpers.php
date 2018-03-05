@@ -2,6 +2,7 @@
 
 use App\Modules\User\Facades\User;
 use App\Modules\User\Exceptions\UserException;
+use Illuminate\Support\Facades\Session;
 
 /**
  * 统一返回
@@ -86,53 +87,6 @@ if (!function_exists('isMobile')) {
 }
 
 /**
- * 发送curl请求
- */
-if (!function_exists('curlRequest')) {
-    function curlRequest($url, $method, $params = [], $extraHeaders = [])
-    {
-        $headerArray = [
-            "Content-type:application/json;",
-            "Accept:application/json",
-            "Authorization:Basic YXdheToxMjM0NTY=",
-        ];
-        if (!empty($extraHeaders)) {
-            $headerArray = array_merge($extraHeaders, $headerArray);
-        }
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method); //设置请求方式
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headerArray);
-        if (!empty($params)) {
-            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($params));//设置提交的字符串
-        }
-        $output = curl_exec($ch);
-        curl_close($ch);
-        $output = json_decode($output, true);
-        return $output;
-    }
-}
-
-/**
- * 发布mqtt消息
- */
-if (!function_exists('publishEmqtt')) {
-    function publishEmqtt($topic, $msg)
-    {
-        $clientId = 'PHP_CLIENT_' . str_random(16);
-
-        $mqtt = new \Bluerhinos\phpMQTT(env('MQTT_SERVER'), env('MQTT_PORT'), $clientId);
-        if ($mqtt->connect(true, NULL, env('MQTT_PHP_USERNAME'), env('MQTT_PHP_PASSWORD'))) {
-            $mqtt->publish($topic, $msg, 0);
-            $mqtt->close();
-        }
-    }
-}
-
-/**
  * 获取用户信息
  */
 if (!function_exists('getUserInfo')) {
@@ -148,10 +102,20 @@ if (!function_exists('getUserInfo')) {
 if (!function_exists('checkIsSuperUser')) {
     function checkIsSuperUser($uid, $fields = [])
     {
-        $userInfo = getUserInfo($uid,$fields);
+        $userInfo = getUserInfo($uid, $fields);
         if (!$userInfo['is_superuser']) {
             throw new UserException(10010);
         }
         return $userInfo;
+    }
+}
+
+/**
+ * 设置用户缓存
+ */
+if (!function_exists('setUserCache')) {
+    function setUserCache($cache)
+    {
+        Session::put('user_info', $cache);
     }
 }

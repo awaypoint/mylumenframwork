@@ -3,32 +3,60 @@
 namespace App\Modules\User;
 
 use App\Modules\Common\CommonRepository;
+use GuzzleHttp\Client;
 use App\Modules\User\Exceptions\UserException;
-use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Facades\Session;
 
 class UserRepository extends CommonRepository
 {
     private $_userModel;
+    private $_http;
 
-    public function __construct()
+    public function __construct(
+        Client $guezzClient,
+        EloquentUserModel $userModel
+    )
     {
+        $this->_http = $guezzClient;
+        $this->_userModel = $userModel;
     }
 
     public function loginByPassword($params)
     {
-        $result = [];
-
-        $token = app()->make('oauth2-server.authorizer')->issueAccessToken();
-        $result['token'] = $token['access_token'];
-        dd($result);die;
+        $response = $this->_http->post(env('SERVER_REQUEST_URL') . 'oauth/token', [
+            'form_params' => [
+                'grant_type' => 'password',
+                'client_id' => env('OAUTH_CLIENT_ID'),
+                'client_secret' => env('OAUTH_CLIENT_SECRET'),
+                'username' => $params['username'],
+                'password' => $params['password'],
+                'scope' => '',
+            ],
+        ]);
+        if ($response->getStatusCode() == 401) {
+            throw new UserException(10001);
+        }
+        $result = json_decode((string)$response->getBody(), true);
         //获取用户信息
-        $userInfo = $this->_userModel->getUserInfoByMobile($params['username'], ['id', 'nickname', 'headimgurl']);
+        $userInfo = $this->getUserInfoByUsername($params['username']);
+        Session::put('uid', $userInfo['id']);
         $result['uid'] = $userInfo['id'];
-        $result['nickname'] = $userInfo['nickname'];
-        $result['headimgurl'] = $userInfo['headimgurl'];
+        $result['username'] = $userInfo['username'];
+        $result['avatar_url'] = $userInfo['avatar_url'];
         //设置缓存
-        $this->setUserCache($token['access_token'], $result);
+        setUserCache($userInfo);
 
         return $result;
+    }
+
+    /**
+     * 通过用户名获取用户信息
+     * @param $username
+     * @param array $fields
+     * @return mixed
+     */
+    public function getUserInfoByUsername($username, $fields = [])
+    {
+        return $this->_userModel->getOne(['username' => $username], $fields);
     }
 }

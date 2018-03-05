@@ -2,149 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use App\Modules\Approve\ApproveRepository;
 use App\Modules\User\Exceptions\UserException;
 use App\Modules\User\UserRepository;
-use EasyWeChat\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Facades\Session;
 
 class UserController extends Controller
 {
-    private $wxApp;
     private $_userRepository;
-    private $_approveRepository;
 
     public function __construct(
-        UserRepository $userRepository,
-        ApproveRepository $approveRepository
+        UserRepository $userRepository
     )
     {
         parent::__construct();
         $this->_userRepository = $userRepository;
-        $this->_approveRepository = $approveRepository;
     }
 
-    /**
-     * @api            {post} /onLogin 登录
-     * @apiName        onLogin
-     * @apiGroup       Others
-     *
-     * @apiParam {String} code
-     * @apiParam {String} iv
-     * @apiParam {String} encryptedData
-     * @apiDescription 登录
-     *
-     * @apiSuccessExample {json} 结果描述
-     *   {
-     *      "msg":"",
-     *      "code":0,
-     *      "result": {
-     *           "id": "1",//用户id
-     *           "token": "abc23dfdfd123dfdfdfdfdf",//token
-     *           "role_type": 0,//角色类型 0 啥都不是 1业主 2管理员 --只有管理员才有开关电闸的权限
-     *      }
-     *   }
-     * @apiSuccessExample {json} 参数描述
-     *   {
-     *       "code": "no example",
-     *       "iv": "no example",
-     *       "encryptedData": "no example",
-     *   }
-     */
-    public function onLogin(Request $request)
-    {
-        $this->validate($request, [
-            'code' => 'required',
-            'iv' => 'required',
-            'encryptedData' => 'required',
-        ]);
-        app()->configure('wxConfig');
-        $this->wxApp = new Application(Config::get('wxConfig'));
-        $miniProgram = $this->wxApp->mini_program;
-
-        $userSession = $miniProgram->sns->getSessionKey($request->get('code'));
-        if (isset($userInfo->errcode)) {
-            throw new UserException(10001);
-        }
-        $openId = $userSession->openid;
-        $userInfo = $miniProgram->encryptor->decryptData($userSession->session_key, $request->get('iv'), $request->get('encryptedData'));
-//        $userInfo = [];
-//        $openId = 'oSEQG0fj81fXPC5tm-XUfaOAkC0Y';
-        $result = $this->_userRepository->onLogin($openId, $userInfo);
-        if (is_null($result)) {
-            throw new UserException(10001);
-        }
-        return responseTo($result);
-    }
-
-    /**
-     * @api            {get} /clear/user 清除用户缓存
-     * @apiName        userClear
-     * @apiGroup       Others
-     *
-     * @apiParam {Int} uid 用户id
-     * @apiParam {String=token} [type] 类型 ''用户信息 'token' token信息
-     * @apiDescription 清除用户缓存
-     *
-     * @apiSuccessExample {json} 结果描述
-     *   {
-     *      "msg":"",
-     *      "code":0,
-     *      "result": 1
-     *   }
-     * @apiSuccessExample {json} 参数描述
-     *   {
-     *       "uid": 1,
-     *       "type": "token",
-     *   }
-     */
-    public function celarUserRedis(Request $request)
-    {
-        $this->validate($request, [
-            'uid' => 'required',
-        ]);
-        $prefix = TUJIA_UID_PREFIX;
-        $value = $request->get('uid');
-        if ($request->has('type') && $request->get('type') == 'token') {
-            $lastToken = $this->_userRepository->getLastTokenByUid($value);
-            if (is_null($lastToken)) {
-                return responseTo(-1);
-            }
-            $value = $lastToken['token'];
-            $prefix = TUJIA_TOKEN_PREFIX;
-        }
-        return responseTo(Redis::expire($prefix . $value, 0));
-    }
-
-    /**
-     * @api            {get} /users/getUserInfo 获取用户信息
-     * @apiName        getUserInfo
-     * @apiGroup       Users
-     *
-     * @apiDescription 获取用户信息
-     *
-     * @apiSuccessExample {json} 结果描述
-     *   {
-     *      "msg":"",
-     *      "code":0,
-     *      "result": [{
-     *           "id": 1,//用户id
-     *           "nickname": 1,//昵称
-     *           "role_type": 0,//角色类型 0 啥都不是 1业主 2管理员 --只有管理员才有开关电闸的权限
-     *           "is_superuser": 0,//是否是超级管理员 0 否 1是 -- 超级管理员具有【权限管理】菜单
-     *           "approve_type": 0,//审核类型 0 不处于审核状态 1业主审核状态 2管理员审核状态
-     *           "avatar_url": "https://abcd",//微信头像
-     *           "approve_count": 0,//未审核单据数量
-     *      },{...}]
-     *   }
-     * @apiSuccessExample {json} 参数描述
-     *   {
-     *   }
-     */
     public function getUserInfo()
     {
+        var_export(Session::all());die;
         $fields = ['id', 'nickname', 'role_type', 'is_superuser', 'avatar_url'];
         $result = getUserInfo($this->uid, $fields);
         $approveInfo = $this->_approveRepository->getApprovingData($this->uid, ['type']);
