@@ -23,6 +23,10 @@ $app->post('/login', 'LoginController@login');
 $app->group(['prefix' => '/', 'middleware' => 'auth'], function () use ($app) {
     $app->get('logout', 'LoginController@logout');
 });
+//系统设置
+$app->group(['prefix' => '/setting', 'middleware' => 'auth'], function () use ($app) {
+    $app->get('getMenu', 'SettingController@getMenu');
+});
 //用户
 $app->group(['prefix' => 'users', 'middleware' => 'auth'], function () use ($app) {
     $app->get('getUserInfo', 'UserController@getUserInfo');
