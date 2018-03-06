@@ -23,7 +23,6 @@ class UserController extends Controller
 
     public function getUserInfo()
     {
-        var_export(Session::all());die;
         $fields = ['id', 'nickname', 'role_type', 'is_superuser', 'avatar_url'];
         $result = getUserInfo($this->uid, $fields);
         $approveInfo = $this->_approveRepository->getApprovingData($this->uid, ['type']);

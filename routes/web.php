@@ -19,6 +19,10 @@ $app->post('/webhook', function () use ($app) {
 });
 
 $app->post('/login', 'LoginController@login');
+//登录
+$app->group(['prefix' => '/', 'middleware' => 'auth'], function () use ($app) {
+    $app->get('logout', 'LoginController@logout');
+});
 //用户
 $app->group(['prefix' => 'users', 'middleware' => 'auth'], function () use ($app) {
     $app->get('getUserInfo', 'UserController@getUserInfo');

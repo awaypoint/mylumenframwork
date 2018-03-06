@@ -34,27 +34,12 @@ class LoginController extends BaseController
         return responseTo($result);
     }
 
-
     /**
-     * @api            {get} /logOut Logout-登出
-     * @apiName        logOut
-     * @apiGroup       Login
-     *
-     * @apiDescription 登出
-     *
-     * @apiSuccessExample {json} 结果描述
-     *   {
-     *      "msg": "",
-     *      "code": 0,
-     *      "result":1
-     *   }
+     * 登出
      */
     public function logOut()
     {
-        $token = getToken();
-        if ($token) {
-            return responseTo($this->_userRepository->logOut($token));
-        }
-        throw new ProxyException(401);
+        Session::flush();
+        return responseTo('退出成功');
     }
 }
