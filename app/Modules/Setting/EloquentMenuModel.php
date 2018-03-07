@@ -12,5 +12,5 @@ class EloquentMenuModel extends CommonEloquentModel
     protected $table = 'menu';
     protected $dateFormat = 'U';
     //采用白名单模式
-    public $fillable = ['id', 'name', 'parents_id', 'level', 'listorder', 'itemorder', 'status', 'url', 'icon'];
+    public $fillable = ['id', 'name', 'parents_id', 'level', 'leaf', 'listorder', 'itemorder', 'status', 'url', 'icon'];
 }

@@ -17,6 +17,10 @@ class SettingController extends Controller
         $this->_settingRepository = $settingRepository;
     }
 
+    /**
+     * 获取菜单列表
+     * @return array
+     */
     public function getMenu()
     {
         $result = $this->_settingRepository->getMenuList($this->uid);
