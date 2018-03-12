@@ -3,10 +3,13 @@
 namespace App\Modules\Setting;
 
 use App\Modules\Common\CommonRepository;
+use App\Modules\Role\Facades\Role;
+use Illuminate\Support\Facades\Session;
 
 class SettingRepository extends CommonRepository
 {
     private $_menuModel;
+    private $_myPermissions = [];
 
     const SETTING_MENU_LEGAL_STATUS = 1;
 
@@ -27,7 +30,9 @@ class SettingRepository extends CommonRepository
         $where = [
             'status' => self::SETTING_MENU_LEGAL_STATUS,
         ];
-        $fields = ['id', 'parents_id', 'name', 'leaf', 'url', 'icon'];
+        $this->_myPermissions = Role::getUserPermissions($uid);
+
+        $fields = ['id', 'parents_id', 'name', 'leaf', 'url', 'icon', 'permission'];
         $menuInfo = $this->_menuModel->searchData($where, $fields, ['listorder', 'ASC']);
         $result = $this->builtMenuItem($menuInfo);
         return $result;
@@ -44,7 +49,7 @@ class SettingRepository extends CommonRepository
         $result = [];
         if (!empty($menuInfo)) {
             foreach ($menuInfo as $key => $item) {
-                if ($item['parents_id'] == $parentId) {
+                if ($item['parents_id'] == $parentId && in_array($item['permission'], $this->_myPermissions)) {
                     $mainMenu = [];
                     $id = $item['id'];
                     $mainMenu['name'] = $item['name'];

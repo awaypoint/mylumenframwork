@@ -59,4 +59,29 @@ class UserRepository extends CommonRepository
     {
         return $this->_userModel->getOne(['username' => $username], $fields);
     }
+
+    /**
+     * 获取用户信息
+     * @param $uid
+     * @param array $fields
+     * @return mixed
+     */
+    public function getUserInfo($uid, $fields = [])
+    {
+        if (!Session::has('user_info')) {
+            $where = [
+                'id' => $uid,
+            ];
+            Session::put('user_info', $this->_userModel->getOne($where));
+        }
+        $result = Session::get('user_info');
+        if (!empty($fields)) {
+            foreach ($result as $field => $value) {
+                if (!in_array($field, $fields)) {
+                    unset($result[$field]);
+                }
+            }
+        }
+        return $result;
+    }
 }
