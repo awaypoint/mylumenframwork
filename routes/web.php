@@ -28,7 +28,7 @@ $app->group(['prefix' => '/setting', 'middleware' => 'auth'], function () use ($
     $app->get('getMenu', 'SettingController@getMenu');
 });
 //用户
-$app->group(['prefix' => 'users', 'middleware' => 'auth'], function () use ($app) {
+$app->group(['prefix' => 'users', 'middleware' => ['auth', 'permissions']], function () use ($app) {
     $app->get('getUserInfo', 'UserController@getUserInfo');
     $app->get('getAdminUser', 'UserController@getAdminUserList');
     $app->delete('delAdminUser', 'UserController@delAdminUser');

@@ -18,6 +18,7 @@ class ProtectException extends \Exception
     private $_defaultCodeList = [
         400 => [ 'msg' => "请求参数有误。"],
         401 => [ 'msg' => "授权Token错误。"],
+        402 => [ 'msg' => "暂无权限。"],
         403 => [ 'msg' => "服务器拒绝执行。"],
         404 => [ 'msg' => "请求方法不存在。"],
         405 => [ 'msg' => "禁止操作。"],

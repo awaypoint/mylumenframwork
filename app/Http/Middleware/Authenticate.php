@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Contracts\Auth\Factory as Auth;
+use Illuminate\Support\Facades\Session;
 
 class Authenticate
 {
@@ -37,6 +38,9 @@ class Authenticate
     {
         if ($this->auth->guard($guard)->guest() && !env('APP_DEBUG')) {
             return responseTo('授权失败', 401);
+        }
+        if (env('APP_DEBUG')) {
+            Session::put('uid', 8);
         }
 
         return $next($request);
