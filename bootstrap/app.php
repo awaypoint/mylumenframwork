@@ -88,6 +88,8 @@ $app->register(App\Providers\AppServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
 $app->register(\Illuminate\Redis\RedisServiceProvider::class);
 $app->register(\Illuminate\Session\SessionServiceProvider::class);
+//commond
+$app->register(\App\Providers\CreateModulesServiceProvider::class);
 
 //oauth2
 $app->register(Laravel\Passport\PassportServiceProvider::class);
