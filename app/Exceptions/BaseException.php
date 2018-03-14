@@ -2,7 +2,7 @@
 
 namespace App\Exceptions;
 
-class ProtectException extends \Exception
+class BaseException extends \Exception
 {
     protected $_defaultCode = [
         'msg'=>'用户中心的异常'

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Modules\Example;
+namespace App\Modules\_bigname_;
 
 use App\Modules\Common\CommonRepository;
 
-class ExampleRepository extends CommonRepository
+class _bigname_Repository extends CommonRepository
 {
 
 }

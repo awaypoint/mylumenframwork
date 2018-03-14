@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Modules\Example;
+namespace App\Modules\_bigname_;
 
 use App\Modules\Common\CommonEloquentModel;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class EloquentExampleModel extends CommonEloquentModel
+class Eloquent_bigname_Model extends CommonEloquentModel
 {
     use SoftDeletes;
 
-    protected $table = 'example';
+    protected $table = '_smallname_';
     protected $dateFormat = 'U';
     //采用白名单模式
-    public $fillable = ['id', 'device_name', 'device_id', 'product_key', 'created_uid', 'status'];
+    public $fillable = [];
 }

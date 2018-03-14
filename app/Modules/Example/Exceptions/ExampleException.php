@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Modules\Example\Exceptions;
+namespace App\Modules\_bigname_\Exceptions;
 
-use App\Exceptions\TujiaException;
+use App\Exceptions\BaseException;
 
-class ExampleException extends TujiaException
+class _bigname_Exception extends BaseException
 {
     protected $_codeList = [
-        50001=>['msg'=>'设备注册失败'],
+        10001=>['msg'=>'msg'],
     ];
 }

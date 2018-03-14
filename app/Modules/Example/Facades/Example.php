@@ -1,11 +1,11 @@
 <?php 
-namespace App\Modules\Example\Facades;
+namespace App\Modules\_bigname_\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
-class Example extends Facade
+class _bigname_ extends Facade
 {	
 	protected static function getFacadeAccessor(){
-		return 'example';
+		return '_smallname_';
 	}
 }

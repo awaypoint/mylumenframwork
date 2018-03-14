@@ -18,9 +18,9 @@ try {
 | application as an "IoC" container and router for this framework.
 |
 */
-
+define('APP_PATH', realpath(__DIR__ . '/../'));
 $app = new Laravel\Lumen\Application(
-    realpath(__DIR__ . '/../')
+    APP_PATH
 );
 
 $app->configure('cors');

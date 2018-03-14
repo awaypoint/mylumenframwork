@@ -1,15 +1,15 @@
 <?php 
-namespace App\Modules\Example\Facades;
+namespace App\Modules\_bigname_\Facades;
 
-use App\Modules\Example\ExampleRepository;
+use App\Modules\_bigname_\_bigname_Repository;
 use Illuminate\Support\ServiceProvider;
 
-class ExampleServiceProvider extends ServiceProvider
+class _bigname_ServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        $this->app->bind('example', function($app) {
-            return new ExampleFacades($app->make(ExampleRepository::class));
+        $this->app->bind('_smallname_', function($app) {
+            return new _bigname_Facades($app->make(_smallname_Repository::class));
         });        
     }
 }

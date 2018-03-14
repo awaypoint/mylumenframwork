@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Modules\Example\Facades;
+namespace App\Modules\_bigname_\Facades;
 
-use App\Modules\Example\ExampleRepository;
+use App\Modules\_bigname_\_bigname_Repository;
 
-class ExampleFacades
+class _bigname_Facades
 {
-    private $_exampleRepository;
+    private $__smallname_Repository;
 
-    public function __construct(ExampleRepository $exampleRepository)
+    public function __construct(_bigname_Repository $repository)
     {
-        $this->_exampleRepository = $exampleRepository;
+        $this->__smallname_Repository = $repository;
     }
 }
