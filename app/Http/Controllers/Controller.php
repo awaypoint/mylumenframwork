@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\ProtectException;
+use App\Exceptions\BaseException;
 use Illuminate\Support\Facades\Session;
 use Laravel\Lumen\Routing\Controller as BaseController;
 
@@ -13,7 +13,7 @@ class Controller extends BaseController
     public function __construct()
     {
         if (!Session::has('uid')) {
-            throw new ProtectException(401);
+            throw new BaseException(401);
         }
         $this->uid = Session::get('uid');
     }

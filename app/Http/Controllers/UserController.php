@@ -5,9 +5,6 @@ namespace App\Http\Controllers;
 use App\Modules\User\Exceptions\UserException;
 use App\Modules\User\UserRepository;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Redis;
-use Illuminate\Support\Facades\Session;
 
 class UserController extends Controller
 {
