@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Modules\User\Exceptions\UserException;
 use App\Modules\User\UserRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 
 class UserController extends Controller
 {
@@ -18,17 +19,14 @@ class UserController extends Controller
         $this->_userRepository = $userRepository;
     }
 
+    /**
+     * 获取用户信息
+     * @return array
+     */
     public function getUserInfo()
     {
-        $fields = ['id', 'nickname', 'role_type', 'is_superuser', 'avatar_url'];
-        $result = getUserInfo($this->uid, $fields);
-        $approveInfo = $this->_approveRepository->getApprovingData($this->uid, ['type']);
-        $result['approve_type'] = $approveInfo['type'] ?? 0;
-        $result['approve_count'] = 0;
-        if ($result['is_superuser']) {
-            $result['approve_count'] = $this->_approveRepository->getApproveCount($this->uid);
-        }
-        return responseTo($result);
+        $result = $this->_userRepository->getUserInfo();
+        return responseTo($result, '获取用户信息成功');
     }
 
     /**

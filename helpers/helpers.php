@@ -87,12 +87,22 @@ if (!function_exists('isMobile')) {
 }
 
 /**
+ * 检验邮箱合法性
+ */
+if (!function_exists('isEmail')) {
+    function isEmail($email)
+    {
+        return filter_var($email,FILTER_VALIDATE_EMAIL) ? true : false;
+    }
+}
+
+/**
  * 获取用户信息
  */
 if (!function_exists('getUserInfo')) {
-    function getUserInfo($uid, $fields = [])
+    function getUserInfo($fields = [])
     {
-        return User::getUserInfo($uid, $fields);
+        return User::getUserInfo($fields);
     }
 }
 

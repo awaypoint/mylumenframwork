@@ -66,11 +66,11 @@ class UserRepository extends CommonRepository
      * @param array $fields
      * @return mixed
      */
-    public function getUserInfo($uid, $fields = [])
+    public function getUserInfo($fields = [])
     {
         if (!Session::has('user_info')) {
             $where = [
-                'id' => $uid,
+                'id' => Session::get('uid'),
             ];
             Session::put('user_info', $this->_userModel->getOne($where));
         }
@@ -83,5 +83,28 @@ class UserRepository extends CommonRepository
             }
         }
         return $result;
+    }
+
+    /**
+     * 更新用户公司
+     * @param $companyId
+     * @throws UserException
+     */
+    public function updateCompanyId($companyId)
+    {
+        $where = [
+            'id' => Session::get('uid'),
+        ];
+        $updateData = [
+            'company_id' => $companyId,
+        ];
+        $result = $this->_userModel->updateData($updateData, $where);
+        if (!$result) {
+            throw new UserException(10002);
+        }
+        //重新设置缓存
+        $userInfo = $this->getUserInfo();
+        $userInfo['company_id'] = $companyId;
+        Session::put('user_info', $userInfo);
     }
 }
