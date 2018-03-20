@@ -16,5 +16,6 @@ class CompanyException extends BaseException
         40007=>['msg'=>'【{$fileName}】参数错误'],
         40008=>['msg'=>'您还未注册公司'],
         40009=>['msg'=>'企业信息修改失败'],
+        40010=>['msg'=>'产品添加失败'],
     ];
 }

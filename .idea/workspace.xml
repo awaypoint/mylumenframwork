@@ -5,15 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5f981ce2-1424-4011-9a85-2821d3783edb" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Http/Controllers/UserController.php" afterPath="$PROJECT_DIR$/app/Http/Controllers/UserController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Modules/Common/CommonRepository.php" afterPath="$PROJECT_DIR$/app/Modules/Common/CommonRepository.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Modules/Setting/Exceptions/SettingException.php" afterPath="$PROJECT_DIR$/app/Modules/Setting/Exceptions/SettingException.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Modules/User/EloquentUserModel.php" afterPath="$PROJECT_DIR$/app/Modules/User/EloquentUserModel.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Modules/User/Exceptions/UserException.php" afterPath="$PROJECT_DIR$/app/Modules/User/Exceptions/UserException.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Modules/User/Facades/UserFacades.php" afterPath="$PROJECT_DIR$/app/Modules/User/Facades/UserFacades.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Modules/User/UserRepository.php" afterPath="$PROJECT_DIR$/app/Modules/User/UserRepository.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/helpers/helpers.php" afterPath="$PROJECT_DIR$/helpers/helpers.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Http/Controllers/CompanyController.php" afterPath="$PROJECT_DIR$/app/Http/Controllers/CompanyController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Modules/Company/CompanyRepository.php" afterPath="$PROJECT_DIR$/app/Modules/Company/CompanyRepository.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Modules/Company/Exceptions/CompanyException.php" afterPath="$PROJECT_DIR$/app/Modules/Company/Exceptions/CompanyException.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/routes/web.php" afterPath="$PROJECT_DIR$/routes/web.php" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -44,31 +38,23 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="EloquentUserModel.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/Modules/User/EloquentUserModel.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1300">
-              <caret line="55" column="1" lean-forward="true" selection-start-line="55" selection-start-column="1" selection-end-line="55" selection-end-column="1" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="UserException.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/Modules/User/Exceptions/UserException.php">
+      <file leaf-file-name="EloquentProductModel.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/Modules/Company/EloquentProductModel.php">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="325">
-              <caret line="13" column="0" lean-forward="true" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
-              <folding />
+              <caret line="13" column="13" lean-forward="true" selection-start-line="13" selection-start-column="13" selection-end-line="13" selection-end-column="13" />
+              <folding>
+                <element signature="e#39#82#0#PHP" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="web.php" pinned="false" current-in-tab="true">
+      <file leaf-file-name="web.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/routes/web.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="694">
-              <caret line="37" column="28" lean-forward="false" selection-start-line="37" selection-start-column="15" selection-end-line="37" selection-end-column="28" />
+            <state relative-caret-position="594">
+              <caret line="33" column="6" lean-forward="true" selection-start-line="33" selection-start-column="6" selection-end-line="33" selection-end-column="6" />
               <folding />
             </state>
           </provider>
@@ -77,10 +63,59 @@
       <file leaf-file-name="CompanyController.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/Http/Controllers/CompanyController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="244">
-              <caret line="36" column="47" lean-forward="true" selection-start-line="36" selection-start-column="47" selection-end-line="36" selection-end-column="47" />
+            <state relative-caret-position="494">
+              <caret line="79" column="34" lean-forward="false" selection-start-line="79" selection-start-column="20" selection-end-line="79" selection-end-column="34" />
               <folding>
-                <element signature="e#40#82#0#PHP" expanded="true" />
+                <element signature="e#196#374#0#PHP" expanded="false" />
+                <element signature="e#380#455#0#PHP" expanded="false" />
+                <element signature="e#460#951#0#PHP" expanded="false" />
+                <element signature="e#519#822#0#PHP" expanded="false" />
+                <element signature="e#545#821#0#PHP" expanded="false" />
+                <element signature="e#957#1005#0#PHP" expanded="false" />
+                <element signature="e#1010#1157#0#PHP" expanded="false" />
+                <element signature="e#1163#1240#0#PHP" expanded="false" />
+                <element signature="e#1245#1429#0#PHP" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="CompanyRepository.php" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/Modules/Company/CompanyRepository.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="369">
+              <caret line="192" column="69" lean-forward="true" selection-start-line="192" selection-start-column="69" selection-end-line="192" selection-end-column="69" />
+              <folding>
+                <element signature="e#603#680#0#PHP" expanded="false" />
+                <element signature="e#770#861#0#PHP" expanded="false" />
+                <element signature="e#916#2941#0#PHP" expanded="false" />
+                <element signature="e#2983#3407#0#PHP" expanded="false" />
+                <element signature="e#3060#3172#0#PHP" expanded="false" />
+                <element signature="e#3299#3407#0#PHP" expanded="false" />
+                <element signature="e#3419#3499#0#PHP" expanded="false" />
+                <element signature="e#3504#3843#0#PHP" expanded="false" />
+                <element signature="e#3611#3667#0#PHP" expanded="false" />
+                <element signature="e#3733#3813#0#PHP" expanded="false" />
+                <element signature="e#3849#3949#0#PHP" expanded="false" />
+                <element signature="e#3954#4933#0#PHP" expanded="false" />
+                <element signature="e#4042#4134#0#PHP" expanded="false" />
+                <element signature="e#4212#4268#0#PHP" expanded="false" />
+                <element signature="e#4339#4424#0#PHP" expanded="false" />
+                <element signature="e#4519#4684#0#PHP" expanded="false" />
+                <element signature="e#4576#4674#0#PHP" expanded="false" />
+                <element signature="e#4693#4899#0#PHP" expanded="false" />
+                <element signature="e#4809#4889#0#PHP" expanded="false" />
+                <element signature="e#6676#6759#0#PHP" expanded="false" />
+                <element signature="e#6764#8251#0#PHP" expanded="false" />
+                <element signature="e#6839#6889#0#PHP" expanded="false" />
+                <element signature="e#6899#6972#0#PHP" expanded="false" />
+                <element signature="e#7053#7171#0#PHP" expanded="false" />
+                <element signature="e#7181#7301#0#PHP" expanded="false" />
+                <element signature="e#7310#7427#0#PHP" expanded="false" />
+                <element signature="e#7436#7653#0#PHP" expanded="false" />
+                <element signature="e#7728#7990#0#PHP" expanded="false" />
+                <element signature="e#7783#7980#0#PHP" expanded="false" />
+                <element signature="e#7999#8245#0#PHP" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -89,39 +124,18 @@
       <file leaf-file-name="CompanyException.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/Modules/Company/Exceptions/CompanyException.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="425">
-              <caret line="17" column="13" lean-forward="false" selection-start-line="17" selection-start-column="8" selection-end-line="17" selection-end-column="13" />
+            <state relative-caret-position="450">
+              <caret line="18" column="13" lean-forward="false" selection-start-line="18" selection-start-column="8" selection-end-line="18" selection-end-column="13" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="CompanyRepository.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/Modules/Company/CompanyRepository.php">
+      <file leaf-file-name="app.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/bootstrap/app.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="269">
-              <caret line="154" column="68" lean-forward="true" selection-start-line="154" selection-start-column="68" selection-end-line="154" selection-end-column="68" />
-              <folding>
-                <element signature="e#312#463#0#PHP" expanded="false" />
-                <element signature="e#469#546#0#PHP" expanded="false" />
-                <element signature="e#2849#3272#0#PHP" expanded="false" />
-                <element signature="e#2926#3038#0#PHP" expanded="false" />
-                <element signature="e#3165#3272#0#PHP" expanded="false" />
-                <element signature="e#3284#3364#0#PHP" expanded="false" />
-                <element signature="e#3369#3708#0#PHP" expanded="false" />
-                <element signature="e#3476#3532#0#PHP" expanded="false" />
-                <element signature="e#3598#3678#0#PHP" expanded="false" />
-                <element signature="e#4804#4887#0#PHP" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="CommonEloquentModel.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/Modules/Common/CommonEloquentModel.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="444">
-              <caret line="82" column="49" lean-forward="false" selection-start-line="82" selection-start-column="49" selection-end-line="82" selection-end-column="49" />
+            <state relative-caret-position="348">
+              <caret line="93" column="8" lean-forward="true" selection-start-line="93" selection-start-column="8" selection-end-line="93" selection-end-column="8" />
               <folding />
             </state>
           </provider>
@@ -209,11 +223,12 @@
         <option value="$PROJECT_DIR$/config/const.php" />
         <option value="$PROJECT_DIR$/app/Modules/Common/CommonRepository.php" />
         <option value="$PROJECT_DIR$/app/Modules/Company/CompanyTraits.php" />
-        <option value="$PROJECT_DIR$/app/Http/Controllers/CompanyController.php" />
-        <option value="$PROJECT_DIR$/routes/web.php" />
-        <option value="$PROJECT_DIR$/app/Modules/Company/Exceptions/CompanyException.php" />
-        <option value="$PROJECT_DIR$/app/Modules/Company/CompanyRepository.php" />
         <option value="$PROJECT_DIR$/app/Modules/Common/CommonEloquentModel.php" />
+        <option value="$PROJECT_DIR$/app/Modules/Company/EloquentProductModel.php" />
+        <option value="$PROJECT_DIR$/app/Modules/Company/Exceptions/CompanyException.php" />
+        <option value="$PROJECT_DIR$/app/Http/Controllers/CompanyController.php" />
+        <option value="$PROJECT_DIR$/app/Modules/Company/CompanyRepository.php" />
+        <option value="$PROJECT_DIR$/routes/web.php" />
       </list>
     </option>
   </component>
@@ -380,12 +395,12 @@
       <workItem from="1520909736362" duration="6397000" />
       <workItem from="1520923193387" duration="1265000" />
       <workItem from="1520990188728" duration="9090000" />
-      <workItem from="1521516199549" duration="16037000" />
+      <workItem from="1521516199549" duration="19701000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="69474000" />
+    <option name="totallyTimeSpent" value="73138000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -422,20 +437,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/Modules/Role/Facades/Role.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="125">
-          <caret line="5" column="25" lean-forward="true" selection-start-line="5" selection-start-column="25" selection-end-line="5" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Modules/Role/Facades/RoleFacades.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="500">
-          <caret line="20" column="38" lean-forward="false" selection-start-line="20" selection-start-column="20" selection-end-line="20" selection-end-column="38" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$APPLICATION_HOME_DIR$/plugins/php/lib/php.jar!/stubs/standard/standard_8.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-153">
@@ -500,14 +501,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="372">
           <caret line="1168" column="9" lean-forward="false" selection-start-line="1168" selection-start-column="9" selection-end-line="1168" selection-end-column="9" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bootstrap/app.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="148">
-          <caret line="19" column="2" lean-forward="false" selection-start-line="19" selection-start-column="2" selection-end-line="19" selection-end-column="2" />
           <folding />
         </state>
       </provider>
@@ -747,14 +740,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/Modules/Common/CommonRepository.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="7" column="22" lean-forward="true" selection-start-line="7" selection-start-column="22" selection-end-line="7" selection-end-column="22" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/Modules/Company/CompanyTraits.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="125">
@@ -763,10 +748,18 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/Modules/User/EloquentUserModel.php">
+    <entry file="file://$PROJECT_DIR$/app/Modules/Common/CommonEloquentModel.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1300">
-          <caret line="55" column="1" lean-forward="true" selection-start-line="55" selection-start-column="1" selection-end-line="55" selection-end-column="1" />
+        <state relative-caret-position="444">
+          <caret line="82" column="49" lean-forward="false" selection-start-line="82" selection-start-column="49" selection-end-line="82" selection-end-column="49" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bootstrap/app.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="348">
+          <caret line="93" column="8" lean-forward="true" selection-start-line="93" selection-start-column="8" selection-end-line="93" selection-end-column="8" />
           <folding />
         </state>
       </provider>
@@ -779,56 +772,110 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/Modules/User/EloquentUserModel.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1300">
+          <caret line="55" column="1" lean-forward="true" selection-start-line="55" selection-start-column="1" selection-end-line="55" selection-end-column="1" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Modules/Company/EloquentProductModel.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="325">
+          <caret line="13" column="13" lean-forward="true" selection-start-line="13" selection-start-column="13" selection-end-line="13" selection-end-column="13" />
+          <folding>
+            <element signature="e#39#82#0#PHP" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Modules/Common/CommonRepository.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="7" column="22" lean-forward="true" selection-start-line="7" selection-start-column="22" selection-end-line="7" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$APPLICATION_HOME_DIR$/plugins/php/lib/php.jar!/stubs/Core/Core_c.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="297">
+          <caret line="258" column="6" lean-forward="false" selection-start-line="258" selection-start-column="6" selection-end-line="258" selection-end-column="6" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/Modules/Company/Exceptions/CompanyException.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="425">
-          <caret line="17" column="13" lean-forward="false" selection-start-line="17" selection-start-column="8" selection-end-line="17" selection-end-column="13" />
+        <state relative-caret-position="450">
+          <caret line="18" column="13" lean-forward="false" selection-start-line="18" selection-start-column="8" selection-end-line="18" selection-end-column="13" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/Http/Controllers/CompanyController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="244">
-          <caret line="36" column="47" lean-forward="true" selection-start-line="36" selection-start-column="47" selection-end-line="36" selection-end-column="47" />
+        <state relative-caret-position="494">
+          <caret line="79" column="34" lean-forward="false" selection-start-line="79" selection-start-column="20" selection-end-line="79" selection-end-column="34" />
           <folding>
-            <element signature="e#40#82#0#PHP" expanded="true" />
+            <element signature="e#196#374#0#PHP" expanded="false" />
+            <element signature="e#380#455#0#PHP" expanded="false" />
+            <element signature="e#460#951#0#PHP" expanded="false" />
+            <element signature="e#519#822#0#PHP" expanded="false" />
+            <element signature="e#545#821#0#PHP" expanded="false" />
+            <element signature="e#957#1005#0#PHP" expanded="false" />
+            <element signature="e#1010#1157#0#PHP" expanded="false" />
+            <element signature="e#1163#1240#0#PHP" expanded="false" />
+            <element signature="e#1245#1429#0#PHP" expanded="false" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Modules/Company/CompanyRepository.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="269">
-          <caret line="154" column="68" lean-forward="true" selection-start-line="154" selection-start-column="68" selection-end-line="154" selection-end-column="68" />
-          <folding>
-            <element signature="e#312#463#0#PHP" expanded="false" />
-            <element signature="e#469#546#0#PHP" expanded="false" />
-            <element signature="e#2849#3272#0#PHP" expanded="false" />
-            <element signature="e#2926#3038#0#PHP" expanded="false" />
-            <element signature="e#3165#3272#0#PHP" expanded="false" />
-            <element signature="e#3284#3364#0#PHP" expanded="false" />
-            <element signature="e#3369#3708#0#PHP" expanded="false" />
-            <element signature="e#3476#3532#0#PHP" expanded="false" />
-            <element signature="e#3598#3678#0#PHP" expanded="false" />
-            <element signature="e#4804#4887#0#PHP" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Modules/Common/CommonEloquentModel.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="444">
-          <caret line="82" column="49" lean-forward="false" selection-start-line="82" selection-start-column="49" selection-end-line="82" selection-end-column="49" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/routes/web.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="694">
-          <caret line="37" column="28" lean-forward="false" selection-start-line="37" selection-start-column="15" selection-end-line="37" selection-end-column="28" />
+        <state relative-caret-position="594">
+          <caret line="33" column="6" lean-forward="true" selection-start-line="33" selection-start-column="6" selection-end-line="33" selection-end-column="6" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Modules/Company/CompanyRepository.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="369">
+          <caret line="192" column="69" lean-forward="true" selection-start-line="192" selection-start-column="69" selection-end-line="192" selection-end-column="69" />
+          <folding>
+            <element signature="e#603#680#0#PHP" expanded="false" />
+            <element signature="e#770#861#0#PHP" expanded="false" />
+            <element signature="e#916#2941#0#PHP" expanded="false" />
+            <element signature="e#2983#3407#0#PHP" expanded="false" />
+            <element signature="e#3060#3172#0#PHP" expanded="false" />
+            <element signature="e#3299#3407#0#PHP" expanded="false" />
+            <element signature="e#3419#3499#0#PHP" expanded="false" />
+            <element signature="e#3504#3843#0#PHP" expanded="false" />
+            <element signature="e#3611#3667#0#PHP" expanded="false" />
+            <element signature="e#3733#3813#0#PHP" expanded="false" />
+            <element signature="e#3849#3949#0#PHP" expanded="false" />
+            <element signature="e#3954#4933#0#PHP" expanded="false" />
+            <element signature="e#4042#4134#0#PHP" expanded="false" />
+            <element signature="e#4212#4268#0#PHP" expanded="false" />
+            <element signature="e#4339#4424#0#PHP" expanded="false" />
+            <element signature="e#4519#4684#0#PHP" expanded="false" />
+            <element signature="e#4576#4674#0#PHP" expanded="false" />
+            <element signature="e#4693#4899#0#PHP" expanded="false" />
+            <element signature="e#4809#4889#0#PHP" expanded="false" />
+            <element signature="e#6676#6759#0#PHP" expanded="false" />
+            <element signature="e#6764#8251#0#PHP" expanded="false" />
+            <element signature="e#6839#6889#0#PHP" expanded="false" />
+            <element signature="e#6899#6972#0#PHP" expanded="false" />
+            <element signature="e#7053#7171#0#PHP" expanded="false" />
+            <element signature="e#7181#7301#0#PHP" expanded="false" />
+            <element signature="e#7310#7427#0#PHP" expanded="false" />
+            <element signature="e#7436#7653#0#PHP" expanded="false" />
+            <element signature="e#7728#7990#0#PHP" expanded="false" />
+            <element signature="e#7783#7980#0#PHP" expanded="false" />
+            <element signature="e#7999#8245#0#PHP" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>

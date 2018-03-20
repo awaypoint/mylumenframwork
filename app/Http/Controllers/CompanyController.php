@@ -55,6 +55,36 @@ class CompanyController extends Controller
     public function updateCompany(Request $request)
     {
         $result = $this->_companyRepository->updateCompany($request->all());
-        return responseTo($result,'企业信息修改成功');
+        return responseTo($result, '企业信息修改成功');
+    }
+
+    /**
+     * 添加产品
+     * @param Request $request
+     * @return array
+     */
+    public function addProduct(Request $request)
+    {
+        $this->validate($request, [
+            'name' => 'required',
+        ]);
+        $result = $this->_companyRepository->addProduct($request->all());
+        return responseTo($result);
+    }
+
+    /**
+     * 获取产品列表
+     * @param Request $request
+     * @return array
+     */
+    public function getProductList(Request $request)
+    {
+        $page = $request->get('page') ?? 0;
+        $pageSize = $request->get('page_size') ?? 0;
+        $orderBy = $request->get('order_by') ?? 'id';
+        $sortBy = $request->get('sort_by') ?? 'DESC';
+        $orderArr = [$orderBy, $sortBy];
+        $result = $this->_companyRepository->getProductList($request, $page, $pageSize, $orderArr);
+        return responseTo($result);
     }
 }

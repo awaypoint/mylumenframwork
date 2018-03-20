@@ -12,12 +12,15 @@ class CompanyRepository extends CommonRepository
     use CompanyTraits;
 
     private $_companyModel;
+    private $_productModel;
 
     public function __construct(
-        EloquentCompanyModel $eloquentCompanyModel
+        EloquentCompanyModel $eloquentCompanyModel,
+        EloquentProductModel $eloquentProductModel
     )
     {
         $this->_companyModel = $eloquentCompanyModel;
+        $this->_productModel = $eloquentProductModel;
     }
 
     /**
@@ -79,7 +82,7 @@ class CompanyRepository extends CommonRepository
             User::updateCompanyId($result);
             DB::commit();
             return ['company_id' => $result];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             DB::rollBack();
             throw new CompanyException(40003);
         }
@@ -140,6 +143,60 @@ class CompanyRepository extends CommonRepository
     }
 
     /**
+     * 添加产品
+     * @param $params
+     * @return array
+     * @throws CompanyException
+     */
+    public function addProduct($params)
+    {
+        $userInfo = getUserInfo(['company_id']);
+        $this->_proValidate($params);
+        $addData = [
+            'company_id' => $userInfo['company_id'],
+            'name' => $params['name'],
+            'annual_output' => $params['annual_output'] ?? 0,
+            'source_material' => $params['source_material'] ?? '',
+            'unit' => $params['unit'] ?? 0,
+            'consume' => $params['consume'] ?? 0,
+            'process_flow' => $params['process_flow'] ?? '',
+            'consume_unit' => $params['consume_unit'] ?? 0,
+            'remark' => $params['remark'] ?? '',
+        ];
+        try {
+            $result = $this->_productModel->add($addData);
+            if (!$result) {
+                throw new CompanyException(40010);
+            }
+            return ['id' => $result];
+        } catch (\Exception $e) {
+            throw new CompanyException(40010);
+        }
+    }
+
+    /**
+     * 获取产品列表
+     * @param $params
+     * @param int $page
+     * @param int $pageSize
+     * @param array $orderBy
+     * @param array $fields
+     * @return mixed
+     */
+    public function getProductList($params, $page = 1, $pageSize = 10, $orderBy = [], $fields = [])
+    {
+        $userInfo = getUserInfo(['company_id']);
+        $where = [
+            'company_id' => $userInfo['company_id'],
+        ];
+        if (isset($params['name']) && $params['name']) {
+            $where[] = ['name', 'LIKE', '%' . $params['name'] . '%'];
+        }
+        $result = $this->_productModel->getList($where, $fields, $page, $pageSize, $orderBy);
+        return $result;
+    }
+
+    /**
      * 添加企业信息参数验证
      * @param $params
      * @throws CompanyException
@@ -150,7 +207,7 @@ class CompanyRepository extends CommonRepository
             'name' => $params['name'],
         ];
         if ($id > 0) {
-            $isExistWhere[] = ['id','<>',$id];
+            $isExistWhere[] = ['id', '<>', $id];
         }
         $isExist = $this->_companyModel->getOne($isExistWhere, ['id']);
         if (!is_null($isExist)) {
@@ -175,5 +232,10 @@ class CompanyRepository extends CommonRepository
         if (isset($params['pollution_type']) && $params['pollution_type'] && !in_array($params['pollution_type'], array_keys($this->getConst('pollution_type')))) {
             throw new CompanyException(40007, ['fileName' => 'pollution_type']);
         }
+    }
+
+    private function _proValidate($params, $id = 0)
+    {
+
     }
 }

@@ -36,4 +36,6 @@ $app->group(['prefix' => 'company', 'middleware' => 'auth'], function () use ($a
     $app->post('addCompany', 'CompanyController@addCompany');
     $app->get('getCompanyDetail', 'CompanyController@getCompanyDetail');
     $app->put('updateCompany', 'CompanyController@updateCompany');
+    $app->post('addProduct', 'CompanyController@addProduct');
+    $app->get('getProructList', 'CompanyController@getProductList');
 });
