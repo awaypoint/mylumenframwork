@@ -87,4 +87,49 @@ class CompanyController extends Controller
         $result = $this->_companyRepository->getProductList($request, $page, $pageSize, $orderArr);
         return responseTo($result);
     }
+
+    /**
+     * 获取产品详情
+     * @param Request $request
+     * @return array
+     */
+    public function getProductDetail(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required',
+        ]);
+        $userInfo = getUserInfo(['company_id']);
+        $result = $this->_companyRepository->getProductDetail($userInfo['company_id'], $request->get('id'));
+        return responseTo($result);
+    }
+
+    /**
+     * 修改产品
+     * @param Request $request
+     * @return array
+     */
+    public function updateProduct(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required',
+        ]);
+        $userInfo = getUserInfo(['company_id']);
+        $result = $this->_companyRepository->updateProduct($userInfo['company_id'], $request->get('id'), $request->all());
+        return responseTo($result, '产品修改成功');
+    }
+
+    /**
+     * 删除产品
+     * @param Request $request
+     * @return array
+     */
+    public function delProduct(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required',
+        ]);
+        $userInfo = getUserInfo(['company_id']);
+        $result = $this->_companyRepository->delProduct($userInfo['company_id'], $request->get('id'));
+        return responseTo($result, '产品删除成功');
+    }
 }

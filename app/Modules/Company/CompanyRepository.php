@@ -197,6 +197,84 @@ class CompanyRepository extends CommonRepository
     }
 
     /**
+     * 获取产品详情
+     * @param $companyId
+     * @param $id
+     * @param array $fields
+     * @return mixed
+     * @throws CompanyException
+     */
+    public function getProductDetail($companyId, $id, $fields = [])
+    {
+        $where = [
+            'company_id' => $companyId,
+            'id' => $id,
+        ];
+        $result = $this->_productModel->getOne($where, $fields);
+        if (is_null($result)) {
+            throw new CompanyException(40011);
+        }
+        return $result;
+    }
+
+    /**
+     * 修改产品
+     * @param $companyId
+     * @param $id
+     * @param $params
+     * @return array
+     * @throws CompanyException
+     */
+    public function updateProduct($companyId, $id, $params)
+    {
+        $where = [
+            'company_id' => $companyId,
+            'id' => $id,
+        ];
+        $isExist = $this->_productModel->getOne($where);
+        if (is_null($isExist)) {
+            throw new CompanyException(40011);
+        }
+        $updateData = [];
+        foreach ($isExist as $field => $value) {
+            if (isset($params[$field])) {
+                $updateData[$field] = $params[$field];
+            }
+        }
+        if (!empty($updateData)) {
+            $result = $this->_productModel->updateData($updateData, $where);
+            if (!$result) {
+                throw new CompanyException(40012);
+            }
+        }
+        return ['id' => $isExist['id']];
+    }
+
+    /**
+     * 删除产品
+     * @param $companyId
+     * @param $id
+     * @return mixed
+     * @throws CompanyException
+     */
+    public function delProduct($companyId, $id)
+    {
+        $where = [
+            'company_id' => $companyId,
+            'id' => $id,
+        ];
+        $isExist = $this->_productModel->getOne($where, ['id']);
+        if (is_null($isExist)) {
+            throw new CompanyException(40011);
+        }
+        $result = $this->_productModel->deleteByFields($where);
+        if (!$result) {
+            throw new CompanyException(40013);
+        }
+        return $result;
+    }
+
+    /**
      * 添加企业信息参数验证
      * @param $params
      * @throws CompanyException
