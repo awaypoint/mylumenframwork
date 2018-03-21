@@ -30,106 +30,17 @@ class UserController extends Controller
     }
 
     /**
-     * @api            {get} /users/getAdminUser 权限列表
-     * @apiName        approveList
-     * @apiGroup       Users
-     *
-     * @apiParam {Int} page 页码
-     * @apiParam {Int} page_size 每页条数
-     * @apiParam {Int=1,2} [role_type] 角色类型 1业主 2管理员
-     * @apiDescription 权限列表
-     *
-     * @apiSuccessExample {json} 结果描述
-     *   {
-     *      "msg":"",
-     *      "code":0,
-     *      "result": {
-     *          "total": 1,
-     *          "total_page": 1,
-     *          "rows"[{
-     *              "id": 3,//用户id
-     *              "company_id": 1,
-     *              "nickname": "away",//微信昵称
-     *              "avatar_url": "https://abcd",//微信头像
-     *              "user_name": "",//用户名称
-     *              "mobile": 0,//手机号
-     *              "role_type": 1,//角色类型
-     *          },{...}]
-     *      }
-     *   }
-     * @apiSuccessExample {json} 参数描述
-     *   {
-     *       "page": 1,//页码
-     *       "page_size": 10,//每页条数
-     *       "role_type": 1,//角色类型
-     *   }
+     * 修改密码
+     * @param Request $request
+     * @return array
      */
-    public function getAdminUserList(Request $request)
-    {
-        $page = $request->get('page') ?? 1;
-        $pageSize = $request->get('page_size') ?? 10;
-        $result = $this->_userRepository->getAdminUserList($this->uid, [], $request->all(), $page, $pageSize);
-        return responseTo($result);
-    }
-
-    /**
-     * @api            {delete} /users/delAdminUser 删除权限用户
-     * @apiName        delAdminUser
-     * @apiGroup       Users
-     *
-     * @apiParam {Int} id 用户id
-     * @apiDescription 删除权限用户
-     *
-     * @apiSuccessExample {json} 结果描述
-     *   {
-     *      "msg":"",
-     *      "code":0,
-     *      "result": {
-     *          "id": 1,
-     *      }
-     *   }
-     * @apiSuccessExample {json} 参数描述
-     *   {
-     *       "id": 1,//用户id
-     *   }
-     */
-    public function delAdminUser(Request $request)
+    public function modifyPassword(Request $request)
     {
         $this->validate($request, [
-            'id' => 'required',
+            'old_password' => 'required',
+            'new_password' => 'required',
         ]);
-        $result = $this->_userRepository->delAdminUser($this->uid, $request->get('id'));
-        return responseTo($result);
-    }
-
-    /**
-     * @api            {get} /change 更改用户角色类型
-     * @apiName        change
-     * @apiGroup       Others
-     *
-     * @apiParam {Int} uid
-     * @apiParam {Int=0,1,2,3} type
-     * @apiDescription 更改用户角色类型
-     *
-     * @apiSuccessExample {json} 结果描述
-     *   {
-     *      "msg":"",
-     *      "code":0,
-     *      "result": true
-     *   }
-     * @apiSuccessExample {json} 参数描述
-     *   {
-     *      "uid":7,//用户id
-     *      "type":1,//角色类型（0什么都不是 1业主 2管理员 3超级管理员）
-     *   }
-     */
-    public function changeRoleType(Request $request)
-    {
-        $this->validate($request, [
-            'uid' => 'required',
-            'type' => 'required',
-        ]);
-        $result = $this->_userRepository->changeRoleType($request->get('uid'), $request->get('type'));
-        return responseTo($result);
+        $result = $this->_userRepository->modifyPassword($request->all());
+        return responseTo($result, '密码修改成功');
     }
 }

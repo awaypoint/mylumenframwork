@@ -72,7 +72,9 @@ class UserRepository extends CommonRepository
             $where = [
                 'id' => Session::get('uid'),
             ];
-            Session::put('user_info', $this->_userModel->getOne($where));
+            $userInfo = $this->_userModel->getOne($where);
+            unset($userInfo['password']);
+            Session::put('user_info', $userInfo);
         }
         $result = Session::get('user_info');
         if (!empty($fields)) {
@@ -150,5 +152,34 @@ class UserRepository extends CommonRepository
         } catch (\Exception $e) {
             throw new UserException(10004);
         }
+    }
+
+    /**
+     * 修改密码
+     * @param $params
+     * @return array
+     * @throws UserException
+     */
+    public function modifyPassword($params)
+    {
+        $userInfo = $this->getUserInfo(['id']);
+        $where = [
+            'id' => $userInfo['id'],
+        ];
+        $checkPassword = $this->_userModel->getOne($where, ['password']);
+        if (is_null($checkPassword)) {
+            throw new UserException(10006);
+        }
+        if ($checkPassword['password'] != $params['old_password']) {
+            throw new UserException(10007);
+        }
+        $updateData = [
+            'password' => $params['new_password'],
+        ];
+        $result = $this->_userModel->updateData($updateData, $where);
+        if ($result === false) {
+            throw new UserException(10008);
+        }
+        return ['id' => $userInfo['id']];
     }
 }
