@@ -42,3 +42,7 @@ $app->group(['prefix' => 'company', 'middleware' => 'auth'], function () use ($a
     $app->put('updateProduct', 'CompanyController@updateProduct');
     $app->delete('delProduct', 'CompanyController@delProduct');
 });
+//文件
+$app->group(['prefix' => 'files', 'middleware' => 'auth'], function () use ($app) {
+    $app->post('upLoadFile', 'FilesController@upLoadFile');
+});
