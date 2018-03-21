@@ -107,4 +107,48 @@ class UserRepository extends CommonRepository
         $userInfo['company_id'] = $companyId;
         Session::put('user_info', $userInfo);
     }
+
+    /**
+     * 注册
+     * @param $params
+     * @return array
+     * @throws UserException
+     */
+    public function register($params)
+    {
+        $nameWhere = [
+            'username' => $params['username'],
+        ];
+        $isNameRegistered = $this->_userModel->getOne($nameWhere, ['id']);
+        if (!is_null($isNameRegistered)) {
+            throw new UserException(10003, ['name' => $params['username']]);
+        }
+        if (isset($params['mobile']) && $params['mobile']) {
+            if (!isMobile($params['mobile'])) {
+                throw new UserException(10005);
+            }
+            $mobileWhere = [
+                'mobile' => $params['mobile'],
+            ];
+            $isMobileRegistered = $this->_userModel->getOne($mobileWhere, ['id']);
+            if (!is_null($isMobileRegistered)) {
+                throw new UserException(10003, ['name' => $params['mobile']]);
+            }
+        }
+        $addData = [
+            'username' => $params['username'],
+            'password' => $params['password'],
+            'mobile' => $params['mobile'] ?? 0,
+            'avatar_url' => $params['avatar_url'] ?? '',
+        ];
+        try {
+            $result = $this->_userModel->add($addData);
+            if (!$result) {
+                throw new UserException(10004);
+            }
+            return ['id' => $result];
+        } catch (\Exception $e) {
+            throw new UserException(10004);
+        }
+    }
 }

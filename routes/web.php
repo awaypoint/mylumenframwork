@@ -17,9 +17,11 @@ $app->post('/webhook', function () use ($app) {
     $shellExec = shell_exec("bash /var/project/webhook.sh && echo 'ok'");
     var_dump($shellExec);
 });
-
+//登录、注册
 $app->post('/login', 'LoginController@login');
-//登录
+$app->post('/register', 'LoginController@register');
+
+
 $app->group(['prefix' => '/', 'middleware' => 'auth'], function () use ($app) {
     $app->get('logout', 'LoginController@logout');
 });

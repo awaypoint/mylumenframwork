@@ -42,4 +42,20 @@ class LoginController extends BaseController
         Session::flush();
         return responseTo('退出成功');
     }
+
+    /**
+     * 注册
+     * @param Request $request
+     * @return array
+     */
+    public function register(Request $request)
+    {
+        $this->validate($request, [
+            'username' => 'required',
+            'password' => 'required',
+            'password_confirm' => 'required|same:password',
+        ]);
+        $result = $this->_userRepository->register($request->all());
+        return responseTo($result, '注册成功');
+    }
 }
