@@ -21,10 +21,10 @@ class RoleRepository extends CommonRepository
      * @param $uid
      * @return mixed
      */
-    public function getUserPermissions($uid)
+    public function getUserPermissions()
     {
         if (!Session::has('permissions')) {
-            $userInfo = getUserInfo($uid);
+            $userInfo = getUserInfo();
             $where = [
                 'id' => $userInfo['role_id'],
                 'built_in' => [

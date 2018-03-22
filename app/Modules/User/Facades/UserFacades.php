@@ -36,4 +36,14 @@ class UserFacades
     {
         return $this->_userRepository->updateCompanyId($companyId);
     }
+
+    /**
+     * 更新用户菜单
+     * @param array $hideMenuIds
+     * @return mixed
+     */
+    public function updateUserMenu(array $hideMenuIds)
+    {
+        return $this->_userRepository->updateUserMenu($hideMenuIds);
+    }
 }

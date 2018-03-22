@@ -30,6 +30,7 @@ $app->group(['prefix' => '/', 'middleware' => 'auth'], function () use ($app) {
 $app->group(['prefix' => '/setting', 'middleware' => 'auth'], function () use ($app) {
     $app->get('getMenu', 'SettingController@getMenu');
     $app->get('getWasteTypeCombo', 'SettingController@getWasteTypeCombo');
+    $app->put('updateUserMenu', 'SettingController@updateUserMenu');
 });
 //用户
 $app->group(['prefix' => 'users', 'middleware' => 'auth'], function () use ($app) {

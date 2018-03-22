@@ -18,8 +18,8 @@ class RoleFacades
      * @param $uid
      * @return mixed
      */
-    public function getUserPermissions($uid)
+    public function getUserPermissions()
     {
-        return $this->_roleRepository->getUserPermissions($uid);
+        return $this->_roleRepository->getUserPermissions();
     }
 }

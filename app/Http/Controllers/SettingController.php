@@ -23,7 +23,7 @@ class SettingController extends Controller
      */
     public function getMenu()
     {
-        $result = $this->_settingRepository->getMenuList($this->uid);
+        $result = $this->_settingRepository->getMenuList();
         return responseTo($result);
     }
 
@@ -39,5 +39,22 @@ class SettingController extends Controller
         ]);
         $result = $this->_settingRepository->getWasteTypeCombo($request->all());
         return responseTo($result);
+    }
+
+    /**
+     * 用户自定义菜单
+     * @param Request $request
+     * @return array
+     */
+    public function updateUserMenu(Request $request)
+    {
+        $this->validate($request, [
+            'hide_menu_ids' => 'array'
+        ]);
+        if (!$request->has('hide_menu_ids')) {
+            return responseTo(false, '参数缺失');
+        }
+        $result = $this->_settingRepository->updateUserMenu($request->all());
+        return responseTo($result, '用户菜单更新成功');
     }
 }

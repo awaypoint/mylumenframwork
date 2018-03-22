@@ -4,12 +4,14 @@ namespace App\Modules\Setting;
 
 use App\Modules\Common\CommonRepository;
 use App\Modules\Role\Facades\Role;
+use App\Modules\User\Facades\User;
 
 class SettingRepository extends CommonRepository
 {
     private $_menuModel;
     private $_wasteTypeModel;
     private $_myPermissions = [];
+    private $_hideMenuIds = [];
 
     const SETTING_MENU_LEGAL_STATUS = 1;
 
@@ -27,12 +29,13 @@ class SettingRepository extends CommonRepository
      * @param $uid 之后可能需要控制用户权限
      * @return array
      */
-    public function getMenuList($uid)
+    public function getMenuList()
     {
         $where = [
             'status' => self::SETTING_MENU_LEGAL_STATUS,
         ];
-        $this->_myPermissions = Role::getUserPermissions($uid);
+        //$this->_myPermissions = Role::getUserPermissions();
+        $this->_hideMenuIds = getUserInfo(['hide_menu_ids'])['hide_menu_ids'];
 
         $fields = ['id', 'parents_id', 'name', 'leaf', 'url', 'icon', 'permission'];
         $menuInfo = $this->_menuModel->searchData($where, $fields, ['listorder', 'ASC']);
@@ -55,6 +58,16 @@ class SettingRepository extends CommonRepository
     }
 
     /**
+     * 用户自定义菜单
+     * @param $params
+     * @return mixed
+     */
+    public function updateUserMenu($params)
+    {
+        return User::updateUserMenu($params['hide_menu_ids']);
+    }
+
+    /**
      * 递归构造菜单子项
      * @param $menuInfo
      * @param int $parentId
@@ -65,9 +78,11 @@ class SettingRepository extends CommonRepository
         $result = [];
         if (!empty($menuInfo)) {
             foreach ($menuInfo as $key => $item) {
-                if ($item['parents_id'] == $parentId && in_array($item['permission'], $this->_myPermissions)) {
+//                if ($item['parents_id'] == $parentId && in_array($item['permission'], $this->_myPermissions)) {
+                if ($item['parents_id'] == $parentId && !in_array($item['id'], $this->_hideMenuIds)) {
                     $mainMenu = [];
                     $id = $item['id'];
+                    $mainMenu['id'] = $id;
                     $mainMenu['name'] = $item['name'];
                     $mainMenu['url'] = $item['url'];
                     $mainMenu['icon'] = $item['icon'];

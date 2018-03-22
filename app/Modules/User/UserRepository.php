@@ -73,6 +73,7 @@ class UserRepository extends CommonRepository
                 'id' => Session::get('uid'),
             ];
             $userInfo = $this->_userModel->getOne($where);
+            $userInfo['hide_menu_ids'] = json_decode($userInfo['hide_menu_ids'], true);
             unset($userInfo['password']);
             Session::put('user_info', $userInfo);
         }
@@ -142,6 +143,7 @@ class UserRepository extends CommonRepository
             'password' => $params['password'],
             'mobile' => $params['mobile'] ?? 0,
             'avatar_url' => $params['avatar_url'] ?? '',
+            'hide_menu_ids' => '[]',
         ];
         try {
             $result = $this->_userModel->add($addData);
@@ -181,5 +183,26 @@ class UserRepository extends CommonRepository
             throw new UserException(10008);
         }
         return ['id' => $userInfo['id']];
+    }
+
+    /**
+     * 用户自定义菜单更新
+     * @param $hideMenuIds
+     * @return bool
+     * @throws UserException
+     */
+    public function updateUserMenu($hideMenuIds)
+    {
+        $userInfo = $this->getUserInfo();
+        $where = [
+            'id' => $userInfo['id'],
+        ];
+        $result = $this->_userModel->updateData(['hide_menu_ids' => json_encode($hideMenuIds, 256)], $where);
+        if ($result === false) {
+            throw new UserException(10009);
+        }
+        $userInfo['hide_menu_ids'] = $hideMenuIds;
+        Session::put('user_info', $userInfo);
+        return true;
     }
 }

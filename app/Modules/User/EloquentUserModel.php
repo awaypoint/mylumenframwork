@@ -14,7 +14,7 @@ class EloquentUserModel extends CommonEloquentModel
     protected $table = 'users';
     protected $dateFormat = 'U';
     //采用白名单模式
-    public $fillable = ['id', 'password', 'username', 'role_id', 'avatar_url', 'company_id'];
+    public $fillable = ['id', 'password', 'username', 'role_id', 'avatar_url', 'company_id', 'hide_menu_ids'];
 
     /**
      * 关联adminUser表
