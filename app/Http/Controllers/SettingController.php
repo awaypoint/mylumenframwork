@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Modules\Role\EloquentRolePermissionsModel;
+use App\Modules\Role\EloquentRoleRelationModel;
 use App\Modules\Setting\SettingRepository;
 use Illuminate\Http\Request;
 
@@ -56,5 +58,29 @@ class SettingController extends Controller
         }
         $result = $this->_settingRepository->updateUserMenu($request->all());
         return responseTo($result, '用户菜单更新成功');
+    }
+
+    /**
+     * 禁用管理员权限
+     */
+    public function forbittenAdmin()
+    {
+        $permissionModel = new EloquentRolePermissionsModel();
+        $relationModel = new EloquentRoleRelationModel();
+        $allPermissions = $permissionModel->searchData([], ['permission', 'relation_permission']);
+        $addData = [];
+        $nowTime = time();
+        foreach ($allPermissions as $item) {
+            $tmp = [
+                'role_id' => 1,
+                'permission' => $item['permission'],
+                'relation_permission' => $item['relation_permission'],
+                'created_at' => $nowTime,
+                'updated_at' => $nowTime,
+            ];
+            $addData[] = $tmp;
+        }
+        $result = $relationModel->addBatch($addData);
+        return responseTo($result);
     }
 }

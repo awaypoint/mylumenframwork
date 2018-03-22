@@ -34,7 +34,7 @@ class SettingRepository extends CommonRepository
         $where = [
             'status' => self::SETTING_MENU_LEGAL_STATUS,
         ];
-        //$this->_myPermissions = Role::getUserPermissions();
+        $this->_myPermissions = Role::getUserPermissions();
         $this->_hideMenuIds = getUserInfo(['hide_menu_ids'])['hide_menu_ids'];
 
         $fields = ['id', 'parents_id', 'name', 'leaf', 'url', 'icon', 'permission'];
@@ -78,8 +78,7 @@ class SettingRepository extends CommonRepository
         $result = [];
         if (!empty($menuInfo)) {
             foreach ($menuInfo as $key => $item) {
-//                if ($item['parents_id'] == $parentId && in_array($item['permission'], $this->_myPermissions)) {
-                if ($item['parents_id'] == $parentId && !in_array($item['id'], $this->_hideMenuIds)) {
+                if ($item['parents_id'] == $parentId && !in_array($item['id'], $this->_hideMenuIds) && !in_array($item['permission'], $this->_myPermissions)) {
                     $mainMenu = [];
                     $id = $item['id'];
                     $mainMenu['id'] = $id;

@@ -31,6 +31,7 @@ $app->group(['prefix' => '/setting', 'middleware' => 'auth'], function () use ($
     $app->get('getMenu', 'SettingController@getMenu');
     $app->get('getWasteTypeCombo', 'SettingController@getWasteTypeCombo');
     $app->put('updateUserMenu', 'SettingController@updateUserMenu');
+    $app->post('forbittenAdmin', 'SettingController@forbittenAdmin');
 });
 //用户
 $app->group(['prefix' => 'users', 'middleware' => 'auth'], function () use ($app) {

@@ -41,8 +41,9 @@ class RoleRepository extends CommonRepository
                 if ($relation['permission']) {
                     $permissions[] = $relation['permission'];
                 }
-                if ($relation['relation_permission']) {
-                    $permissions[] = $relation['relation_permission'];
+                $relationPersmissions = json_decode($relation['relation_permission'], true);
+                if (!empty($relationPersmissions)) {
+                    $permissions = array_merge($permissions, $relationPersmissions);
                 }
             }
         }
