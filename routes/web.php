@@ -53,3 +53,11 @@ $app->group(['prefix' => 'company', 'middleware' => 'auth'], function () use ($a
 $app->group(['prefix' => 'files', 'middleware' => 'auth'], function () use ($app) {
     $app->post('upLoadFile', 'FilesController@upLoadFile');
 });
+//产污情况
+$app->group(['prefix' => 'waste', 'middleware' => 'auth'], function () use ($app) {
+    $app->post('addWasteMaterial', 'WasteController@addWasteMaterial');
+    $app->get('getWasteMaterialList', 'WasteController@getWasteMaterialList');
+    $app->get('getWasteMaterialDetail', 'WasteController@getWasteMaterialDetail');
+    $app->put('updateWasteMaterial', 'WasteController@updateWasteMaterial');
+    $app->delete('delWasteMaterial', 'WasteController@delWasteMaterial');
+});

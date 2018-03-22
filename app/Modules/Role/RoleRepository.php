@@ -49,4 +49,14 @@ class RoleRepository extends CommonRepository
         }
         return $permissions;
     }
+
+    /**
+     * 获取角色信息
+     * @param $roleId
+     * @return mixed
+     */
+    public function getRoleInfo($roleId)
+    {
+        return $this->_roleModel->getOne(['id' => $roleId]);
+    }
 }

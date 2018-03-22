@@ -1,0 +1,192 @@
+<?php
+
+namespace App\Modules\Waste;
+
+use App\Modules\Common\CommonRepository;
+use App\Modules\Role\Facades\Role;
+use App\Modules\Setting\Facades\Setting;
+use App\Modules\Waste\Exceptions\WasteException;
+
+class WasteRepository extends CommonRepository
+{
+    private $_wasteMaterialModel;
+
+    public function __construct(
+        EloquentWasteMaterialModel $wasteMaterialModel
+    )
+    {
+        $this->_wasteMaterialModel = $wasteMaterialModel;
+    }
+
+    /**
+     * 添加危废信息
+     * @param $params
+     * @return array
+     * @throws WasteException
+     */
+    public function addWasteMaterial($params)
+    {
+        $userInfo = getUserInfo(['company_id']);
+        $addData = [
+            'company_id' => $userInfo['company_id'],
+            'waste_category' => $params['waste_category'],
+            'industry' => $params['industry'],
+            'waste_code' => $params['waste_code'],
+            'waste_name' => $params['waste_name'] ?? '',
+            'commonly_called' => $params['commonly_called'] ?? '',
+            'harmful_staff' => $params['harmful_staff'] ?? '',
+            'waste_shape' => $params['waste_shape'] ?? 0,
+            'waste_type' => $params['waste_type'] ?? 0,
+            'waste_trait' => $params['waste_trait'] ?? 0,
+            'emergency' => $params['emergency'] ?? '',
+            'handle_company' => $params['handle_company'] ?? '',
+            'handle_way' => $params['handle_way'] ?? '',
+            'transport_unit' => $params['transport_unit'] ?? '',
+            'remark' => $params['remark'] ?? '',
+        ];
+        try {
+            $result = $this->_wasteMaterialModel->add($addData);
+            if (!$result) {
+                throw new WasteException(60001);
+            }
+            return ['id' => $result];
+        } catch (\Exception $e) {
+            throw new WasteException(60001);
+        }
+    }
+
+    /**
+     * 获取危废信息列表
+     * @param $params
+     * @param $page
+     * @param $pageSize
+     * @param $orderBy
+     * @param array $fileds
+     * @return mixed
+     */
+    public function getWasteMaterialList($params, $page, $pageSize, $orderBy, $fileds = [])
+    {
+        $where = [];
+        if (isset($params['waste_code']) && $params['waste_code']) {
+            $where['waste_code'] = $params['waste_code'];
+        }
+        $result = $this->_wasteMaterialModel->getList($where, $fileds, $page, $pageSize, $orderBy);
+        if (isset($result['rows']) && !empty($result['rows'])) {
+            $wasteTypeIds = [];
+            foreach ($result['rows'] as $item) {
+                $wasteTypeIds[] = $item['waste_category'];
+                $wasteTypeIds[] = $item['industry'];
+                $wasteTypeIds[] = $item['waste_code'];
+            }
+            $wasteTypeIds = array_unique($wasteTypeIds);
+            $wasteTypeInfo = Setting::searchWasteTypeForList($wasteTypeIds, ['name'], 'id');
+            foreach ($result['rows'] as &$row) {
+                $row['waste_category_name'] = isset($wasteTypeInfo[$row['waste_category']]) ? $wasteTypeInfo[$row['waste_category']]['name'] : '';
+                $row['industry_name'] = isset($wasteTypeInfo[$row['industry']]) ? $wasteTypeInfo[$row['industry']]['name'] : '';
+                $row['waste_code_name'] = isset($wasteTypeInfo[$row['waste_code']]) ? $wasteTypeInfo[$row['waste_code']]['name'] : '';
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * 获取危废信息详情
+     * @param $id
+     * @param array $fields
+     * @return mixed
+     * @throws WasteException
+     */
+    public function getWasteMaterialDetail($id, $fields = [])
+    {
+        $where = [
+            'id' => $id,
+        ];
+        $result = $this->_wasteMaterialModel->getOne($where);
+        $this->_checkWastePermission($result['company_id']);
+        $wasteTypeIds = [$result['waste_category'], $result['industry'], $result['waste_code']];
+        $wasteTypeInfo = Setting::searchWasteTypeForList($wasteTypeIds, ['name'], 'id');
+        $result['waste_category_name'] = isset($wasteTypeInfo[$result['waste_category']]) ? $wasteTypeInfo[$result['waste_category']]['name'] : '';
+        $result['industry_name'] = isset($wasteTypeInfo[$result['industry']]) ? $wasteTypeInfo[$result['industry']]['name'] : '';
+        $result['waste_code_name'] = isset($wasteTypeInfo[$result['waste_code']]) ? $wasteTypeInfo[$result['waste_code']]['name'] : '';
+        return $result;
+    }
+
+    /**
+     * 更新危废信息
+     * @param $id
+     * @param $params
+     * @return array
+     * @throws WasteException
+     */
+    public function updateWasteMaterial($id, $params)
+    {
+        $where = [
+            'id' => $id,
+        ];
+        $isExist = $this->_wasteMaterialModel->getOne($where);
+        if (is_null($isExist)) {
+            throw new WasteException(60003);
+        }
+        $result = $this->_wasteMaterialModel->getOne($where);
+        $this->_checkWastePermission($result['company_id']);
+        $updateData = [];
+        foreach ($isExist as $fileld => $value) {
+            if (isset($params[$fileld])) {
+                $updateData[$fileld] = $params[$fileld];
+            }
+        }
+        $returnData = ['id' => $id];
+        if (!empty($updateData)) {
+            try {
+                $result = $this->_wasteMaterialModel->updateData($updateData, $where);
+                if ($result === false) {
+                    throw new WasteException(60004);
+                }
+            } catch (\Exception $e) {
+                throw new WasteException(60004);
+            }
+        }
+        return $returnData;
+    }
+
+    /**
+     * 删除危废信息
+     * @param $id
+     * @return bool
+     * @throws WasteException
+     */
+    public function delWasteMaterial($id)
+    {
+        $where = [
+            'id' => $id,
+        ];
+        $isExist = $this->_wasteMaterialModel->getOne($where, ['company_id']);
+        if (is_null($isExist)) {
+            throw new WasteException(60003);
+        }
+        $this->_checkWastePermission($isExist['company_id']);
+        try {
+            $result = $this->_wasteMaterialModel->deleteData($id);
+            if ($result === false) {
+                throw new WasteException(60005);
+            }
+            return true;
+        } catch (\Exception $e) {
+            throw new WasteException(60005);
+        }
+    }
+
+    /**
+     * 检验权限
+     * @param $companyId
+     * @throws WasteException
+     */
+    private function _checkWastePermission($companyId)
+    {
+        $userInfo = getUserInfo();
+        $roleInfo = Role::getRoleInfo($userInfo['role_id']);
+        if ($roleInfo == Role::ROLE_COMMON_TYPE && $companyId != $userInfo['company_id']) {
+            throw new WasteException(60002);
+        };
+    }
+}

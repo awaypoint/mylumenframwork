@@ -68,6 +68,34 @@ class SettingRepository extends CommonRepository
     }
 
     /**
+     * 匹配危废类型
+     * @param $wasteTypeIds
+     * @param array $fields
+     * @param string $indexKey
+     * @param array $exceptParams
+     * @return array|mixed
+     */
+    public function searchWasteTypeForList($wasteTypeIds, $fields = [], $indexKey = 'id', $replaceWhere = [])
+    {
+        $where = [
+            'built_in' => [
+                'whereIn' => ['id', $wasteTypeIds]
+            ]
+        ];
+        if (!empty($replaceWhere)) {
+            $where = $replaceWhere;
+        }
+        if (!empty($fields) && $indexKey) {
+            $fields = array_unique(array_merge($fields, [$indexKey]));
+        }
+        $result = $this->_wasteTypeModel->searchData($where, $fields);
+        if ($indexKey) {
+            $result = array_column($result, null, $indexKey);
+        }
+        return $result;
+    }
+
+    /**
      * 递归构造菜单子项
      * @param $menuInfo
      * @param int $parentId

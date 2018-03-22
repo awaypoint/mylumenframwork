@@ -97,6 +97,7 @@ $app->register(Dusterio\LumenPassport\PassportServiceProvider::class);
 //facades
 $app->register(\App\Modules\User\Facades\UserServiceProvider::class);
 $app->register(\App\Modules\Role\Facades\RoleServiceProvider::class);
+$app->register(\App\Modules\Setting\Facades\SettingServiceProvider::class);
 
 
 /*

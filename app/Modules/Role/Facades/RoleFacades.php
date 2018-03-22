@@ -22,4 +22,14 @@ class RoleFacades
     {
         return $this->_roleRepository->getUserPermissions();
     }
+
+    /**
+     * 获取角色信息
+     * @param $roleId
+     * @return mixed
+     */
+    public function getRoleInfo($roleId)
+    {
+        return $this->_roleRepository->getRoleInfo($roleId);
+    }
 }

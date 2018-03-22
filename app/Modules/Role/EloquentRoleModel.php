@@ -12,7 +12,7 @@ class EloquentRoleModel extends CommonEloquentModel
     protected $table = 'role';
     protected $dateFormat = 'U';
     //采用白名单模式
-    public $fillable = ['id', 'name', 'company_id'];
+    public $fillable = ['id', 'name', 'company_id', 'type'];
 
     /**
      * 关联role_relation表
