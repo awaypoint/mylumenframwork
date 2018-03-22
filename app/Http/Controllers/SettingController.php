@@ -26,4 +26,18 @@ class SettingController extends Controller
         $result = $this->_settingRepository->getMenuList($this->uid);
         return responseTo($result);
     }
+
+    /**
+     * 获取危废类型下拉列表
+     * @param Request $request
+     * @return array
+     */
+    public function getWasteTypeCombo(Request $request)
+    {
+        $this->validate($request, [
+            'parents_id' => 'required|numeric'
+        ]);
+        $result = $this->_settingRepository->getWasteTypeCombo($request->all());
+        return responseTo($result);
+    }
 }

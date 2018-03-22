@@ -20,14 +20,16 @@ $app->post('/webhook', function () use ($app) {
 //登录、注册
 $app->post('/login', 'LoginController@login');
 $app->post('/register', 'LoginController@register');
+$app->get('/combo', 'LoginController@combo');
 
 
 $app->group(['prefix' => '/', 'middleware' => 'auth'], function () use ($app) {
-    $app->get('logout', 'LoginController@logout');
+    $app->get('logout', 'UserController@logout');
 });
 //系统设置
 $app->group(['prefix' => '/setting', 'middleware' => 'auth'], function () use ($app) {
     $app->get('getMenu', 'SettingController@getMenu');
+    $app->get('getWasteTypeCombo', 'SettingController@getWasteTypeCombo');
 });
 //用户
 $app->group(['prefix' => 'users', 'middleware' => 'auth'], function () use ($app) {

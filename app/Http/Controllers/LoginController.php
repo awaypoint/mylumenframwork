@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Modules\Setting\EloquentWasteTypeModel;
 use Illuminate\Support\Facades\Session;
 use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Modules\User\UserRepository;
@@ -32,15 +33,6 @@ class LoginController extends BaseController
         $params = $request->all();
         $result = $this->_userRepository->loginByPassword($params);
         return responseTo($result);
-    }
-
-    /**
-     * 登出
-     */
-    public function logOut()
-    {
-        Session::flush();
-        return responseTo('退出成功');
     }
 
     /**

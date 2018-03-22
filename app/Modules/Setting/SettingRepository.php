@@ -4,20 +4,22 @@ namespace App\Modules\Setting;
 
 use App\Modules\Common\CommonRepository;
 use App\Modules\Role\Facades\Role;
-use Illuminate\Support\Facades\Session;
 
 class SettingRepository extends CommonRepository
 {
     private $_menuModel;
+    private $_wasteTypeModel;
     private $_myPermissions = [];
 
     const SETTING_MENU_LEGAL_STATUS = 1;
 
     public function __construct(
-        EloquentMenuModel $menuModel
+        EloquentMenuModel $menuModel,
+        EloquentWasteTypeModel $wasteTypeModel
     )
     {
         $this->_menuModel = $menuModel;
+        $this->_wasteTypeModel = $wasteTypeModel;
     }
 
     /**
@@ -35,6 +37,20 @@ class SettingRepository extends CommonRepository
         $fields = ['id', 'parents_id', 'name', 'leaf', 'url', 'icon', 'permission'];
         $menuInfo = $this->_menuModel->searchData($where, $fields, ['listorder', 'ASC']);
         $result = $this->builtMenuItem($menuInfo);
+        return $result;
+    }
+
+    /**
+     * 获取危废类型下拉框列表
+     * @param array $params
+     * @return mixed
+     */
+    public function getWasteTypeCombo($params = [])
+    {
+        $where = [
+            'parents_id' => $params['parents_id'],
+        ];
+        $result = $this->_wasteTypeModel->searchData($where);
         return $result;
     }
 
