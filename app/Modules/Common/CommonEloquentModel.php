@@ -7,6 +7,19 @@ use Illuminate\Support\Facades\DB;
 
 class CommonEloquentModel extends Model
 {
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+//        $this::saving(function ($model){
+//            dd('dfdfdf');
+//            $model->updated_by = getUserInfo()['id'];
+//        });
+//        $this::updating(function ($model){
+//            dd('dfdfdf');
+//            $model->updated_by = getUserInfo()['id'];
+//        });
+    }
+
     /**
      * 新建
      * @param $addData

@@ -6,16 +6,20 @@ use App\Modules\Common\CommonRepository;
 use App\Modules\Role\Facades\Role;
 use App\Modules\Setting\Facades\Setting;
 use App\Modules\Waste\Exceptions\WasteException;
+use App\Modules\Waste\Facades\Waste;
 
 class WasteRepository extends CommonRepository
 {
     private $_wasteMaterialModel;
+    private $_wasteGasModel;
 
     public function __construct(
-        EloquentWasteMaterialModel $wasteMaterialModel
+        EloquentWasteMaterialModel $wasteMaterialModel,
+        EloquentWasteGasModel $wasteGasModel
     )
     {
         $this->_wasteMaterialModel = $wasteMaterialModel;
+        $this->_wasteGasModel = $wasteGasModel;
     }
 
     /**
@@ -167,6 +171,109 @@ class WasteRepository extends CommonRepository
         $this->_checkWastePermission($isExist['company_id']);
         try {
             $result = $this->_wasteMaterialModel->deleteData($id);
+            if ($result === false) {
+                throw new WasteException(60005);
+            }
+            return true;
+        } catch (\Exception $e) {
+            throw new WasteException(60005);
+        }
+    }
+
+    /**
+     * 添加废气信息
+     * @param $params
+     * @return array
+     * @throws WasteException
+     */
+    public function addWasteGas($params)
+    {
+        if (!isset(Waste::WASTE_GAS_TYPE_MAP[$params['type']])) {
+            throw new WasteException(60006);
+        }
+        $userInfo = getUserInfo();
+        $addData = [
+            'company_id' => $userInfo['company_id'],
+            'type' => $params['type'],
+            'waste_name' => $params['waste_name'] ?? '',
+            'fules_type' => $params['fules_type'] ?? '',
+            'fules_element' => $params['fules_element'] ?? '',
+            'sulfur_rate' => $params['sulfur_rate'] ?? 0,
+            'gas_discharge' => $params['gas_discharge'] ?? 0,
+            'discharge_level' => $params['discharge_level'] ?? 0,
+            'tube_no' => $params['tube_no'] ?? '',
+            'technique' => $params['technique'] ?? '[]',
+            'installations' => $params['installations'] ?? '[]',
+            'technique_pic' => $params['technique_pic'] ?? '[]',
+            'remark' => $params['remark'] ?? '',
+        ];
+        try {
+            $result = $this->_wasteGasModel->add($addData);
+            if (!$result) {
+                throw new WasteException(60001);
+            }
+            return ['id' => $result];
+        } catch (\Exception $e) {
+            throw new WasteException(60001);
+        }
+    }
+
+    /**
+     * 更新废气信息
+     * @param $id
+     * @param $params
+     * @return array
+     * @throws WasteException
+     */
+    public function updateWasteGas($id, $params)
+    {
+        $where = [
+            'id' => $id,
+        ];
+        $isExist = $this->_wasteGasModel->getOne($where);
+        if (is_null($isExist)) {
+            throw new WasteException(60003);
+        }
+        $result = $this->_wasteGasModel->getOne($where);
+        $this->_checkWastePermission($result['company_id']);
+        $updateData = [];
+        foreach ($isExist as $fileld => $value) {
+            if (isset($params[$fileld])) {
+                $updateData[$fileld] = $params[$fileld];
+            }
+        }
+        $returnData = ['id' => $id];
+        if (!empty($updateData)) {
+            try {
+                $result = $this->_wasteGasModel->updateData($updateData, $where);
+                if ($result === false) {
+                    throw new WasteException(60004);
+                }
+            } catch (\Exception $e) {
+                throw new WasteException(60004);
+            }
+        }
+        return $returnData;
+    }
+
+    /**
+     * 删除危废信息
+     * @param $id
+     * @return bool
+     * @throws WasteException
+     */
+    public function delWasteGas($id)
+    {
+        $where = [
+            'id' => $id,
+        ];
+        $isExist = $this->_wasteGasModel->getOne($where, ['company_id']);
+        if (is_null($isExist)) {
+            throw new WasteException(60003);
+        }
+        $this->_checkWastePermission($isExist['company_id']);
+        try {
+            $result = $this->_wasteGasModel->deleteData($id);
             if ($result === false) {
                 throw new WasteException(60005);
             }

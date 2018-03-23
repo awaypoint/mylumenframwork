@@ -65,6 +65,7 @@ $app->singleton(
 
 $app->middleware([
     \Illuminate\Session\Middleware\StartSession::class,
+    \Barryvdh\Cors\HandleCors::class,
 ]);
 
 $app->routeMiddleware([
@@ -84,6 +85,7 @@ $app->routeMiddleware([
 */
 
 $app->register(App\Providers\AppServiceProvider::class);
+$app->register(Barryvdh\Cors\ServiceProvider::class);
 //$app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
 $app->register(\Illuminate\Redis\RedisServiceProvider::class);

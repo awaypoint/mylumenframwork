@@ -21,9 +21,10 @@ class AppServiceProvider extends ServiceProvider
     {
         date_default_timezone_set('PRC');
 
-        if (env('PRINT_SQL',false)){
+        if (env('PRINT_SQL', false)) {
             DB::listen(function ($query) {
-                echo $query->sql,PHP_EOL;die;
+                echo $query->sql, PHP_EOL;
+                die;
                 //echo $query->time,PHP_EOL;
             });
         }

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Modules\Role\RoleRepository;
 use App\Modules\Waste\WasteRepository;
 use Illuminate\Http\Request;
 
@@ -93,5 +92,37 @@ class WasteController extends Controller
         ]);
         $result = $this->_wasteRepository->delWasteMaterial($request->get('id'));
         return responseTo($result, '删除危废信息成功');
+    }
+
+    /**
+     * 添加废气信息
+     * @param Request $request
+     * @return array
+     */
+    public function addWasteGas(Request $request)
+    {
+        $this->validate($request, [
+            'type' => 'required|numeric',
+        ]);
+        $result = $this->_wasteRepository->addWasteGas($request->all());
+        return responseTo($result, '添加废气信息成功');
+    }
+
+    public function updateWasteGas(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required|numeric',
+        ]);
+        $result = $this->_wasteRepository->updateWasteGas($request->get('id'), $request->all());
+        return responseTo($result, '更新废气信息成功');
+    }
+
+    public function delWasteGas(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required|numeric',
+        ]);
+        $result = $this->_wasteRepository->delWasteGas($request->get('id'));
+        return responseTo($result, '废气信息删除成功');
     }
 }

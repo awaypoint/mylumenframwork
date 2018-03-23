@@ -60,4 +60,7 @@ $app->group(['prefix' => 'waste', 'middleware' => 'auth'], function () use ($app
     $app->get('getWasteMaterialDetail', 'WasteController@getWasteMaterialDetail');
     $app->put('updateWasteMaterial', 'WasteController@updateWasteMaterial');
     $app->delete('delWasteMaterial', 'WasteController@delWasteMaterial');
+    $app->post('addWasteGas', 'WasteController@addWasteGas');
+    $app->delete('delWasteGas', 'WasteController@delWasteGas');
+    $app->put('updateWasteGas', 'WasteController@updateWasteGas');
 });

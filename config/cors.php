@@ -11,7 +11,7 @@ return [
      |
      */
     'supportsCredentials' => true,
-    'allowedOrigins' => env('APP_DEBUG')?['*']:['http://mobile.xiaoweixitong.com'],
+    'allowedOrigins' => ['*'],
     'allowedHeaders' => ['*'],
     'allowedMethods' => ['POST','GET','PUT','DELETE','OPTIONS'],
     'exposedHeaders' => [],

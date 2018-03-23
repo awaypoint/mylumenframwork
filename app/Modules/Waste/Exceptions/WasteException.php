@@ -12,5 +12,6 @@ class WasteException extends BaseException
         60003 => ['msg' => '危废信息不存在'],
         60004 => ['msg' => '危废信息更新失败'],
         60005 => ['msg' => '删除危废信息失败'],
+        60006 => ['msg' => '废气类型参数错误'],
     ];
 }
