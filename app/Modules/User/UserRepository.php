@@ -23,17 +23,18 @@ class UserRepository extends CommonRepository
 
     public function loginByPassword($params)
     {
-        $response = $this->_http->post(env('SERVER_REQUEST_URL') . 'oauth/token', [
-            'form_params' => [
-                'grant_type' => 'password',
-                'client_id' => env('OAUTH_CLIENT_ID'),
-                'client_secret' => env('OAUTH_CLIENT_SECRET'),
-                'username' => $params['username'],
-                'password' => $params['password'],
-                'scope' => '',
-            ],
-        ]);
-        if ($response->getStatusCode() == 401) {
+        try{
+            $response = $this->_http->post(env('SERVER_REQUEST_URL') . 'oauth/token', [
+                'form_params' => [
+                    'grant_type' => 'password',
+                    'client_id' => env('OAUTH_CLIENT_ID'),
+                    'client_secret' => env('OAUTH_CLIENT_SECRET'),
+                    'username' => $params['username'],
+                    'password' => $params['password'],
+                    'scope' => '',
+                ],
+            ]);
+        }catch (\Exception $e){
             throw new UserException(10001);
         }
         $result = json_decode((string)$response->getBody(), true);
