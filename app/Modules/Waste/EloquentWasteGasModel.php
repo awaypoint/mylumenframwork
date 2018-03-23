@@ -14,12 +14,4 @@ class EloquentWasteGasModel extends CommonEloquentModel
     //采用白名单模式
     public $fillable = ['id', 'company_id', 'type', 'waste_name', 'fules_type', 'fules_element', 'sulfur_rate', 'gas_discharge',
         'discharge_level', 'tube_no', 'technique', 'installations', 'technique_pic', 'remark'];
-
-    public function __construct(array $attributes = [])
-    {
-        parent::__construct($attributes);
-        EloquentWasteGasModel::saving(function (){
-            dd('dfdfdf');
-        });
-    }
 }

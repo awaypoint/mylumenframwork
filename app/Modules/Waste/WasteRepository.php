@@ -230,12 +230,12 @@ class WasteRepository extends CommonRepository
         $where = [
             'id' => $id,
         ];
-        $isExist = $this->_wasteGasModel->getOne($where);
-        if (is_null($isExist)) {
+        $model = $this->_wasteGasModel->where($where)->first();
+        if (is_null($model)) {
             throw new WasteException(60003);
         }
-        $result = $this->_wasteGasModel->getOne($where);
-        $this->_checkWastePermission($result['company_id']);
+        $isExist = $model->toArray();
+        $this->_checkWastePermission($isExist['company_id']);
         $updateData = [];
         foreach ($isExist as $fileld => $value) {
             if (isset($params[$fileld])) {
@@ -245,7 +245,7 @@ class WasteRepository extends CommonRepository
         $returnData = ['id' => $id];
         if (!empty($updateData)) {
             try {
-                $result = $this->_wasteGasModel->updateData($updateData, $where);
+                $result = $model->update($updateData);
                 if ($result === false) {
                     throw new WasteException(60004);
                 }
@@ -267,13 +267,14 @@ class WasteRepository extends CommonRepository
         $where = [
             'id' => $id,
         ];
-        $isExist = $this->_wasteGasModel->getOne($where, ['company_id']);
-        if (is_null($isExist)) {
+        $model = $this->_wasteGasModel->where($where)->first();
+        if (is_null($model)) {
             throw new WasteException(60003);
         }
+        $isExist = $model->toArray();
         $this->_checkWastePermission($isExist['company_id']);
         try {
-            $result = $this->_wasteGasModel->deleteData($id);
+            $result = $model->delete();
             if ($result === false) {
                 throw new WasteException(60005);
             }

@@ -108,6 +108,11 @@ class WasteController extends Controller
         return responseTo($result, '添加废气信息成功');
     }
 
+    /**
+     * 修改废气信息
+     * @param Request $request
+     * @return array
+     */
     public function updateWasteGas(Request $request)
     {
         $this->validate($request, [
@@ -117,6 +122,11 @@ class WasteController extends Controller
         return responseTo($result, '更新废气信息成功');
     }
 
+    /**
+     * 删除废气信息
+     * @param Request $request
+     * @return array
+     */
     public function delWasteGas(Request $request)
     {
         $this->validate($request, [
