@@ -29,6 +29,15 @@ class FilesRepository extends CommonRepository
     const FILES_PREFIX_MAP = [
         'env_approve_code' => '环评资料/'
     ];
+    const FILES_COMPANY_RELATION_FIELDS = [
+        'eia' => '环评资料',
+        'waste' => '固废管理',
+        'emergency' => '应急预案',
+        'check' => '验收文件',
+        'sewage' => '排污许可证',
+        'clean' => '清洁生产',
+        'nucleus' => '核与辐射',
+    ];
 
     public function __construct(
         EloquentFilesModel $filesModel,
@@ -173,7 +182,20 @@ class FilesRepository extends CommonRepository
             'module_type' => $params['module_type'],
         ];
         $fileInfo = $this->_fileModel->searchData($where);
-        return $this->_dealFilesRelation($fileInfo);
+        $fileInfo = $this->_dealFilesRelation($fileInfo);
+        $result = [];
+        foreach (self::FILES_COMPANY_RELATION_FIELDS as $relationField => $name) {
+            $tmp = [
+                'relation_field' => $relationField,
+                'name' => $name,
+                'files' => [],
+            ];
+            if (isset($fileInfo[$relationField . '_files'])) {
+                $tmp['files'] = $fileInfo[$relationField . '_files'];
+            }
+            $result[] = $tmp;
+        }
+        return $result;
     }
 
     /**
