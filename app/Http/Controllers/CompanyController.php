@@ -26,11 +26,19 @@ class CompanyController extends Controller
     {
         $this->validate($request, [
             'name' => 'required',
-            'company_status' => 'required',
+            'used_name' => 'required',
             'credit_code' => 'required',
+            'company_status' => 'required',
+            'type' => 'required|numeric',
             'owner' => 'required',
-            'contacts' => 'required',
-            'mobile' => 'required',
+            'iso' => 'required|array',
+            'business_lic' => 'required|array',
+            'industry_category' => 'required|numeric',
+            'production_time' => 'required',
+            'annual_scale' => 'required',
+            'province' => 'required',
+            'city' => 'required',
+            'area' => 'required',
             'address' => 'required',
         ]);
         $result = $this->_companyRepository->addCompany($request->all());

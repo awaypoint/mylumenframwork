@@ -31,4 +31,19 @@ class FilesController extends Controller
         }
         return responseTo($result);
     }
+
+    /**
+     * 更新文件额外字段
+     * @param Request $request
+     * @return array
+     */
+    public function updateFileExtraFields(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required|numeric',
+            'extra_fields' => 'required',
+        ]);
+        $result = $this->_filesgRepository->updateFileExtraFields($request->get('id'), $request->all());
+        return responseTo($result);
+    }
 }

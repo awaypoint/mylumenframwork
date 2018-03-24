@@ -68,7 +68,8 @@ class FilesRepository extends CommonRepository
     public function upLoadFile($relationField, $file)
     {
         $this->setFile($file);
-        $prefix = env('OSS_ENVIRONMENT','');
+        $userInfo = getUserInfo(['company_id']);
+        $prefix = env('OSS_ENVIRONMENT', '') . DIRECTORY_SEPARATOR . $userInfo['company_id'] . DIRECTORY_SEPARATOR;
         $prefix .= self::FILES_PREFIX_MAP[$relationField] ?? '';
         $ossKey = md5($this->_originalName . time()) . '.' . $this->_originalExtension;
         $options = [
@@ -80,7 +81,7 @@ class FilesRepository extends CommonRepository
             throw new FilesException(50001);
         }
         $url = $this->getPublicObjectURL($ossKey);
-        $fileLogId = $this->addFilesLog($relationField, $ossKey, $url);
+        $fileLogId = $this->addFilesLog($userInfo['company_id'], $relationField, $ossKey, $url);
         $returnData = [
             'id' => $fileLogId,
             'file_name' => $this->_originalName,
@@ -96,15 +97,16 @@ class FilesRepository extends CommonRepository
      * @param $url
      * @throws FilesException
      */
-    public function addFilesLog($relationField, $ossKey, $url)
+    public function addFilesLog($companyId, $relationField, $ossKey, $url)
     {
-        $userInfo = getUserInfo(['company_id']);
         $addData = [
-            'company_id' => $userInfo['company_id'],
+            'company_id' => $companyId,
             'relation_field' => $relationField,
             'file_name' => $this->_originalName,
             'url' => $url,
             'oss_key' => $ossKey,
+            'extra_fields' => '[]',
+            'module_type' => 0,
         ];
         $result = $this->_fileModel->add($addData);
         if (!$result) {
@@ -121,5 +123,39 @@ class FilesRepository extends CommonRepository
     public function getPublicObjectURL($ossKey)
     {
         return $this->ossClient->getPublicUrl($ossKey);
+    }
+
+    /**
+     * 更新文件额外信息
+     * @param $id
+     * @param $params
+     * @return array
+     * @throws FilesException
+     */
+    public function updateFileExtraFields($id, $params)
+    {
+        $where = [
+            'id' => $id,
+        ];
+        $model = $this->_fileModel->where($where)->first();
+        if (is_null($model)) {
+            throw new FilesException(50002);
+        }
+        if ($model->company_id != getUserInfo()['company_id']) {
+            throw new FilesException(50003);
+        }
+        $updateData = [
+            'module_type' => $params['module_type'] ?? 0,
+            'extra_fields' => json_encode($params['extra_fields'], JSON_UNESCAPED_UNICODE),
+        ];
+        try {
+            $result = $model->update($updateData);
+            if ($result === false) {
+                throw new FilesException(50004);
+            }
+            return ['id' => $id];
+        } catch (\Exception $e) {
+            throw new FilesException(50004);
+        }
     }
 }
