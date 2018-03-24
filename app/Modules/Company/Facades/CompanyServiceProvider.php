@@ -9,7 +9,7 @@ class CompanyServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind('company', function($app) {
-            return new CompanyFacades($app->make(companyRepository::class));
+            return new CompanyFacades($app->make(CompanyRepository::class));
         });        
     }
 }

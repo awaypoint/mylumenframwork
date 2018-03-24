@@ -8,6 +8,6 @@ class Files extends Facade
     const FILES_COMPANY_MODULE_TYPE = 1;
 
 	protected static function getFacadeAccessor(){
-		return 'files';
+		return 'myfiles';
 	}
 }

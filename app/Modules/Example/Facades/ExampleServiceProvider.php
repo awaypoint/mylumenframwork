@@ -9,7 +9,7 @@ class _bigname_ServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind('_smallname_', function($app) {
-            return new _bigname_Facades($app->make(_smallname_Repository::class));
+            return new _bigname_Facades($app->make(_bigname_Repository::class));
         });        
     }
 }

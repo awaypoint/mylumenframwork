@@ -8,8 +8,8 @@ class FilesServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        $this->app->bind('files', function($app) {
-            return new FilesFacades($app->make(filesRepository::class));
+        $this->app->bind('myfiles', function($app) {
+            return new FilesFacades($app->make(FilesRepository::class));
         });        
     }
 }
