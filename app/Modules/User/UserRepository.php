@@ -147,6 +147,9 @@ class UserRepository extends CommonRepository
             'hide_menu_ids' => '[]',
         ];
         try {
+            EloquentUserModel::saving(function (){
+               return true;
+            });
             $result = $this->_userModel->add($addData);
             if (!$result) {
                 throw new UserException(10004);
