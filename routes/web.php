@@ -48,6 +48,7 @@ $app->group(['prefix' => 'company', 'middleware' => 'auth'], function () use ($a
     $app->get('getProductDetail', 'CompanyController@getProductDetail');
     $app->put('updateProduct', 'CompanyController@updateProduct');
     $app->delete('delProduct', 'CompanyController@delProduct');
+    $app->get('getCompanyFiles', 'FilesController@getCompanyFiles');
 });
 //文件
 $app->group(['prefix' => 'files', 'middleware' => 'auth'], function () use ($app) {

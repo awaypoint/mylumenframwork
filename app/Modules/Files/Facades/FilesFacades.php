@@ -12,4 +12,14 @@ class FilesFacades
     {
         $this->_filesRepository = $repository;
     }
+
+    /**
+     * 匹配文件信息
+     * @param $fileIds
+     * @return mixed
+     */
+    public function searchFilesForList($fileIds)
+    {
+        return $this->_filesRepository->searchFilesForList($fileIds);
+    }
 }

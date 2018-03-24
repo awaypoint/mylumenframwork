@@ -51,7 +51,7 @@ class CompanyController extends Controller
      */
     public function getCompanyDetail()
     {
-        $result = $this->_companyRepository->getCompanyDetail();
+        $result = $this->_companyRepository->getCompanyDetail(getUserInfo()['company_id']);
         return responseTo($result);
     }
 

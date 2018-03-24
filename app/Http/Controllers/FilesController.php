@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Modules\Files\Facades\Files;
 use App\Modules\Files\FilesRepository;
 use Illuminate\Http\Request;
 
@@ -42,8 +43,22 @@ class FilesController extends Controller
         $this->validate($request, [
             'id' => 'required|numeric',
             'extra_fields' => 'required',
+            'relation_field' => 'required',
         ]);
         $result = $this->_filesgRepository->updateFileExtraFields($request->get('id'), $request->all());
+        return responseTo($result);
+    }
+
+    /**
+     * 获取企业信息下文件管理
+     * @param Request $request
+     * @return array
+     */
+    public function getCompanyFiles(Request $request)
+    {
+        $params = $request->all();
+        $params['module_type'] = Files::FILES_COMPANY_MODULE_TYPE;
+        $result = $this->_filesgRepository->getCompanyFiles($params);
         return responseTo($result);
     }
 }

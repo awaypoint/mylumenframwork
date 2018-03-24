@@ -4,6 +4,7 @@ namespace App\Modules\Company;
 
 use App\Modules\Common\CommonRepository;
 use App\Modules\Company\Exceptions\CompanyException;
+use App\Modules\Files\Facades\Files;
 use App\Modules\User\Facades\User;
 use Illuminate\Support\Facades\DB;
 
@@ -13,14 +14,17 @@ class CompanyRepository extends CommonRepository
 
     private $_companyModel;
     private $_productModel;
+    private $_factoryModel;
 
     public function __construct(
         EloquentCompanyModel $eloquentCompanyModel,
-        EloquentProductModel $eloquentProductModel
+        EloquentProductModel $eloquentProductModel,
+        EloquentCompanyFactoryModel $factoryModel
     )
     {
         $this->_companyModel = $eloquentCompanyModel;
         $this->_productModel = $eloquentProductModel;
+        $this->_factoryModel = $factoryModel;
     }
 
     /**
@@ -66,6 +70,13 @@ class CompanyRepository extends CommonRepository
                 DB::rollBack();
                 throw new CompanyException(40003);
             }
+            if (isset($params['factory']) && !empty($params['factory'])) {
+                $factoryResult = $this->addCompanyFactory($params['factory']);
+                if (!$factoryResult) {
+                    DB::rollBack();
+                    throw new CompanyException(40014);
+                }
+            }
             User::updateCompanyId($result);
             DB::commit();
             return ['company_id' => $result];
@@ -80,15 +91,34 @@ class CompanyRepository extends CommonRepository
      * @return mixed
      * @throws CompanyException
      */
-    public function getCompanyDetail()
+    public function getCompanyDetail($companyId)
     {
-        $userInfo = getUserInfo(['company_id']);
         $where = [
-            'id' => $userInfo['company_id'],
+            'id' => $companyId,
+            'built_in' => [
+                'with' => 'factory'
+            ]
         ];
+        $factoryFields = ['id', 'address'];
         $result = $this->_companyModel->getOne($where);
         if (is_null($result)) {
             throw new CompanyException(40004);
+        }
+        $result['iso'] = json_decode($result['iso'], true);
+        $result['business_lic'] = json_decode($result['business_lic'], true);
+        $fileIds = array_merge($result['iso'], $result['business_lic']);
+        if (!empty($fileIds)) {
+            $fileInfo = Files::searchFilesForList($fileIds);
+            $result = array_merge($result, $fileInfo);
+        }
+        if (!empty($result['factory'])) {
+            foreach ($result['factory'] as &$factory) {
+                foreach ($factory as $field => $value) {
+                    if (!in_array($field, $factoryFields)) {
+                        unset($factory[$field]);
+                    }
+                }
+            }
         }
         return $result;
     }
@@ -109,24 +139,54 @@ class CompanyRepository extends CommonRepository
         $where = [
             'id' => $userInfo['company_id'],
         ];
-        $companyInfo = $this->_companyModel->getOne($where);
-        if (is_null($companyInfo)) {
+        $model = $this->_companyModel->where($where)->first();
+        if (is_null($model)) {
             throw new CompanyException(40004);
         }
         $updateData = [];
-        $returnData = ['company_id' => $companyInfo['id']];
-        foreach ($companyInfo as $field => $value) {
-            if (isset($params[$field])) {
+        $returnData = ['company_id' => $model->id];
+        //不可编辑名单
+        $guardFillble = ['id'];
+        foreach ($params as $field => $value) {
+            if (in_array($field, $guardFillble)) {
+                continue;
+            }
+            if (isset($model->$field)) {
+                if ($field == 'iso' || $field == 'business_lic') {
+                    $params[$field] = json_encode($params[$field], JSON_UNESCAPED_UNICODE);
+                }
                 $updateData[$field] = $params[$field];
             }
         }
-        if (!empty($updateData)) {
-            $result = $this->_companyModel->updateData($updateData, $where);
-            if (!$result) {
-                throw new CompanyException(40009);
+        DB::beginTransaction();
+        try {
+            if (!empty($updateData)) {
+                $result = $model->update($updateData);
+                if (!$result) {
+                    DB::rollBack();
+                    throw new CompanyException(40009);
+                }
             }
+            $delFactory = $this->delCompanyFactory($model->id);
+            if ($delFactory === false) {
+                DB::rollBack();
+                throw new CompanyException(40015);
+            }
+            if (isset($params['factory']) && !empty($params['factory'])) {
+                $factoryResult = $this->addCompanyFactory($params['factory']);
+                if (!$factoryResult) {
+                    DB::rollBack();
+                    throw new CompanyException(40014);
+                }
+            }
+            DB::commit();
+            return $returnData;
+        } catch (\Exception $e) {
+            echo $e->getMessage();
+            die;
+            DB::rollBack();
+            throw new CompanyException(40009);
         }
-        return $returnData;
     }
 
     /**
@@ -262,6 +322,43 @@ class CompanyRepository extends CommonRepository
     }
 
     /**
+     * 添加分厂信息
+     * @param $factorys
+     * @return mixed
+     */
+    public function addCompanyFactory($factorys)
+    {
+        $addData = [];
+        $nowTime = time();
+        $userInfo = getUserInfo();
+        foreach ($factorys as $factory) {
+            $tmp = [
+                'company_id' => $userInfo['company_id'],
+                'name' => '',
+                'address' => $factory['address'],
+                'created_at' => $nowTime,
+                'updated_at' => $nowTime,
+                'updated_by' => $userInfo['id'],
+            ];
+            $addData[] = $tmp;
+        }
+        return $this->_factoryModel->addBatch($addData);
+    }
+
+    /**
+     * 删除分厂
+     * @param $companyId
+     * @return mixed
+     */
+    public function delCompanyFactory($companyId)
+    {
+        $where = [
+            'company_id' => $companyId
+        ];
+        return $this->_factoryModel->deleteByFields($where, true);
+    }
+
+    /**
      * 添加企业信息参数验证
      * @param $params
      * @throws CompanyException
@@ -287,15 +384,6 @@ class CompanyRepository extends CommonRepository
         }
         if (isset($params['company_status']) && !in_array($params['company_status'], array_keys($this->getConst('company_status')))) {
             throw new CompanyException(40007, ['fileName' => 'company_status']);
-        }
-        $legalBoolFields = ['is_env_statistics', 'is_pass_iso',];
-        foreach ($legalBoolFields as $checkBool) {
-            if (isset($params[$checkBool]) && !in_array($params[$checkBool], array_keys(self::COMMON_LEGAL_BOOL))) {
-                throw new CompanyException(40007, ['fileName' => $checkBool]);
-            }
-        }
-        if (isset($params['pollution_type']) && $params['pollution_type'] && !in_array($params['pollution_type'], array_keys($this->getConst('pollution_type')))) {
-            throw new CompanyException(40007, ['fileName' => 'pollution_type']);
         }
     }
 

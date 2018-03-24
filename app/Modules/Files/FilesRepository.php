@@ -4,6 +4,7 @@ namespace App\Modules\Files;
 
 use App\Modules\Common\CommonRepository;
 use App\Modules\Files\Exceptions\FilesException;
+use App\Modules\Files\Facades\Files;
 use JohnLui\AliyunOSS;
 use Exception;
 
@@ -105,7 +106,7 @@ class FilesRepository extends CommonRepository
             'file_name' => $this->_originalName,
             'url' => $url,
             'oss_key' => $ossKey,
-            'extra_fields' => '[]',
+            'extra_fields' => '',
             'module_type' => 0,
         ];
         $result = $this->_fileModel->add($addData);
@@ -145,7 +146,8 @@ class FilesRepository extends CommonRepository
             throw new FilesException(50003);
         }
         $updateData = [
-            'module_type' => $params['module_type'] ?? 0,
+            'relation_field' => $params['relation_field'],
+            'module_type' => $params['module_type'] ?? Files::FILES_COMPANY_MODULE_TYPE,
             'extra_fields' => json_encode($params['extra_fields'], JSON_UNESCAPED_UNICODE),
         ];
         try {
@@ -157,5 +159,60 @@ class FilesRepository extends CommonRepository
         } catch (\Exception $e) {
             throw new FilesException(50004);
         }
+    }
+
+    /**
+     * 获取企业信息管理文件
+     * @param $params
+     * @return array
+     */
+    public function getCompanyFiles($params)
+    {
+        $where = [
+            'company_id' => getUserInfo()['company_id'],
+            'module_type' => $params['module_type'],
+        ];
+        $fileInfo = $this->_fileModel->searchData($where);
+        return $this->_dealFilesRelation($fileInfo);
+    }
+
+    /**
+     * 匹配文件信息
+     * @param $fileIds
+     * @return array
+     */
+    public function searchFilesForList($fileIds)
+    {
+        $fields = ['id', 'relation_field', 'file_name', 'url', 'extra_fields'];
+        $fileInfo = $this->_fileModel->whereIn('id', $fileIds)
+            ->select($fields)
+            ->get()->toArray();
+        $result = $this->_dealFilesRelation($fileInfo);
+        return $result;
+    }
+
+    /**
+     * 构造关联数组
+     * @param $fileInfo
+     * @return array
+     */
+    private function _dealFilesRelation($fileInfo)
+    {
+        $result = [];
+        if (!empty($fileInfo)) {
+            foreach ($fileInfo as $file) {
+                $key = $file['relation_field'] . '_files';
+                if ($file['extra_fields']) {
+                    $file['extra_fields'] = json_decode($file['extra_fields'], true);
+                } else {
+                    $file['extra_fields'] = new \stdClass();
+                }
+                if (!isset($result[$key])) {
+                    $result[$key] = [];
+                }
+                $result[$key][] = $file;
+            }
+        }
+        return $result;
     }
 }

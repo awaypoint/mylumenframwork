@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Modules\Setting\EloquentWasteTypeModel;
-use Illuminate\Support\Facades\Session;
 use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Modules\User\UserRepository;
 use Illuminate\Http\Request;
@@ -47,6 +45,7 @@ class LoginController extends BaseController
             'password' => 'required',
             'password_confirm' => 'required|same:password',
         ]);
+
         $result = $this->_userRepository->register($request->all());
         return responseTo($result, '注册成功');
     }
