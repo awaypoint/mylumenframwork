@@ -38,6 +38,7 @@ class UserController extends Controller
         $this->validate($request, [
             'old_password' => 'required',
             'new_password' => 'required',
+            'new_password_confirm' => 'required|same:new_password',
         ]);
         $result = $this->_userRepository->modifyPassword($request->all());
         return responseTo($result, '密码修改成功');
