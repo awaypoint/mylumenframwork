@@ -21,6 +21,7 @@ $app->post('/webhook', function () use ($app) {
 $app->post('/login', 'LoginController@login');
 $app->post('/register', 'LoginController@register');
 $app->get('/combo', 'LoginController@combo');
+$app->get('/testSession', 'TestController@testSession');
 
 
 $app->group(['prefix' => '/', 'middleware' => 'auth'], function () use ($app) {
