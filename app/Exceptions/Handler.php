@@ -34,7 +34,7 @@ class Handler extends ExceptionHandler
      *
      * This is a great spot to send exceptions to Sentry, Bugsnag, etc.
      *
-     * @param  \Exception  $e
+     * @param  \Exception $e
      * @return void
      */
     public function report(Exception $e)
@@ -45,13 +45,14 @@ class Handler extends ExceptionHandler
     /**
      * Render an exception into an HTTP response.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Exception  $e
+     * @param  \Illuminate\Http\Request $request
+     * @param  \Exception $e
      * @return \Illuminate\Http\Response
      */
     public function render($request, Exception $e)
     {
-        header('Access-Control-Allow-Origin:*');
+        $host = $request->getHost();
+        header('Access-Control-Allow-Origin:' . $host);
         header('Access-Control-Allow-Credentials:true');
         header('WithCredentials:true');
         if ($e instanceof HttpResponseException) {
@@ -67,8 +68,8 @@ class Handler extends ExceptionHandler
             $e = new HttpException(200, '亲～ 服务器暂不提供该Api', $e, [], 404);
         } elseif ($e instanceof QueryException) {
             $e = new HttpException(200, 'DB查询错误', $e, [], 4000001);
-        }else{
-            $e = new HttpException(200, $e->getMessage(), $e, [], $e->getCode()>0?$e->getCode():500);
+        } else {
+            $e = new HttpException(200, $e->getMessage(), $e, [], $e->getCode() > 0 ? $e->getCode() : 500);
         }
         $_content['msg'] = $e->getMessage();
         $_content['code'] = $e->getCode();
