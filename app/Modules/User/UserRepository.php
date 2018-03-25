@@ -34,9 +34,7 @@ class UserRepository extends CommonRepository
                     'scope' => '',
                 ],
             ]);
-            dd($response);
         }catch (\Exception $e){
-            echo $e->getMessage();die;
             throw new UserException(10001);
         }
         $result = json_decode((string)$response->getBody(), true);
