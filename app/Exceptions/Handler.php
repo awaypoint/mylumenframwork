@@ -51,7 +51,7 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $e)
     {
-        $host = $request->getHost();
+        $host = $request->server('SERVER_REQUEST_URL');
         header('Access-Control-Allow-Origin:' . $host);
         header('Access-Control-Allow-Credentials:true');
         header('WithCredentials:true');
