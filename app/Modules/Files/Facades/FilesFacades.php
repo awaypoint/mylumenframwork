@@ -18,8 +18,8 @@ class FilesFacades
      * @param $fileIds
      * @return mixed
      */
-    public function searchFilesForList($fileIds)
+    public function searchFilesForList($fileIds, $type = 1)
     {
-        return $this->_filesRepository->searchFilesForList($fileIds);
+        return $this->_filesRepository->searchFilesForList($fileIds, $type);
     }
 }

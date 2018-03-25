@@ -55,6 +55,7 @@ $app->group(['prefix' => 'company', 'middleware' => 'auth'], function () use ($a
 $app->group(['prefix' => 'files', 'middleware' => 'auth'], function () use ($app) {
     $app->post('upLoadFile', 'FilesController@upLoadFile');
     $app->put('updateFileExtraFields', 'FilesController@updateFileExtraFields');
+    $app->delete('delFile', 'FilesController@delFile');
 });
 //产污情况
 $app->group(['prefix' => 'waste', 'middleware' => 'auth'], function () use ($app) {

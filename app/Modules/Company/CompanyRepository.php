@@ -206,7 +206,7 @@ class CompanyRepository extends CommonRepository
             'source_material' => $params['source_material'] ?? '',
             'unit' => $params['unit'] ?? 0,
             'consume' => $params['consume'] ?? 0,
-            'process_flow' => $params['process_flow'] ?? '',
+            'process_flow' => isset($params['process_flow']) ? json_encode($params['process_flow'], JSON_UNESCAPED_UNICODE) : '[]',
             'consume_unit' => $params['consume_unit'] ?? 0,
             'remark' => $params['remark'] ?? '',
         ];
@@ -240,6 +240,29 @@ class CompanyRepository extends CommonRepository
             $where[] = ['name', 'LIKE', '%' . $params['name'] . '%'];
         }
         $result = $this->_productModel->getList($where, $fields, $page, $pageSize, $orderBy);
+        if (isset($result['rows']) && !empty($result['rows'])) {
+            $fileIds = [];
+            foreach ($result['rows'] as $row) {
+                if ($row['process_flow'] && $row['process_flow'] != '[]') {
+                    $fileIds = array_merge($fileIds, json_decode($row['process_flow'], true));
+                }
+            }
+            $fileIds = array_unique($fileIds);
+            if (!empty($fileIds)) {
+                $fileInfos = Files::searchFilesForList($fileIds, 2);
+                foreach ($result['rows'] as &$newRow) {
+                    $newRow['process_flow'] = json_decode($newRow['process_flow'], true);
+                    $newRow['process_flow_files'] = [];
+                    if (!empty($newRow['process_flow'])) {
+                        foreach ($newRow['process_flow'] as $flow) {
+                            if (isset($fileInfos[$flow])) {
+                                $newRow['process_flow_files'][] = $fileInfos[$flow];
+                            }
+                        }
+                    }
+                }
+            }
+        }
         return $result;
     }
 
@@ -261,6 +284,15 @@ class CompanyRepository extends CommonRepository
         if (is_null($result)) {
             throw new CompanyException(40011);
         }
+        $result['process_flow'] = json_decode($result['process_flow'], true);
+        $result['process_flow_files'] = [];
+        if ($result['process_flow'] && $result['process_flow'] != '[]') {
+            if (!is_array($result['process_flow'])) {
+                $result['process_flow'] = json_decode($result['process_flow'], true);
+            }
+            $fileInfo = Files::searchFilesForList($result['process_flow']);
+            $result = array_merge($result, $fileInfo);
+        }
         return $result;
     }
 
@@ -278,23 +310,31 @@ class CompanyRepository extends CommonRepository
             'company_id' => $companyId,
             'id' => $id,
         ];
-        $isExist = $this->_productModel->getOne($where);
-        if (is_null($isExist)) {
+        $model = $this->_productModel->where($where)->first();
+        if (is_null($model)) {
             throw new CompanyException(40011);
         }
         $updateData = [];
-        foreach ($isExist as $field => $value) {
-            if (isset($params[$field])) {
-                $updateData[$field] = $params[$field];
+        $guardFillable = ['id'];
+        foreach ($params as $field => $value) {
+            if (in_array($field, $guardFillable)) {
+                continue;
+            }
+            if ($field == 'process_flow') {
+                $value = json_encode($value, JSON_UNESCAPED_UNICODE);
+            }
+            if (isset($model->$field)) {
+                $updateData[$field] = $value;
             }
         }
+
         if (!empty($updateData)) {
-            $result = $this->_productModel->updateData($updateData, $where);
+            $result = $model->update($updateData);
             if (!$result) {
                 throw new CompanyException(40012);
             }
         }
-        return ['id' => $isExist['id']];
+        return ['id' => $id];
     }
 
     /**

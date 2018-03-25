@@ -203,14 +203,47 @@ class FilesRepository extends CommonRepository
      * @param $fileIds
      * @return array
      */
-    public function searchFilesForList($fileIds)
+    public function searchFilesForList($fileIds, $type = 1)
     {
         $fields = ['id', 'relation_field', 'file_name', 'url', 'extra_fields'];
         $fileInfo = $this->_fileModel->whereIn('id', $fileIds)
             ->select($fields)
             ->get()->toArray();
-        $result = $this->_dealFilesRelation($fileInfo);
+        if ($type == 1) {
+            $result = $this->_dealFilesRelation($fileInfo);
+        } else {
+            $result = $this->_dealFilesRelation2($fileInfo);
+        }
         return $result;
+    }
+
+    /**
+     * 删除文件
+     * @param $id
+     * @return array
+     * @throws FilesException
+     */
+    public function delFile($id)
+    {
+        $where = [
+            'id' => $id,
+        ];
+        $isExist = $this->_fileModel->getOne($where, ['company_id']);
+        if (is_null($isExist)) {
+            throw new FilesException(50002);
+        }
+        if ($isExist['company_id'] != getUserInfo()['company_id']) {
+            throw new FilesException(50003);
+        }
+        try {
+            $result = $this->_fileModel->deleteData($id);
+            if (!$result) {
+                throw new FilesException(50005);
+            }
+            return ['id' => $id];
+        } catch (\Exception $e) {
+            throw new FilesException(50005);
+        }
     }
 
     /**
@@ -236,5 +269,15 @@ class FilesRepository extends CommonRepository
             }
         }
         return $result;
+    }
+
+    /**
+     * 列表匹配模式
+     * @param $fileInfo
+     * @return array
+     */
+    private function _dealFilesRelation2($fileInfo)
+    {
+        return array_column($fileInfo, null, 'id');
     }
 }

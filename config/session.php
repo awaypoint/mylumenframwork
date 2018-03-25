@@ -102,7 +102,7 @@ return [
     | new session cookie is created by the framework for every driver.
     |
     */
-    'cookie' => 'laravel_session',
+    'cookie' => 'lumen_session',
     /*
     |--------------------------------------------------------------------------
     | Session Cookie Path

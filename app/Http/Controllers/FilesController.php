@@ -61,4 +61,18 @@ class FilesController extends Controller
         $result = $this->_filesgRepository->getCompanyFiles($params);
         return responseTo($result);
     }
+
+    /**
+     * 删除文件
+     * @param Request $request
+     * @return array
+     */
+    public function delFile(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required'
+        ]);
+        $result = $this->_filesgRepository->delFile($request->get('id'));
+        return responseTo($result, '删除文件成功');
+    }
 }
