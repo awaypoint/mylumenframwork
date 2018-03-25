@@ -37,7 +37,7 @@ class EloquentUserModel extends CommonEloquentModel
         if (is_null($result)){
             throw new UserException(10006);
         }
-        return;
+        return $this;
     }
 
     /**
@@ -51,7 +51,7 @@ class EloquentUserModel extends CommonEloquentModel
         if (is_null($result)){
             throw new UserException(10007);
         }
-        return;
+        return $this;
     }
 
     /**
