@@ -3,14 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Session;
+use Laravel\Lumen\Routing\Controller as BaseController;
 
-class TestController extends Controller
+class TestController extends BaseController
 {
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     public function testSession()
     {
         $a = Session::getId();

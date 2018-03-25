@@ -88,8 +88,8 @@ $app->register(App\Providers\AppServiceProvider::class);
 $app->register(Barryvdh\Cors\ServiceProvider::class);
 //$app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
-$app->register(\Illuminate\Redis\RedisServiceProvider::class);
 $app->register(\Illuminate\Session\SessionServiceProvider::class);
+$app->register(\Illuminate\Redis\RedisServiceProvider::class);
 //commond
 $app->register(\App\Providers\CreateModulesServiceProvider::class);
 
