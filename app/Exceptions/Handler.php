@@ -51,8 +51,8 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $e)
     {
-        $host = $request->server('SERVER_REQUEST_URL');
-        header('Access-Control-Allow-Origin:' . $host);
+        $httpOrigin = is_null($request->server('HTTP_ORIGIN')) ? '*' : $request->server('HTTP_ORIGIN');
+        header('Access-Control-Allow-Origin:' . $httpOrigin);
         header('Access-Control-Allow-Credentials:true');
         header('WithCredentials:true');
         if ($e instanceof HttpResponseException) {
