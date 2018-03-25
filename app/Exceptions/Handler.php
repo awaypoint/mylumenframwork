@@ -53,6 +53,7 @@ class Handler extends ExceptionHandler
     {
         header('Access-Control-Allow-Origin:*');
         header('Access-Control-Allow-Credentials:true');
+        header('WithCredentials:true');
         if ($e instanceof HttpResponseException) {
             return $e->getResponse();
         } elseif ($e instanceof ModelNotFoundException) {

@@ -251,7 +251,9 @@ class CompanyRepository extends CommonRepository
             if (!empty($fileIds)) {
                 $fileInfos = Files::searchFilesForList($fileIds, 2);
                 foreach ($result['rows'] as &$newRow) {
-                    $newRow['process_flow'] = json_decode($newRow['process_flow'], true);
+                    if (!is_array($newRow['process_flow'])) {
+                        $newRow['process_flow'] = json_decode($newRow['process_flow'], true);
+                    }
                     $newRow['process_flow_files'] = [];
                     if (!empty($newRow['process_flow'])) {
                         foreach ($newRow['process_flow'] as $flow) {

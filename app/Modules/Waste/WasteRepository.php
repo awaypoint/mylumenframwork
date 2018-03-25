@@ -12,14 +12,17 @@ class WasteRepository extends CommonRepository
 {
     private $_wasteMaterialModel;
     private $_wasteGasModel;
+    private $_wasteGasTubeModel;
 
     public function __construct(
         EloquentWasteMaterialModel $wasteMaterialModel,
-        EloquentWasteGasModel $wasteGasModel
+        EloquentWasteGasModel $wasteGasModel,
+        EloquentWasteGasTubeModel $wasteGasTubeModel
     )
     {
         $this->_wasteMaterialModel = $wasteMaterialModel;
         $this->_wasteGasModel = $wasteGasModel;
+        $this->_wasteGasTubeModel = $wasteGasTubeModel;
     }
 
     /**
@@ -42,7 +45,7 @@ class WasteRepository extends CommonRepository
             'waste_shape' => $params['waste_shape'] ?? 0,
             'waste_type' => $params['waste_type'] ?? 0,
             'waste_trait' => $params['waste_trait'] ?? 0,
-            'emergency' => $params['emergency'] ?? '',
+            'annual_scale' => $params['annual_scale'] ?? 0,
             'handle_company' => $params['handle_company'] ?? '',
             'handle_way' => $params['handle_way'] ?? '',
             'transport_unit' => $params['transport_unit'] ?? '',
@@ -127,22 +130,25 @@ class WasteRepository extends CommonRepository
         $where = [
             'id' => $id,
         ];
-        $isExist = $this->_wasteMaterialModel->getOne($where);
-        if (is_null($isExist)) {
+        $model = $this->_wasteMaterialModel->where($where)->first();
+        if (is_null($model)) {
             throw new WasteException(60003);
         }
-        $result = $this->_wasteMaterialModel->getOne($where);
-        $this->_checkWastePermission($result['company_id']);
+        $this->_checkWastePermission($model->company_id);
         $updateData = [];
-        foreach ($isExist as $fileld => $value) {
-            if (isset($params[$fileld])) {
+        $guardFillble = ['id'];
+        foreach ($params as $fileld => $value) {
+            if (in_array($fileld, $guardFillble)) {
+                continue;
+            }
+            if (isset($model->$fileld)) {
                 $updateData[$fileld] = $params[$fileld];
             }
         }
         $returnData = ['id' => $id];
         if (!empty($updateData)) {
             try {
-                $result = $this->_wasteMaterialModel->updateData($updateData, $where);
+                $result = $model->update($updateData);
                 if ($result === false) {
                     throw new WasteException(60004);
                 }
@@ -177,6 +183,78 @@ class WasteRepository extends CommonRepository
             return true;
         } catch (\Exception $e) {
             throw new WasteException(60005);
+        }
+    }
+
+    /**
+     * 添加排放口
+     * @param $params
+     * @return array
+     * @throws WasteException
+     */
+    public function addWasteGasTube($params)
+    {
+        $userInfo = getUserInfo();
+        $addData = [
+            'company_id' => $userInfo['company_id'],
+            'item_no' => $params['item_no'],
+            'height' => $params['height'] ?? 0,
+            'pics' => isset($params['pics']) ? json_encode($params['pics'], JSON_UNESCAPED_UNICODE) : '[]',
+            'check' => isset($params['check']) ? json_encode($params['check'], JSON_UNESCAPED_UNICODE) : '[]',
+            'remark' => $params['remark'] ?? '',
+        ];
+        try {
+            $result = $this->_wasteGasTubeModel->add($addData);
+            if (!$result) {
+                throw new WasteException(60007);
+            }
+            return ['id' => $result];
+        } catch (\Exception $e) {
+            throw new WasteException(60007);
+        }
+    }
+
+    /**
+     * 修改排放口
+     * @param $id
+     * @param $params
+     * @return array
+     * @throws WasteException
+     */
+    public function updateWasteGasTube($id, $params)
+    {
+        $where = [
+            'id' => $id,
+        ];
+        $model = $this->_wasteGasTubeModel->where($where)->first();
+        if (is_null($model)) {
+            throw new WasteException(60008);
+        }
+        $this->_checkWastePermission($model->company_id);
+        $updateData = [];
+        $guardFillble = ['id'];
+        foreach ($params as $field => $value) {
+            if (in_array($field, $guardFillble)) {
+                continue;
+            }
+            if (isset($model->$field)) {
+                if ($field == 'pics' || $field == 'check') {
+                    $value = json_encode($value, JSON_UNESCAPED_UNICODE);
+                }
+                $updateData[$field] = $value;
+            }
+        }
+        try {
+            $returnData = ['id' => $id];
+            if (!empty($updateData)) {
+                $result = $model->update($updateData);
+                if ($result === false) {
+                    throw new WasteException(60009);
+                }
+            }
+            return $returnData;
+        } catch (\Exception $e) {
+            throw new WasteException(60009);
         }
     }
 

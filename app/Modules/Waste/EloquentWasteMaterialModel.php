@@ -13,5 +13,5 @@ class EloquentWasteMaterialModel extends CommonEloquentModel
     protected $dateFormat = 'U';
     //采用白名单模式
     public $fillable = ['id', 'company_id', 'waste_category', 'industry', 'waste_code', 'waste_name', 'commonly_called', 'harmful_staff',
-        'waste_shape', 'waste_type', 'waste_trait', 'emergency', 'handle_company', 'handle_way', 'transport_unit', 'remark'];
+        'waste_shape', 'waste_type', 'waste_trait', 'annual_scale', 'handle_company', 'handle_way', 'transport_unit', 'remark'];
 }

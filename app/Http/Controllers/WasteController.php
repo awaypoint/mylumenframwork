@@ -95,6 +95,34 @@ class WasteController extends Controller
     }
 
     /**
+     * 添加排放口
+     * @param Request $request
+     * @return array
+     */
+    public function addWasteGasTube(Request $request)
+    {
+        $this->validate($request, [
+            'item_no' => 'required',
+        ]);
+        $result = $this->_wasteRepository->addWasteGasTube($request->all());
+        return responseTo($result, '添加排放口成功');
+    }
+
+    /**
+     * 修改排放口
+     * @param Request $request
+     * @return array
+     */
+    public function updateWasteGasTube(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required|numeric',
+        ]);
+        $result = $this->_wasteRepository->updateWasteGasTube($request->get('id'), $request->all());
+        return responseTo($result, '排放口修改成功');
+    }
+
+    /**
      * 添加废气信息
      * @param Request $request
      * @return array
