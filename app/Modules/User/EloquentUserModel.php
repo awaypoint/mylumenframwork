@@ -3,6 +3,7 @@
 namespace App\Modules\User;
 
 use App\Modules\Common\CommonEloquentModel;
+use App\Modules\User\Exceptions\UserException;
 use Illuminate\Auth\Authenticatable;
 use Laravel\Lumen\Auth\Authorizable;
 use Laravel\Passport\HasApiTokens;
@@ -32,7 +33,11 @@ class EloquentUserModel extends CommonEloquentModel
      */
     public function findForPassport($username)
     {
-        return $this->where('username', $username)->first();
+        $result = $this->where('username', $username)->first();
+        if (is_null($result)){
+            throw new UserException(10006);
+        }
+        return;
     }
 
     /**
@@ -42,7 +47,11 @@ class EloquentUserModel extends CommonEloquentModel
      */
     public function validateForPassportPasswordGrant($password)
     {
-        return $this->where('password', $password)->first();
+        $result = $this->where('password', $password)->first();
+        if (is_null($result)){
+            throw new UserException(10007);
+        }
+        return;
     }
 
     /**
