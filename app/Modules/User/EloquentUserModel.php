@@ -47,7 +47,11 @@ class EloquentUserModel extends CommonEloquentModel
      */
     public function validateForPassportPasswordGrant($password)
     {
-        $result = $this->where('password', $password)->first();
+        $where = [
+            'username'=>$this->username,
+            'password'=>$password,
+        ];
+        $result = $this->where($where)->first();
         if (is_null($result)){
             throw new UserException(10007);
         }
