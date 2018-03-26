@@ -90,7 +90,7 @@ class FilesRepository extends CommonRepository
         if ($result === false) {
             throw new FilesException(50001);
         }
-        $url = $this->getPublicObjectURL($ossKey);
+        $url = $this->getPublicObjectURL($prefix . $ossKey);
         $fileLogId = $this->addFilesLog($userInfo['company_id'], $relationField, $ossKey, $url);
         $returnData = [
             'id' => $fileLogId,
