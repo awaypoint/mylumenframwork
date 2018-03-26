@@ -26,9 +26,6 @@ class FilesRepository extends CommonRepository
     private $_mimeType;
     private $_pathname;
 
-    const FILES_PREFIX_MAP = [
-        'env_approve_code' => '环评资料/'
-    ];
     const FILES_COMPANY_RELATION_FIELDS = [
         'eia' => '环评资料',
         'waste' => '固废管理',
@@ -80,7 +77,6 @@ class FilesRepository extends CommonRepository
         $this->setFile($file);
         $userInfo = getUserInfo(['company_id']);
         $prefix = env('OSS_ENVIRONMENT', '') . DIRECTORY_SEPARATOR . $userInfo['company_id'] . DIRECTORY_SEPARATOR;
-        $prefix .= self::FILES_PREFIX_MAP[$relationField] ?? '';
         $ossKey = md5($this->_originalName . time()) . '.' . $this->_originalExtension;
         $options = [
             'ContentType' => $this->_mimeType,

@@ -3,6 +3,7 @@
 namespace App\Modules\Waste;
 
 use App\Modules\Common\CommonRepository;
+use App\Modules\Files\Facades\Files;
 use App\Modules\Role\Facades\Role;
 use App\Modules\Setting\Facades\Setting;
 use App\Modules\Waste\Exceptions\WasteException;
@@ -272,17 +273,18 @@ class WasteRepository extends CommonRepository
         $userInfo = getUserInfo();
         $addData = [
             'company_id' => $userInfo['company_id'],
+            'tube_id' => $params['tube_id'],
             'type' => $params['type'],
             'waste_name' => $params['waste_name'] ?? '',
+            'gas_discharge' => $params['gas_discharge'] ?? 0,
+            'equipment' => $params['equipment'] ?? '',
+            'discharge_level' => $params['discharge_level'] ?? 0,
+            'technique' => $params['technique'] ?? '',
+            'installations' => $params['installations'] ?? 0,
             'fules_type' => $params['fules_type'] ?? '',
             'fules_element' => $params['fules_element'] ?? '',
             'sulfur_rate' => $params['sulfur_rate'] ?? 0,
-            'gas_discharge' => $params['gas_discharge'] ?? 0,
-            'discharge_level' => $params['discharge_level'] ?? 0,
-            'tube_no' => $params['tube_no'] ?? '',
-            'technique' => $params['technique'] ?? '[]',
-            'installations' => $params['installations'] ?? '[]',
-            'technique_pic' => $params['technique_pic'] ?? '[]',
+            'technique_pic' => isset($params['technique_pic']) ? json_encode($params['technique_pic']) : '[]',
             'remark' => $params['remark'] ?? '',
         ];
         try {
@@ -312,12 +314,18 @@ class WasteRepository extends CommonRepository
         if (is_null($model)) {
             throw new WasteException(60003);
         }
-        $isExist = $model->toArray();
-        $this->_checkWastePermission($isExist['company_id']);
+        $this->_checkWastePermission($model->company_id);
         $updateData = [];
-        foreach ($isExist as $fileld => $value) {
-            if (isset($params[$fileld])) {
-                $updateData[$fileld] = $params[$fileld];
+        $guardFillble = ['id'];
+        foreach ($params as $fileld => $value) {
+            if (in_array($fileld, $guardFillble)) {
+                continue;
+            }
+            if ($fileld == 'technique_pic') {
+                $value = json_encode($value, JSON_UNESCAPED_UNICODE);
+            }
+            if (isset($model->$fileld)) {
+                $updateData[$fileld] = $value;
             }
         }
         $returnData = ['id' => $id];
@@ -360,6 +368,124 @@ class WasteRepository extends CommonRepository
         } catch (\Exception $e) {
             throw new WasteException(60005);
         }
+    }
+
+    /**
+     * 获取排气口下拉框
+     * @return mixed
+     */
+    public function getWasteGasTubeCombo()
+    {
+        $where = [
+            'company_id' => getUserInfo()['company_id'],
+        ];
+        $fields = ['id', 'item_no'];
+        $result = $this->_wasteGasTubeModel->searchData($where, $fields);
+        return $result;
+    }
+
+    /**
+     * 删除排放口
+     * @param $id
+     * @return bool
+     * @throws WasteException
+     */
+    public function delWasteGasTube($id)
+    {
+        $where = [
+            'id' => $id,
+        ];
+        $model = $this->_wasteGasTubeModel->where($where)->first();
+        if (is_null($model)) {
+            throw new WasteException(60008);
+        }
+        $this->_checkWastePermission($model->company_id);
+        try {
+            $result = $model->delete();
+            if ($result === false) {
+                throw new WasteException(60010);
+            }
+            return true;
+        } catch (\Exception $e) {
+            throw new WasteException(60010);
+        }
+    }
+
+    /**
+     * 获取废气信息详情
+     * @param $id
+     * @return mixed
+     * @throws WasteException
+     */
+    public function getWasteGasDetail($companyId, $id)
+    {
+        $where = [
+            'id' => $id,
+            'company_id' => $companyId,
+        ];
+        $result = $this->_wasteGasModel->getOne($where);
+        if (is_null($result)) {
+            throw new WasteException(60011);
+        }
+        $this->_checkWastePermission($result['company_id']);
+        $tubeWhere = [
+            'id' => $result['tube_id'],
+        ];
+        $result['type_name'] = Waste::WASTE_GAS_TYPE_MAP[$result['type']] ?? '';
+        $gasTubeInfo = $this->_wasteGasTubeModel->getOne($tubeWhere, ['item_no']);
+        if (is_null($gasTubeInfo)) {
+            throw new WasteException(60008);
+        }
+        $result['item_no'] = is_null($gasTubeInfo) ? '' : $gasTubeInfo['item_no'];
+        $result['technique_pic'] = json_decode($result['technique_pic'], true);
+        $result['technique_pic_files'] = [];
+        if (!empty($result['technique_pic'])) {
+            $picInfo = Files::searchFilesForList($result['technique_pic'], 2);
+            $result['technique_pic_files'] = array_values($picInfo);
+        }
+        return $result;
+    }
+
+    public function getWasteGasList($params)
+    {
+        $where = [
+            'built_in' => [
+                'with' => 'gases',
+            ]
+        ];
+        $tubeFields = ['id', 'item_no', 'height', 'pics', 'check'];
+        $gasFields = ['id', 'type', 'waste_name', 'gas_discharge', 'discharge_level', 'equipment', 'technique', 'installations', 'remark'];
+        $result = $this->_wasteGasTubeModel->getList($where, $tubeFields);
+        if (isset($result['rows']) && !empty($result['rows'])) {
+            $allFileIds = [];
+            foreach ($result['rows'] as &$row) {
+                $row['pics'] = json_decode($row['pics'], true);
+                $row['check'] = json_decode($row['check'], true);
+                $allFileIds = array_merge($allFileIds, $row['pics'], $row['check']);
+                if (!empty($row['gases'])) {
+                    $newGas = [];
+                    foreach ($row['gases'] as $gas) {
+                        $tmp = [
+                            'type_name' => Waste::WASTE_GAS_TYPE_MAP[$gas['type']] ?? '',
+                        ];
+                        foreach ($gasFields as $gasField) {
+                            if (isset($gas[$gasField])) {
+                                $tmp[$gasField] = $gas[$gasField];
+                            }
+                        }
+                        $newGas[] = $tmp;
+                    }
+                    $row['gases'] = $newGas;
+                }
+            }
+            if (!empty($allFileIds)){
+                $filesInfo = Files::searchFilesForList($allFileIds);
+                foreach ($result['rows'] as $item) {
+
+                }
+            }
+        }
+        return $result;
     }
 
     /**

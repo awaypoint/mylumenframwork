@@ -424,9 +424,6 @@ class CompanyRepository extends CommonRepository
         if (isset($params['email']) && !isEmail($params['email'])) {
             throw new CompanyException(40006);
         }
-        if (isset($params['company_status']) && !in_array($params['company_status'], array_keys($this->getConst('company_status')))) {
-            throw new CompanyException(40007, ['fileName' => 'company_status']);
-        }
     }
 
     private function _proValidate($params, $id = 0)

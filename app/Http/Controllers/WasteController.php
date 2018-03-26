@@ -123,6 +123,30 @@ class WasteController extends Controller
     }
 
     /**
+     * 获取排气管道下拉框
+     * @return array
+     */
+    public function getWasteGasTubeCombo()
+    {
+        $result = $this->_wasteRepository->getWasteGasTubeCombo();
+        return responseTo($result);
+    }
+
+    /**
+     * 删除排放口
+     * @param Request $request
+     * @return array
+     */
+    public function delWasteGasTube(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required|numeric',
+        ]);
+        $result = $this->_wasteRepository->delWasteGasTube($request->get('id'));
+        return responseTo($result, '删除排放口成功');
+    }
+
+    /**
      * 添加废气信息
      * @param Request $request
      * @return array
@@ -130,6 +154,7 @@ class WasteController extends Controller
     public function addWasteGas(Request $request)
     {
         $this->validate($request, [
+            'tube_id' => 'required|numeric',
             'type' => 'required|numeric',
         ]);
         $result = $this->_wasteRepository->addWasteGas($request->all());
@@ -162,5 +187,30 @@ class WasteController extends Controller
         ]);
         $result = $this->_wasteRepository->delWasteGas($request->get('id'));
         return responseTo($result, '废气信息删除成功');
+    }
+
+    /**
+     * 获取废气信息详情
+     * @param Request $request
+     * @return array
+     */
+    public function getWasteGasDetail(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required|numeric',
+        ]);
+        $result = $this->_wasteRepository->getWasteGasDetail(getUserInfo()['company_id'], $request->get('id'));
+        return responseTo($result);
+    }
+
+    /**
+     * 获取废气信息列表
+     * @param Request $request
+     * @return array
+     */
+    public function getWasteGasList(Request $request)
+    {
+        $result = $this->_wasteRepository->getWasteGasList($request->all());
+        return responseTo($result);
     }
 }
