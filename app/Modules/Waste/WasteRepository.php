@@ -260,6 +260,33 @@ class WasteRepository extends CommonRepository
     }
 
     /**
+     * 获取排放口详情
+     * @param $id
+     * @return array|mixed
+     * @throws WasteException
+     */
+    public function getWasteGasTubeDetail($id)
+    {
+        $where = [
+            'id' => $id,
+        ];
+        $result = $this->_wasteGasTubeModel->getOne($where);
+        if (is_null($result)) {
+            throw new WasteException(60008);
+        }
+        $this->_checkWastePermission($result['company_id']);
+        $result['pics'] = json_decode($result['pics'], true);
+        $result['check'] = json_decode($result['check'], true);
+        $allFileIds = array_merge($result['pics'], $result['check']);
+        $result['pics_files'] = $result['check_files'] = [];
+        if (!empty($allFileIds)) {
+            $filesInfo = Files::searchFilesForList($allFileIds);
+            $result = array_merge($result, $filesInfo);
+        }
+        return $result;
+    }
+
+    /**
      * 添加废气信息
      * @param $params
      * @return array
@@ -446,6 +473,11 @@ class WasteRepository extends CommonRepository
         return $result;
     }
 
+    /**
+     * 获取废气列表
+     * @param $params
+     * @return mixed
+     */
     public function getWasteGasList($params)
     {
         $where = [
@@ -459,6 +491,8 @@ class WasteRepository extends CommonRepository
         if (isset($result['rows']) && !empty($result['rows'])) {
             $allFileIds = [];
             foreach ($result['rows'] as &$row) {
+                $row['pics_files'] = [];
+                $row['check_files'] = [];
                 $row['pics'] = json_decode($row['pics'], true);
                 $row['check'] = json_decode($row['check'], true);
                 $allFileIds = array_merge($allFileIds, $row['pics'], $row['check']);
@@ -478,10 +512,23 @@ class WasteRepository extends CommonRepository
                     $row['gases'] = $newGas;
                 }
             }
-            if (!empty($allFileIds)){
-                $filesInfo = Files::searchFilesForList($allFileIds);
-                foreach ($result['rows'] as $item) {
-
+            if (!empty($allFileIds)) {
+                $filesInfo = Files::searchFilesForList($allFileIds, 2);
+                foreach ($result['rows'] as &$item) {
+                    if (!empty($item['pics'])) {
+                        foreach ($item['pics'] as $pic) {
+                            if (isset($filesInfo[$pic])) {
+                                $item['pics_files'][] = $filesInfo[$pic];
+                            }
+                        }
+                    }
+                    if (!empty($item['check'])) {
+                        foreach ($item['check'] as $check) {
+                            if (isset($filesInfo[$check])) {
+                                $item['check_files'][] = $filesInfo[$check];
+                            }
+                        }
+                    }
                 }
             }
         }

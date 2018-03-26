@@ -123,6 +123,20 @@ class WasteController extends Controller
     }
 
     /**
+     * 获取排气口详情
+     * @param Request $request
+     * @return array
+     */
+    public function getWasteGasTubeDetail(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required|numeric',
+        ]);
+        $result = $this->_wasteRepository->getWasteGasTubeDetail($request->get('id'));
+        return responseTo($result);
+    }
+
+    /**
      * 获取排气管道下拉框
      * @return array
      */
