@@ -36,9 +36,10 @@ class Authenticate
      */
     public function handle($request, Closure $next, $guard = null)
     {
-        if ($this->auth->guard($guard)->guest() && !env('APP_DEBUG')) {
-            return responseTo('授权失败', '授权失败', 401);
-        }
+        //不再做token验证
+        //if ($this->auth->guard($guard)->guest() && !env('APP_DEBUG')) {
+            //return responseTo('授权失败', '授权失败', 401);
+        //}
         if (env('APP_DEBUG')) {
             Session::put('uid', 8);
         }
