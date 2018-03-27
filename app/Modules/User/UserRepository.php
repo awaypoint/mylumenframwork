@@ -160,7 +160,7 @@ class UserRepository extends CommonRepository
                 DB::rollBack();
                 throw new UserException(10010);
             }
-            $addData['company_id'] = $companyResult;
+            $addData['company_id'] = $companyResult['id'];
             $result = $this->_userModel->add($addData);
             if (!$result) {
                 DB::rollBack();
