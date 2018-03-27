@@ -34,10 +34,6 @@ class CompanyRepository extends CommonRepository
      */
     public function addCompany($params)
     {
-        $userInfo = getUserInfo();
-        if ($userInfo['company_id'] > 0) {
-            throw new CompanyException(40001);
-        }
         $this->_validate($params);
         $addData = [
             'name' => $params['name'],

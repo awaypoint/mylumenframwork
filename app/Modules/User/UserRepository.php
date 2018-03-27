@@ -169,6 +169,7 @@ class UserRepository extends CommonRepository
             DB::commit();
             return ['id' => $result];
         } catch (\Exception $e) {
+            echo $e->getMessage();die;
             DB::rollBack();
             throw new UserException(10004);
         }
