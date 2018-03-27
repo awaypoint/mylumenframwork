@@ -16,13 +16,15 @@ class WasteRepository extends CommonRepository
     private $_wasteTubeModel;
     private $_wasteWaterModel;
     private $_noiseModel;
+    private $_nucleusModel;
 
     public function __construct(
         EloquentWasteMaterialModel $wasteMaterialModel,
         EloquentWasteGasModel $wasteGasModel,
         EloquentWasteTubeModel $wasteTubeModel,
         EloquentWasteWaterModel $wasteWaterModel,
-        EloquentNoiseModel $noiseModel
+        EloquentNoiseModel $noiseModel,
+        EloquentNucleusModel $nucleusModel
     )
     {
         $this->_wasteMaterialModel = $wasteMaterialModel;
@@ -30,6 +32,7 @@ class WasteRepository extends CommonRepository
         $this->_wasteTubeModel = $wasteTubeModel;
         $this->_wasteWaterModel = $wasteWaterModel;
         $this->_noiseModel = $noiseModel;
+        $this->_nucleusModel = $nucleusModel;
     }
 
     /**
@@ -837,13 +840,184 @@ class WasteRepository extends CommonRepository
         return $result;
     }
 
+    /**
+     * 获取噪音列表
+     * @param $params
+     * @return mixed
+     */
     public function getNoiseList($params)
     {
         $where = [];
-        if (isset($params['equipment']) && $params['equipment']){
+        if (isset($params['equipment']) && $params['equipment']) {
             $where['built_in'] = [
-                'LIKE'=>['equipment',$params['equipment']]
+                'where' => ['equipment', 'LIKE', '%' . $params['equipment'] . '%']
             ];
+        }
+        $result = $this->_noiseModel->getList($where);
+        return $result;
+    }
+
+    /**
+     * 删除噪音
+     * @param $id
+     * @return bool
+     * @throws WasteException
+     */
+    public function delNoise($id)
+    {
+        $where = [
+            'id' => $id,
+        ];
+        $model = $this->_noiseModel->where($where)->first();
+        if (is_null($model)) {
+            throw new WasteException(60003);
+        }
+        $this->_checkWastePermission($model->company_id);
+        try {
+            $result = $model->delete();
+            if ($result === false) {
+                throw new WasteException(60005);
+            }
+            return true;
+        } catch (\Exception $e) {
+            throw new WasteException(60005);
+        }
+    }
+
+    /**
+     * 添加辐射信息
+     * @param $params
+     * @return array
+     * @throws WasteException
+     */
+    public function addNucleus($params)
+    {
+        $userInfo = getUserInfo();
+        if (isset($params['staff_mobile']) && !isMobile($params['staff_mobile'])) {
+            throw new WasteException(60016);
+        }
+        $addData = [
+            'company_id' => $userInfo['company_id'],
+            'equipment' => $params['equipment'],
+            'num' => $params['num'] ?? 0,
+            'equipment_type' => $params['equipment_type'] ?? 0,
+            'radial_type' => $params['radial_type'] ?? 0,
+            'spec' => $params['spec'] ?? '',
+            'activity' => $params['activity'] ?? '',
+            'code' => $params['code'] ?? '',
+            'no' => $params['no'] ?? '',
+            'maintenance_staff' => $params['maintenance_staff'] ?? '',
+            'staff_mobile' => $params['staff_mobile'] ?? 0,
+            'management_agency' => $params['management_agency'] ?? '',
+            'remark' => $params['remark'] ?? '',
+        ];
+        try {
+            $result = $this->_nucleusModel->add($addData);
+            if (!$result) {
+                throw new WasteException(60001);
+            }
+            return ['id' => $result];
+        } catch (\Exception $e) {
+            throw new WasteException(60001);
+        }
+    }
+
+    public function updateNucleus($id, $params)
+    {
+        $where = [
+            'id' => $id,
+        ];
+        $model = $this->_nucleusModel->where($where)->first();
+        if (is_null($model)) {
+            throw new WasteException(60003);
+        }
+        $this->_checkWastePermission($model->company_id);
+        $updateData = [];
+        $guardFillble = ['id'];
+        foreach ($params as $fileld => $value) {
+            if (in_array($fileld, $guardFillble)) {
+                continue;
+            }
+            if (isset($model->$fileld)) {
+                $updateData[$fileld] = $value;
+            }
+        }
+        $returnData = ['id' => $id];
+        if (!empty($updateData)) {
+            try {
+                $result = $model->update($updateData);
+                if ($result === false) {
+                    throw new WasteException(60004);
+                }
+            } catch (\Exception $e) {
+                throw new WasteException(60004);
+            }
+        }
+        return $returnData;
+    }
+
+    /**
+     * 获取辐射详情
+     * @param $companyId
+     * @param $id
+     * @return mixed
+     * @throws WasteException
+     */
+    public function getNucleusDetail($companyId, $id)
+    {
+        $where = [
+            'id' => $id,
+            'company_id' => $companyId,
+        ];
+        $result = $this->_nucleusModel->getOne($where);
+        if (is_null($result)) {
+            throw new WasteException(60017);
+        }
+        $this->_checkWastePermission($result['company_id']);
+        return $result;
+    }
+
+    /**
+     * 获取辐射列表
+     * @param $params
+     * @return mixed
+     */
+    public function getNucleusList($params)
+    {
+        $where = [];
+        if (isset($params['equipment']) && $params['equipment']) {
+            $where['built_in'] = [
+                'where' => ['equipment', 'LIKE', '%' . $params['equipment'] . '%']
+            ];
+        }
+        $result = $this->_nucleusModel->getList($where);
+        return $result;
+    }
+
+    /**
+     * 删除辐射信息
+     * @param $id
+     * @return bool
+     * @throws WasteException
+     */
+    public function delNucleus($id)
+    {
+        $where = [
+            'id' => $id,
+        ];
+        $model = $this->_nucleusModel->where($where)->first();
+        if (is_null($model)) {
+            throw new WasteException(60003);
+        }
+        $this->_checkWastePermission($model->company_id);
+        try {
+            $result = $model->delete();
+            if ($result === false) {
+                throw new WasteException(60005);
+            }
+            return true;
+        } catch (\Exception $e) {
+            throw new WasteException(60005);
         }
     }
 

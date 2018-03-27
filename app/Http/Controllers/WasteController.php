@@ -352,4 +352,85 @@ class WasteController extends Controller
         $result = $this->_wasteRepository->getNoiseList($request->all());
         return responseTo($result);
     }
+
+    /**
+     * 删除噪音信息
+     * @param Request $request
+     * @return array
+     */
+    public function delNoise(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required',
+        ]);
+        $result = $this->_wasteRepository->delNoise($request->get('id'));
+        return responseTo($result, '噪音信息删除成功');
+    }
+
+    /**
+     * 添加辐射
+     * @param Request
+     * @return array
+     */
+    public function addNucleus(Request $request)
+    {
+        $this->validate($request, [
+            'equipment' => 'required',
+        ]);
+        $result = $this->_wasteRepository->addNucleus($request->all());
+        return responseTo($result, '添加辐射成功');
+    }
+
+    /**
+     * 修改噪音
+     * @param Request $request
+     * @return array
+     */
+    public function updateNucleus(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required',
+        ]);
+        $result = $this->_wasteRepository->updateNucleus($request->get('id'), $request->all());
+        return responseTo($result, '修改辐射成功');
+    }
+
+    /**
+     * 获取噪音详情
+     * @param Request $request
+     * @return array
+     */
+    public function getNucleusDetail(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required',
+        ]);
+        $result = $this->_wasteRepository->getNucleusDetail(getUserInfo()['company_id'], $request->get('id'));
+        return responseTo($result);
+    }
+
+    /**
+     * 获取辐射信息列表
+     * @param Request $request
+     * @return array
+     */
+    public function getNucleusList(Request $request)
+    {
+        $result = $this->_wasteRepository->getNucleusList($request->all());
+        return responseTo($result);
+    }
+
+    /**
+     * 删除噪音信息
+     * @param Request $request
+     * @return array
+     */
+    public function delNucleus(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required',
+        ]);
+        $result = $this->_wasteRepository->delNucleus($request->get('id'));
+        return responseTo($result, '辐射信息删除成功');
+    }
 }

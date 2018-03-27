@@ -82,4 +82,11 @@ $app->group(['prefix' => 'waste', 'middleware' => 'auth'], function () use ($app
     $app->post('addNoise', 'WasteController@addNoise');
     $app->put('updateNoise', 'WasteController@updateNoise');
     $app->get('getNoiseDetail', 'WasteController@getNoiseDetail');
+    $app->get('getNoiseList', 'WasteController@getNoiseList');
+    $app->delete('delNoise', 'WasteController@delNoise');
+    $app->post('addNucleus', 'WasteController@addNucleus');
+    $app->put('updateNucleus', 'WasteController@updateNucleus');
+    $app->get('getNucleusDetail', 'WasteController@getNucleusDetail');
+    $app->get('getNucleusList', 'WasteController@getNucleusList');
+    $app->delete('delNucleus', 'WasteController@delNucleus');
 });
