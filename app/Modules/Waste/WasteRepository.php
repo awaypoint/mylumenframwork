@@ -492,9 +492,10 @@ class WasteRepository extends CommonRepository
      * @param $params
      * @return mixed
      */
-    public function getWasteGasList($params)
+    public function getWasteGasList($companyId, $params)
     {
         $where = [
+            'company_id' => $companyId,
             'type' => Waste::WASTE_GAS_TUBE_TYPE,
             'built_in' => [
                 'with' => 'gases',

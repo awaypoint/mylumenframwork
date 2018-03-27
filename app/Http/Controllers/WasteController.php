@@ -228,7 +228,7 @@ class WasteController extends Controller
      */
     public function getWasteGasList(Request $request)
     {
-        $result = $this->_wasteRepository->getWasteGasList($request->all());
+        $result = $this->_wasteRepository->getWasteGasList(getUserInfo()['company_id'], $request->all());
         return responseTo($result);
     }
 
