@@ -514,6 +514,9 @@ class WasteRepository extends CommonRepository
                 if (!empty($row['gases'])) {
                     $newGas = [];
                     foreach ($row['gases'] as $gas) {
+                        if (isset($params['waste_name']) && $params['waste_name'] && strpos($gas['waste_name'], $params['waste_name']) === false) {
+                            continue;
+                        }
                         $tmp = [
                             'type_name' => Waste::WASTE_GAS_TYPE_MAP[$gas['type']] ?? '',
                         ];
@@ -663,9 +666,10 @@ class WasteRepository extends CommonRepository
      * 获取废水信息列表
      * @param $params
      */
-    public function getWasteWaterList($params)
+    public function getWasteWaterList($companyId, $params, $page = 0, $pageSize = 0, $orderBy = [])
     {
         $where = [
+            'company_id' => $companyId,
             'type' => Waste::WASTE_WATER_TUBE_TYPE,
             'built_in' => [
                 'with' => 'water',
@@ -673,7 +677,7 @@ class WasteRepository extends CommonRepository
         ];
         $tubeFields = ['id', 'item_no', 'height', 'pics', 'check'];
         $waterFields = ['id', 'type', 'waste_name', 'water_discharge', 'discharge_level', 'water_direction', 'technique', 'waste_plants', 'daily_process', 'remark'];
-        $result = $this->_wasteTubeModel->getList($where, $tubeFields);
+        $result = $this->_wasteTubeModel->getList($where, $tubeFields, $page, $pageSize, $orderBy);
         if (isset($result['rows']) && !empty($result['rows'])) {
             $allFileIds = [];
             foreach ($result['rows'] as &$row) {
@@ -685,6 +689,9 @@ class WasteRepository extends CommonRepository
                 if (!empty($row['water'])) {
                     $newWater = [];
                     foreach ($row['water'] as $water) {
+                        if (isset($params['waste_name']) && $params['waste_name'] && strpos($water['waste_name'], $params['waste_name']) === false) {
+                            continue;
+                        }
                         $tmp = [
                             'type_name' => Waste::WASTE_WATER_TYPE_MAP[$water['type']] ?? '',
                         ];
@@ -845,15 +852,17 @@ class WasteRepository extends CommonRepository
      * @param $params
      * @return mixed
      */
-    public function getNoiseList($params)
+    public function getNoiseList($companyId, $params, $page = 1, $pageSize = 10, $orderBy = [])
     {
-        $where = [];
+        $where = [
+            'company_id' => $companyId,
+        ];
         if (isset($params['equipment']) && $params['equipment']) {
             $where['built_in'] = [
                 'where' => ['equipment', 'LIKE', '%' . $params['equipment'] . '%']
             ];
         }
-        $result = $this->_noiseModel->getList($where);
+        $result = $this->_noiseModel->getList($where, [], $page, $pageSize, $orderBy);
         return $result;
     }
 
@@ -922,6 +931,13 @@ class WasteRepository extends CommonRepository
         }
     }
 
+    /**
+     * 更新辐射信息
+     * @param $id
+     * @param $params
+     * @return array
+     * @throws WasteException
+     */
     public function updateNucleus($id, $params)
     {
         $where = [
@@ -982,15 +998,17 @@ class WasteRepository extends CommonRepository
      * @param $params
      * @return mixed
      */
-    public function getNucleusList($params)
+    public function getNucleusList($companyId, $params, $page = 1, $pageSize = 10, $orderBy = [])
     {
-        $where = [];
+        $where = [
+            'company_id' => $companyId,
+        ];
         if (isset($params['equipment']) && $params['equipment']) {
             $where['built_in'] = [
                 'where' => ['equipment', 'LIKE', '%' . $params['equipment'] . '%']
             ];
         }
-        $result = $this->_nucleusModel->getList($where);
+        $result = $this->_nucleusModel->getList($where, [], $page, $pageSize, $orderBy);
         return $result;
     }
 

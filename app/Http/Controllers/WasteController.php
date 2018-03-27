@@ -282,7 +282,13 @@ class WasteController extends Controller
      */
     public function getWasteWaterList(Request $request)
     {
-        $result = $this->_wasteRepository->getWasteWaterList($request->all());
+        $page = $request->get('page') ?? 0;
+        $pageSigze = $request->get('page_size') ?? 0;
+        $orderBy = $request->get('order_by') ?? 'id';
+        $sortBy = $request->get('sort_by') ?? 'DESC';
+
+        $order = [$orderBy, $sortBy];
+        $result = $this->_wasteRepository->getWasteWaterList(getUserInfo()['company_id'], $request->all(), $page, $pageSigze, $order);
         return responseTo($result);
     }
 
@@ -343,13 +349,19 @@ class WasteController extends Controller
     }
 
     /**
-     * 获取废水信息列表
+     * 获取噪音信息列表
      * @param Request $request
      * @return array
      */
     public function getNoiseList(Request $request)
     {
-        $result = $this->_wasteRepository->getNoiseList($request->all());
+        $page = $request->get('page') ?? 0;
+        $pageSigze = $request->get('page_size') ?? 0;
+        $orderBy = $request->get('order_by') ?? 'id';
+        $sortBy = $request->get('sort_by') ?? 'DESC';
+
+        $order = [$orderBy, $sortBy];
+        $result = $this->_wasteRepository->getNoiseList(getUserInfo()['company_id'], $request->all(), $page, $pageSigze, $order);
         return responseTo($result);
     }
 
@@ -416,7 +428,13 @@ class WasteController extends Controller
      */
     public function getNucleusList(Request $request)
     {
-        $result = $this->_wasteRepository->getNucleusList($request->all());
+        $page = $request->get('page') ?? 0;
+        $pageSigze = $request->get('page_size') ?? 0;
+        $orderBy = $request->get('order_by') ?? 'id';
+        $sortBy = $request->get('sort_by') ?? 'DESC';
+
+        $order = [$orderBy, $sortBy];
+        $result = $this->_wasteRepository->getNucleusList(getUserInfo()['company_id'], $request->all(), $page, $pageSigze, $order);
         return responseTo($result);
     }
 
