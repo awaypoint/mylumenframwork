@@ -13,17 +13,20 @@ class WasteRepository extends CommonRepository
 {
     private $_wasteMaterialModel;
     private $_wasteGasModel;
-    private $_wasteGasTubeModel;
+    private $_wasteTubeModel;
+    private $_wasteWaterModel;
 
     public function __construct(
         EloquentWasteMaterialModel $wasteMaterialModel,
         EloquentWasteGasModel $wasteGasModel,
-        EloquentWasteGasTubeModel $wasteGasTubeModel
+        EloquentWasteTubeModel $wasteTubeModel,
+        EloquentWasteWaterModel $wasteWaterModel
     )
     {
         $this->_wasteMaterialModel = $wasteMaterialModel;
         $this->_wasteGasModel = $wasteGasModel;
-        $this->_wasteGasTubeModel = $wasteGasTubeModel;
+        $this->_wasteTubeModel = $wasteTubeModel;
+        $this->_wasteWaterModel = $wasteWaterModel;
     }
 
     /**
@@ -196,8 +199,12 @@ class WasteRepository extends CommonRepository
     public function addWasteGasTube($params)
     {
         $userInfo = getUserInfo();
+        if (!isset(Waste::WASTE_TUBE_TYPE_MAP[$params['type']])) {
+            throw new WasteException(60012);
+        }
         $addData = [
             'company_id' => $userInfo['company_id'],
+            'type' => $params['type'],
             'item_no' => $params['item_no'],
             'height' => $params['height'] ?? 0,
             'pics' => isset($params['pics']) ? json_encode($params['pics'], JSON_UNESCAPED_UNICODE) : '[]',
@@ -205,7 +212,7 @@ class WasteRepository extends CommonRepository
             'remark' => $params['remark'] ?? '',
         ];
         try {
-            $result = $this->_wasteGasTubeModel->add($addData);
+            $result = $this->_wasteTubeModel->add($addData);
             if (!$result) {
                 throw new WasteException(60007);
             }
@@ -227,13 +234,13 @@ class WasteRepository extends CommonRepository
         $where = [
             'id' => $id,
         ];
-        $model = $this->_wasteGasTubeModel->where($where)->first();
+        $model = $this->_wasteTubeModel->where($where)->first();
         if (is_null($model)) {
             throw new WasteException(60008);
         }
         $this->_checkWastePermission($model->company_id);
         $updateData = [];
-        $guardFillble = ['id'];
+        $guardFillble = ['id', 'type'];
         foreach ($params as $field => $value) {
             if (in_array($field, $guardFillble)) {
                 continue;
@@ -270,7 +277,7 @@ class WasteRepository extends CommonRepository
         $where = [
             'id' => $id,
         ];
-        $result = $this->_wasteGasTubeModel->getOne($where);
+        $result = $this->_wasteTubeModel->getOne($where);
         if (is_null($result)) {
             throw new WasteException(60008);
         }
@@ -401,13 +408,14 @@ class WasteRepository extends CommonRepository
      * 获取排气口下拉框
      * @return mixed
      */
-    public function getWasteGasTubeCombo()
+    public function getWasteGasTubeCombo($params)
     {
         $where = [
             'company_id' => getUserInfo()['company_id'],
+            'type' => $params['type'],
         ];
         $fields = ['id', 'item_no'];
-        $result = $this->_wasteGasTubeModel->searchData($where, $fields);
+        $result = $this->_wasteTubeModel->searchData($where, $fields);
         return $result;
     }
 
@@ -422,7 +430,7 @@ class WasteRepository extends CommonRepository
         $where = [
             'id' => $id,
         ];
-        $model = $this->_wasteGasTubeModel->where($where)->first();
+        $model = $this->_wasteTubeModel->where($where)->first();
         if (is_null($model)) {
             throw new WasteException(60008);
         }
@@ -459,7 +467,7 @@ class WasteRepository extends CommonRepository
             'id' => $result['tube_id'],
         ];
         $result['type_name'] = Waste::WASTE_GAS_TYPE_MAP[$result['type']] ?? '';
-        $gasTubeInfo = $this->_wasteGasTubeModel->getOne($tubeWhere, ['item_no']);
+        $gasTubeInfo = $this->_wasteTubeModel->getOne($tubeWhere, ['item_no']);
         if (is_null($gasTubeInfo)) {
             throw new WasteException(60008);
         }
@@ -481,13 +489,14 @@ class WasteRepository extends CommonRepository
     public function getWasteGasList($params)
     {
         $where = [
+            'type' => Waste::WASTE_GAS_TUBE_TYPE,
             'built_in' => [
                 'with' => 'gases',
             ]
         ];
         $tubeFields = ['id', 'item_no', 'height', 'pics', 'check'];
         $gasFields = ['id', 'type', 'waste_name', 'gas_discharge', 'discharge_level', 'equipment', 'technique', 'installations', 'remark'];
-        $result = $this->_wasteGasTubeModel->getList($where, $tubeFields);
+        $result = $this->_wasteTubeModel->getList($where, $tubeFields);
         if (isset($result['rows']) && !empty($result['rows'])) {
             $allFileIds = [];
             foreach ($result['rows'] as &$row) {
@@ -532,6 +541,115 @@ class WasteRepository extends CommonRepository
                 }
             }
         }
+        return $result;
+    }
+
+    /**
+     * 添加废水信息
+     * @param $params
+     * @return array
+     * @throws WasteException
+     */
+    public function addWasterWater($params)
+    {
+        if (!isset(Waste::WASTE_WATER_TYPE_MAP[$params['type']])) {
+            throw new WasteException(60013);
+        }
+        $userInfo = getUserInfo();
+        $addData = [
+            'company_id' => $userInfo['company_id'],
+            'tube_id' => $params['tube_id'],
+            'type' => $params['type'],
+            'waste_name' => $params['waste_name'] ?? '',
+            'water_discharge' => $params['water_discharge'] ?? 0,
+            'discharge_level' => $params['discharge_level'] ?? 0,
+            'technique' => $params['technique'] ?? '',
+            'water_direction' => $params['water_direction'] ?? '',
+            'waste_plants' => $params['waste_plants'] ?? '',
+            'daily_process' => $params['daily_process'] ?? 0,
+            'remark' => $params['remark'] ?? '',
+        ];
+        try {
+            $result = $this->_wasteWaterModel->add($addData);
+            if (!$result) {
+                throw new WasteException(60001);
+            }
+            return ['id' => $result];
+        } catch (\Exception $e) {
+            throw new WasteException(60001);
+        }
+    }
+
+    /**
+     * 更新废气信息
+     * @param $id
+     * @param $params
+     * @return array
+     * @throws WasteException
+     */
+    public function updateWasteWater($id, $params)
+    {
+        $where = [
+            'id' => $id,
+        ];
+        if (isset($params['type']) && !isset(Waste::WASTE_WATER_TYPE_MAP[$params['type']])) {
+            throw new WasteException(60013);
+        }
+        $model = $this->_wasteWaterModel->where($where)->first();
+        if (is_null($model)) {
+            throw new WasteException(60003);
+        }
+        $this->_checkWastePermission($model->company_id);
+        $updateData = [];
+        $guardFillble = ['id'];
+        foreach ($params as $fileld => $value) {
+            if (in_array($fileld, $guardFillble)) {
+                continue;
+            }
+            if (isset($model->$fileld)) {
+                $updateData[$fileld] = $value;
+            }
+        }
+        $returnData = ['id' => $id];
+        if (!empty($updateData)) {
+            try {
+                $result = $model->update($updateData);
+                if ($result === false) {
+                    throw new WasteException(60004);
+                }
+            } catch (\Exception $e) {
+                throw new WasteException(60004);
+            }
+        }
+        return $returnData;
+    }
+
+    /**
+     * 获取废水信息详情
+     * @param $id
+     * @return mixed
+     * @throws WasteException
+     */
+    public function getWasteWaterDetail($companyId, $id)
+    {
+        $where = [
+            'id' => $id,
+            'company_id' => $companyId,
+        ];
+        $result = $this->_wasteWaterModel->getOne($where);
+        if (is_null($result)) {
+            throw new WasteException(60014);
+        }
+        $this->_checkWastePermission($result['company_id']);
+        $tubeWhere = [
+            'id' => $result['tube_id'],
+        ];
+        $result['type_name'] = Waste::WASTE_WATER_TYPE_MAP[$result['type']] ?? '';
+        $gasTubeInfo = $this->_wasteTubeModel->getOne($tubeWhere, ['item_no']);
+        if (is_null($gasTubeInfo)) {
+            throw new WasteException(60008);
+        }
+        $result['item_no'] = is_null($gasTubeInfo) ? '' : $gasTubeInfo['item_no'];
         return $result;
     }
 

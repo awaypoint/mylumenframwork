@@ -103,6 +103,7 @@ class WasteController extends Controller
     {
         $this->validate($request, [
             'item_no' => 'required',
+            'type' => 'required|numeric',
         ]);
         $result = $this->_wasteRepository->addWasteGasTube($request->all());
         return responseTo($result, '添加排放口成功');
@@ -140,9 +141,12 @@ class WasteController extends Controller
      * 获取排气管道下拉框
      * @return array
      */
-    public function getWasteGasTubeCombo()
+    public function getWasteGasTubeCombo(Request $request)
     {
-        $result = $this->_wasteRepository->getWasteGasTubeCombo();
+        $this->validate($request, [
+            'type' => 'required|numeric',
+        ]);
+        $result = $this->_wasteRepository->getWasteGasTubeCombo($request->all());
         return responseTo($result);
     }
 
@@ -225,6 +229,49 @@ class WasteController extends Controller
     public function getWasteGasList(Request $request)
     {
         $result = $this->_wasteRepository->getWasteGasList($request->all());
+        return responseTo($result);
+    }
+
+    /**
+     * 添加废水信息
+     * @param Request $request
+     * @return array
+     */
+    public function addWasteWater(Request $request)
+    {
+        $this->validate($request, [
+            'tube_id' => 'required|numeric',
+            'type' => 'required|numeric',
+        ]);
+        $result = $this->_wasteRepository->addWasterWater($request->all());
+        return responseTo($result, '添加废水信息成功');
+    }
+
+    /**
+     * 修改废气信息
+     * @param Request $request
+     * @return array
+     */
+    public function updateWasteWater(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required|numeric',
+        ]);
+        $result = $this->_wasteRepository->updateWasteWater($request->get('id'), $request->all());
+        return responseTo($result, '更新废水信息成功');
+    }
+
+    /**
+     * 获取废水信息详情
+     * @param Request $request
+     * @return array
+     */
+    public function getWasteWaterDetail(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required|numeric',
+        ]);
+        $result = $this->_wasteRepository->getWasteWaterDetail(getUserInfo()['company_id'], $request->get('id'));
         return responseTo($result);
     }
 }
