@@ -42,6 +42,8 @@ class UserRepository extends CommonRepository
         $userInfo = $this->getUserInfoByUsername($params['username']);
         Session::put('uid', $userInfo['id']);
         $result['uid'] = $userInfo['id'];
+        $result['company_id'] = $userInfo['company_id'];
+        $result['user_type'] = 1;
         $result['username'] = $userInfo['username'];
         $result['avatar_url'] = $userInfo['avatar_url'];
         //设置缓存

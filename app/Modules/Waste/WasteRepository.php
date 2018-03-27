@@ -15,18 +15,21 @@ class WasteRepository extends CommonRepository
     private $_wasteGasModel;
     private $_wasteTubeModel;
     private $_wasteWaterModel;
+    private $_noiseModel;
 
     public function __construct(
         EloquentWasteMaterialModel $wasteMaterialModel,
         EloquentWasteGasModel $wasteGasModel,
         EloquentWasteTubeModel $wasteTubeModel,
-        EloquentWasteWaterModel $wasteWaterModel
+        EloquentWasteWaterModel $wasteWaterModel,
+        EloquentNoiseModel $noiseModel
     )
     {
         $this->_wasteMaterialModel = $wasteMaterialModel;
         $this->_wasteGasModel = $wasteGasModel;
         $this->_wasteTubeModel = $wasteTubeModel;
         $this->_wasteWaterModel = $wasteWaterModel;
+        $this->_noiseModel = $noiseModel;
     }
 
     /**
@@ -651,6 +654,197 @@ class WasteRepository extends CommonRepository
         }
         $result['item_no'] = is_null($gasTubeInfo) ? '' : $gasTubeInfo['item_no'];
         return $result;
+    }
+
+    /**
+     * 获取废水信息列表
+     * @param $params
+     */
+    public function getWasteWaterList($params)
+    {
+        $where = [
+            'type' => Waste::WASTE_WATER_TUBE_TYPE,
+            'built_in' => [
+                'with' => 'water',
+            ]
+        ];
+        $tubeFields = ['id', 'item_no', 'height', 'pics', 'check'];
+        $waterFields = ['id', 'type', 'waste_name', 'water_discharge', 'discharge_level', 'water_direction', 'technique', 'waste_plants', 'daily_process', 'remark'];
+        $result = $this->_wasteTubeModel->getList($where, $tubeFields);
+        if (isset($result['rows']) && !empty($result['rows'])) {
+            $allFileIds = [];
+            foreach ($result['rows'] as &$row) {
+                $row['pics_files'] = [];
+                $row['check_files'] = [];
+                $row['pics'] = json_decode($row['pics'], true);
+                $row['check'] = json_decode($row['check'], true);
+                $allFileIds = array_merge($allFileIds, $row['pics'], $row['check']);
+                if (!empty($row['water'])) {
+                    $newWater = [];
+                    foreach ($row['water'] as $water) {
+                        $tmp = [
+                            'type_name' => Waste::WASTE_WATER_TYPE_MAP[$water['type']] ?? '',
+                        ];
+                        foreach ($waterFields as $waterField) {
+                            if (isset($water[$waterField])) {
+                                $tmp[$waterField] = $water[$waterField];
+                            }
+                        }
+                        $newWater[] = $tmp;
+                    }
+                    $row['water'] = $newWater;
+                }
+            }
+            if (!empty($allFileIds)) {
+                $filesInfo = Files::searchFilesForList($allFileIds, 2);
+                foreach ($result['rows'] as &$item) {
+                    if (!empty($item['pics'])) {
+                        foreach ($item['pics'] as $pic) {
+                            if (isset($filesInfo[$pic])) {
+                                $item['pics_files'][] = $filesInfo[$pic];
+                            }
+                        }
+                    }
+                    if (!empty($item['check'])) {
+                        foreach ($item['check'] as $check) {
+                            if (isset($filesInfo[$check])) {
+                                $item['check_files'][] = $filesInfo[$check];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * 删除废水信息
+     * @param $id
+     * @return bool
+     * @throws WasteException
+     */
+    public function delWasteWater($id)
+    {
+        $where = [
+            'id' => $id,
+        ];
+        $model = $this->_wasteWaterModel->where($where)->first();
+        if (is_null($model)) {
+            throw new WasteException(60003);
+        }
+        $this->_checkWastePermission($model->company_id);
+        try {
+            $result = $model->delete();
+            if ($result === false) {
+                throw new WasteException(60005);
+            }
+            return true;
+        } catch (\Exception $e) {
+            throw new WasteException(60005);
+        }
+    }
+
+    /**
+     * 添加噪音
+     * @param $params
+     * @return array
+     * @throws WasteException
+     */
+    public function addNoise($params)
+    {
+        $userInfo = getUserInfo();
+        $addData = [
+            'company_id' => $userInfo['company_id'],
+            'equipment' => $params['equipment'],
+            'num' => $params['num'] ?? 0,
+            'range' => $params['range'] ?? '',
+            'stanard' => $params['stanard'] ?? 0,
+            'is_done' => $params['is_done'] ?? 0,
+            'technique' => $params['technique'] ?? '',
+            'remark' => $params['remark'] ?? '',
+        ];
+        try {
+            $result = $this->_noiseModel->add($addData);
+            if (!$result) {
+                throw new WasteException(60001);
+            }
+            return ['id' => $result];
+        } catch (\Exception $e) {
+            throw new WasteException(60001);
+        }
+    }
+
+    /**
+     * 更新噪音信息
+     * @param $id
+     * @param $params
+     * @return array
+     * @throws WasteException
+     */
+    public function updateNoise($id, $params)
+    {
+        $where = [
+            'id' => $id,
+        ];
+        $model = $this->_noiseModel->where($where)->first();
+        if (is_null($model)) {
+            throw new WasteException(60003);
+        }
+        $this->_checkWastePermission($model->company_id);
+        $updateData = [];
+        $guardFillble = ['id'];
+        foreach ($params as $fileld => $value) {
+            if (in_array($fileld, $guardFillble)) {
+                continue;
+            }
+            if (isset($model->$fileld)) {
+                $updateData[$fileld] = $value;
+            }
+        }
+        $returnData = ['id' => $id];
+        if (!empty($updateData)) {
+            try {
+                $result = $model->update($updateData);
+                if ($result === false) {
+                    throw new WasteException(60004);
+                }
+            } catch (\Exception $e) {
+                throw new WasteException(60004);
+            }
+        }
+        return $returnData;
+    }
+
+    /**
+     * 获取噪音详情
+     * @param $companyId
+     * @param $id
+     * @return mixed
+     * @throws WasteException
+     */
+    public function getNoiseDetail($companyId, $id)
+    {
+        $where = [
+            'id' => $id,
+            'company_id' => $companyId,
+        ];
+        $result = $this->_noiseModel->getOne($where);
+        if (is_null($result)) {
+            throw new WasteException(60015);
+        }
+        $this->_checkWastePermission($result['company_id']);
+        return $result;
+    }
+
+    public function getNoiseList($params)
+    {
+        $where = [];
+        if (isset($params['equipment']) && $params['equipment']){
+            $where['built_in'] = [
+                'LIKE'=>['equipment',$params['equipment']]
+            ];
+        }
     }
 
     /**

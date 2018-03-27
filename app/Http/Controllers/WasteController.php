@@ -25,9 +25,9 @@ class WasteController extends Controller
     public function addWasteMaterial(Request $request)
     {
         $this->validate($request, [
-            'waste_category' => 'required|numeric',
-            'industry' => 'required|numeric',
-            'waste_code' => 'required|numeric',
+            'waste_category' => 'required',
+            'industry' => 'required',
+            'waste_code' => 'required',
         ]);
         $result = $this->_wasteRepository->addWasteMaterial($request->all());
         return responseTo($result, '添加危险废物信息成功');
@@ -60,7 +60,7 @@ class WasteController extends Controller
     public function getWasteMaterialDetail(Request $request)
     {
         $this->validate($request, [
-            'id' => 'required|numeric',
+            'id' => 'required',
         ]);
         $result = $this->_wasteRepository->getWasteMaterialDetail($request->get('id'));
         return responseTo($result);
@@ -74,7 +74,7 @@ class WasteController extends Controller
     public function updateWasteMaterial(Request $request)
     {
         $this->validate($request, [
-            'id' => 'required|numeric',
+            'id' => 'required',
         ]);
         $result = $this->_wasteRepository->updateWasteMaterial($request->get('id'), $request->all());
         return responseTo($result, '修改危废信息成功');
@@ -88,7 +88,7 @@ class WasteController extends Controller
     public function delWasteMaterial(Request $request)
     {
         $this->validate($request, [
-            'id' => 'required|numeric',
+            'id' => 'required',
         ]);
         $result = $this->_wasteRepository->delWasteMaterial($request->get('id'));
         return responseTo($result, '删除危废信息成功');
@@ -103,7 +103,7 @@ class WasteController extends Controller
     {
         $this->validate($request, [
             'item_no' => 'required',
-            'type' => 'required|numeric',
+            'type' => 'required',
         ]);
         $result = $this->_wasteRepository->addWasteGasTube($request->all());
         return responseTo($result, '添加排放口成功');
@@ -117,7 +117,7 @@ class WasteController extends Controller
     public function updateWasteGasTube(Request $request)
     {
         $this->validate($request, [
-            'id' => 'required|numeric',
+            'id' => 'required',
         ]);
         $result = $this->_wasteRepository->updateWasteGasTube($request->get('id'), $request->all());
         return responseTo($result, '排放口修改成功');
@@ -131,7 +131,7 @@ class WasteController extends Controller
     public function getWasteGasTubeDetail(Request $request)
     {
         $this->validate($request, [
-            'id' => 'required|numeric',
+            'id' => 'required',
         ]);
         $result = $this->_wasteRepository->getWasteGasTubeDetail($request->get('id'));
         return responseTo($result);
@@ -144,7 +144,7 @@ class WasteController extends Controller
     public function getWasteGasTubeCombo(Request $request)
     {
         $this->validate($request, [
-            'type' => 'required|numeric',
+            'type' => 'required',
         ]);
         $result = $this->_wasteRepository->getWasteGasTubeCombo($request->all());
         return responseTo($result);
@@ -158,7 +158,7 @@ class WasteController extends Controller
     public function delWasteGasTube(Request $request)
     {
         $this->validate($request, [
-            'id' => 'required|numeric',
+            'id' => 'required',
         ]);
         $result = $this->_wasteRepository->delWasteGasTube($request->get('id'));
         return responseTo($result, '删除排放口成功');
@@ -172,8 +172,8 @@ class WasteController extends Controller
     public function addWasteGas(Request $request)
     {
         $this->validate($request, [
-            'tube_id' => 'required|numeric',
-            'type' => 'required|numeric',
+            'tube_id' => 'required',
+            'type' => 'required',
         ]);
         $result = $this->_wasteRepository->addWasteGas($request->all());
         return responseTo($result, '添加废气信息成功');
@@ -187,7 +187,7 @@ class WasteController extends Controller
     public function updateWasteGas(Request $request)
     {
         $this->validate($request, [
-            'id' => 'required|numeric',
+            'id' => 'required',
         ]);
         $result = $this->_wasteRepository->updateWasteGas($request->get('id'), $request->all());
         return responseTo($result, '更新废气信息成功');
@@ -201,7 +201,7 @@ class WasteController extends Controller
     public function delWasteGas(Request $request)
     {
         $this->validate($request, [
-            'id' => 'required|numeric',
+            'id' => 'required',
         ]);
         $result = $this->_wasteRepository->delWasteGas($request->get('id'));
         return responseTo($result, '废气信息删除成功');
@@ -215,7 +215,7 @@ class WasteController extends Controller
     public function getWasteGasDetail(Request $request)
     {
         $this->validate($request, [
-            'id' => 'required|numeric',
+            'id' => 'required',
         ]);
         $result = $this->_wasteRepository->getWasteGasDetail(getUserInfo()['company_id'], $request->get('id'));
         return responseTo($result);
@@ -240,8 +240,8 @@ class WasteController extends Controller
     public function addWasteWater(Request $request)
     {
         $this->validate($request, [
-            'tube_id' => 'required|numeric',
-            'type' => 'required|numeric',
+            'tube_id' => 'required',
+            'type' => 'required',
         ]);
         $result = $this->_wasteRepository->addWasterWater($request->all());
         return responseTo($result, '添加废水信息成功');
@@ -255,7 +255,7 @@ class WasteController extends Controller
     public function updateWasteWater(Request $request)
     {
         $this->validate($request, [
-            'id' => 'required|numeric',
+            'id' => 'required',
         ]);
         $result = $this->_wasteRepository->updateWasteWater($request->get('id'), $request->all());
         return responseTo($result, '更新废水信息成功');
@@ -269,9 +269,87 @@ class WasteController extends Controller
     public function getWasteWaterDetail(Request $request)
     {
         $this->validate($request, [
-            'id' => 'required|numeric',
+            'id' => 'required',
         ]);
         $result = $this->_wasteRepository->getWasteWaterDetail(getUserInfo()['company_id'], $request->get('id'));
+        return responseTo($result);
+    }
+
+    /**
+     * 获取废水信息列表
+     * @param Request $request
+     * @return array
+     */
+    public function getWasteWaterList(Request $request)
+    {
+        $result = $this->_wasteRepository->getWasteWaterList($request->all());
+        return responseTo($result);
+    }
+
+    /**
+     * 删除废水信息
+     * @param Request $request
+     * @return array
+     */
+    public function delWasteWater(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required',
+        ]);
+        $result = $this->_wasteRepository->delWasteWater($request->get('id'));
+        return responseTo($result, '废水信息删除成功');
+    }
+
+    /**
+     * 添加噪音
+     * @param Request $request
+     * @return array
+     */
+    public function addNoise(Request $request)
+    {
+        $this->validate($request, [
+            'equipment' => 'required',
+        ]);
+        $result = $this->_wasteRepository->addNoise($request->all());
+        return responseTo($result, '添加噪音成功');
+    }
+
+    /**
+     * 修改噪音
+     * @param Request $request
+     * @return array
+     */
+    public function updateNoise(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required',
+        ]);
+        $result = $this->_wasteRepository->updateNoise($request->get('id'), $request->all());
+        return responseTo($result, '修改噪音成功');
+    }
+
+    /**
+     * 获取噪音详情
+     * @param Request $request
+     * @return array
+     */
+    public function getNoiseDetail(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required',
+        ]);
+        $result = $this->_wasteRepository->getNoiseDetail(getUserInfo()['company_id'], $request->get('id'));
+        return responseTo($result);
+    }
+
+    /**
+     * 获取废水信息列表
+     * @param Request $request
+     * @return array
+     */
+    public function getNoiseList(Request $request)
+    {
+        $result = $this->_wasteRepository->getNoiseList($request->all());
         return responseTo($result);
     }
 }

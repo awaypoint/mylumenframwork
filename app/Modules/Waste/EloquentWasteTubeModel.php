@@ -22,4 +22,13 @@ class EloquentWasteTubeModel extends CommonEloquentModel
     {
         return $this->hasMany('App\Modules\Waste\EloquentWasteGasModel', 'tube_id');
     }
+
+    /**
+     * 关联water表
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function water()
+    {
+        return $this->hasMany('App\Modules\Waste\EloquentWasteWaterModel', 'tube_id');
+    }
 }

@@ -183,8 +183,6 @@ class CompanyRepository extends CommonRepository
             DB::commit();
             return $returnData;
         } catch (\Exception $e) {
-            echo $e->getMessage();
-            die;
             DB::rollBack();
             throw new CompanyException(40009);
         }
@@ -317,27 +315,31 @@ class CompanyRepository extends CommonRepository
         if (is_null($model)) {
             throw new CompanyException(40011);
         }
-        $updateData = [];
-        $guardFillable = ['id'];
-        foreach ($params as $field => $value) {
-            if (in_array($field, $guardFillable)) {
-                continue;
+        try {
+            $updateData = [];
+            $guardFillable = ['id'];
+            foreach ($params as $field => $value) {
+                if (in_array($field, $guardFillable)) {
+                    continue;
+                }
+                if ($field == 'process_flow') {
+                    $value = json_encode($value, JSON_UNESCAPED_UNICODE);
+                }
+                if (isset($model->$field)) {
+                    $updateData[$field] = $value;
+                }
             }
-            if ($field == 'process_flow') {
-                $value = json_encode($value, JSON_UNESCAPED_UNICODE);
-            }
-            if (isset($model->$field)) {
-                $updateData[$field] = $value;
-            }
-        }
 
-        if (!empty($updateData)) {
-            $result = $model->update($updateData);
-            if (!$result) {
-                throw new CompanyException(40012);
+            if (!empty($updateData)) {
+                $result = $model->update($updateData);
+                if (!$result) {
+                    throw new CompanyException(40012);
+                }
             }
+            return ['id' => $id];
+        } catch (\Exception $e) {
+            throw new CompanyException(40012);
         }
-        return ['id' => $id];
     }
 
     /**
@@ -375,6 +377,9 @@ class CompanyRepository extends CommonRepository
         $nowTime = time();
         $userInfo = getUserInfo();
         foreach ($factorys as $factory) {
+            if (!isset($factory['address'])){
+                throw new CompanyException(40016);
+            }
             $tmp = [
                 'company_id' => $userInfo['company_id'],
                 'name' => '',

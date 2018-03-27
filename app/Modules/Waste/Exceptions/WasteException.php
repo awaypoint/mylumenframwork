@@ -21,5 +21,6 @@ class WasteException extends BaseException
         60012 => ['msg' => '排放口类型错误'],
         60013 => ['msg' => '废水类型参数错误'],
         60014 => ['msg' => '废水信息不存在'],
+        60015 => ['msg' => '噪音信息不存在'],
     ];
 }

@@ -77,4 +77,9 @@ $app->group(['prefix' => 'waste', 'middleware' => 'auth'], function () use ($app
     $app->post('addWasteWater', 'WasteController@addWasteWater');
     $app->put('updateWasteWater', 'WasteController@updateWasteWater');
     $app->get('getWasteWaterDetail', 'WasteController@getWasteWaterDetail');
+    $app->get('getWasteWaterList', 'WasteController@getWasteWaterList');
+    $app->delete('delWasteWater', 'WasteController@delWasteWater');
+    $app->post('addNoise', 'WasteController@addNoise');
+    $app->put('updateNoise', 'WasteController@updateNoise');
+    $app->get('getNoiseDetail', 'WasteController@getNoiseDetail');
 });
