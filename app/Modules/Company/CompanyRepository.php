@@ -226,9 +226,10 @@ class CompanyRepository extends CommonRepository
         if (isset($result['rows']) && !empty($result['rows'])) {
             $fileIds = [];
             foreach ($result['rows'] as $row) {
-                if ($row['process_flow'] && $row['process_flow'] != '[]') {
-                    $fileIds = array_merge($fileIds, json_decode($row['process_flow'], true));
+                if (!is_array($row['process_flow'])){
+                    $row['process_flow'] = json_decode($row['process_flow'], true);
                 }
+                $fileIds = array_merge($fileIds, $row['process_flow']);
             }
             $fileIds = array_unique($fileIds);
             if (!empty($fileIds)) {

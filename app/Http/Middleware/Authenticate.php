@@ -41,7 +41,7 @@ class Authenticate
             //return responseTo('授权失败', '授权失败', 401);
         //}
         if (env('APP_DEBUG')) {
-            Session::put('uid', 8);
+            Session::put('uid', 32);
         }
 
         return $next($request);
