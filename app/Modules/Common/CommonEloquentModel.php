@@ -11,7 +11,7 @@ class CommonEloquentModel extends Model
     {
         parent::__construct($attributes);
         $this::saving(function ($model){
-            if ($model->table == 'users'){
+            if ($model->table == 'users' || $model->table == 'company'){
                 return true;
             }
             $model->updated_by = getUserInfo()['id'];
