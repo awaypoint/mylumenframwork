@@ -42,7 +42,6 @@ class FilesController extends Controller
     {
         $this->validate($request, [
             'id' => 'required|numeric',
-            'extra_fields' => 'required',
             'relation_field' => 'required',
         ]);
         $result = $this->_filesgRepository->updateFileExtraFields($request->get('id'), $request->all());
