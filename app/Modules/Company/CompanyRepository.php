@@ -111,6 +111,7 @@ class CompanyRepository extends CommonRepository
             $fileInfo = Files::searchFilesForList($fileIds);
             $result = array_merge($result, $fileInfo);
         }
+        $result['production_time'] = intval($result['production_time']);
         if (!empty($result['factory'])) {
             foreach ($result['factory'] as &$factory) {
                 foreach ($factory as $field => $value) {
