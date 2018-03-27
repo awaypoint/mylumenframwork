@@ -226,7 +226,7 @@ class CompanyRepository extends CommonRepository
         if (isset($result['rows']) && !empty($result['rows'])) {
             $fileIds = [];
             foreach ($result['rows'] as $row) {
-                if (!is_array($row['process_flow'])){
+                if (!is_array($row['process_flow'])) {
                     $row['process_flow'] = json_decode($row['process_flow'], true);
                 }
                 $fileIds = array_merge($fileIds, $row['process_flow']);
@@ -296,6 +296,7 @@ class CompanyRepository extends CommonRepository
             'company_id' => $companyId,
             'id' => $id,
         ];
+        $this->_proValidate($params);
         $model = $this->_productModel->where($where)->first();
         if (is_null($model)) {
             throw new CompanyException(40011);
@@ -417,8 +418,16 @@ class CompanyRepository extends CommonRepository
         }
     }
 
+    /**
+     * 添加产品验证参数
+     * @param $params
+     * @param int $id
+     * @throws CompanyException
+     */
     private function _proValidate($params, $id = 0)
     {
-
+        if (isset($params['process_flow']) && !is_array($params['process_flow'])) {
+            throw new CompanyException(40007, ['fileName' => 'process_flow']);
+        }
     }
 }
