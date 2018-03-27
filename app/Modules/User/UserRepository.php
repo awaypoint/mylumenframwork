@@ -3,8 +3,10 @@
 namespace App\Modules\User;
 
 use App\Modules\Common\CommonRepository;
+use App\Modules\Company\Facades\Company;
 use GuzzleHttp\Client;
 use App\Modules\User\Exceptions\UserException;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 
 class UserRepository extends CommonRepository
@@ -148,13 +150,26 @@ class UserRepository extends CommonRepository
             'avatar_url' => $params['avatar_url'] ?? '',
             'hide_menu_ids' => '[]',
         ];
+        DB::beginTransaction();
         try {
+            $companyParams = [
+                'name'=>$params['username'],
+            ];
+            $companyResult = Company::addCompany($companyParams);
+            if (!$companyResult){
+                DB::rollBack();
+                throw new UserException(10010);
+            }
+            $addData['company_id'] = $companyResult;
             $result = $this->_userModel->add($addData);
             if (!$result) {
+                DB::rollBack();
                 throw new UserException(10004);
             }
+            DB::commit();
             return ['id' => $result];
         } catch (\Exception $e) {
+            DB::rollBack();
             throw new UserException(10004);
         }
     }

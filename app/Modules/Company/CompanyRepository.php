@@ -41,20 +41,20 @@ class CompanyRepository extends CommonRepository
         $this->_validate($params);
         $addData = [
             'name' => $params['name'],
-            'used_name' => $params['used_name'],
-            'credit_code' => $params['credit_code'],
-            'company_status' => $params['company_status'],
-            'type' => $params['type'],
-            'owner' => $params['owner'],
-            'iso' => json_encode($params['iso'], JSON_UNESCAPED_UNICODE),
-            'business_lic' => json_encode($params['business_lic'], JSON_UNESCAPED_UNICODE),
-            'industry_category' => $params['industry_category'],
-            'production_time' => $params['production_time'],
-            'annual_scale' => $params['annual_scale'],
-            'province' => $params['province'],
-            'city' => $params['city'],
-            'area' => $params['area'],
-            'address' => $params['address'],
+            'used_name' => $params['used_name'] ?? '',
+            'credit_code' => $params['credit_code'] ?? '',
+            'company_status' => $params['company_status'] ?? 0,
+            'type' => $params['type'] ?? 0,
+            'owner' => $params['owner'] ?? '',
+            'iso' => isset($params['iso']) ? json_encode($params['iso'], JSON_UNESCAPED_UNICODE) : '[]',
+            'business_lic' => isset($params['business_lic']) ? json_encode($params['business_lic'], JSON_UNESCAPED_UNICODE) : '[]',
+            'industry_category' => $params['industry_category'] ?? 0,
+            'production_time' => $params['production_time'] ?? 0,
+            'annual_scale' => $params['annual_scale'] ?? 0,
+            'province' => $params['province'] ?? '',
+            'city' => $params['city'] ?? '',
+            'area' => $params['area'] ?? '',
+            'address' => $params['address'] ?? '',
             'contacts' => $params['contacts'] ?? '',
             'tel' => $params['tel'] ?? '',
             'mobile' => $params['mobile'] ?? 0,
@@ -63,25 +63,13 @@ class CompanyRepository extends CommonRepository
             'longitude' => $params['longitude'] ?? '',
             'remark' => $params['remark'] ?? '',
         ];
-        DB::beginTransaction();
         try {
             $result = $this->_companyModel->add($addData);
             if (!$result) {
-                DB::rollBack();
                 throw new CompanyException(40003);
             }
-            if (isset($params['factory']) && !empty($params['factory'])) {
-                $factoryResult = $this->addCompanyFactory($params['factory']);
-                if (!$factoryResult) {
-                    DB::rollBack();
-                    throw new CompanyException(40014);
-                }
-            }
-            User::updateCompanyId($result);
-            DB::commit();
-            return ['company_id' => $result];
+            return ['id' => $result];
         } catch (\Exception $e) {
-            DB::rollBack();
             throw new CompanyException(40003);
         }
     }
@@ -377,7 +365,7 @@ class CompanyRepository extends CommonRepository
         $nowTime = time();
         $userInfo = getUserInfo();
         foreach ($factorys as $factory) {
-            if (!isset($factory['address'])){
+            if (!isset($factory['address'])) {
                 throw new CompanyException(40016);
             }
             $tmp = [
@@ -424,10 +412,10 @@ class CompanyRepository extends CommonRepository
             throw new CompanyException(40002, ['companyName' => $params['name']]);
         }
 
-        if (isset($params['mobile']) && !isMobile($params['mobile'])) {
+        if (isset($params['mobile']) && $params['mobile'] && !isMobile($params['mobile'])) {
             throw new CompanyException(40005);
         }
-        if (isset($params['email']) && !isEmail($params['email'])) {
+        if (isset($params['email']) && $params['email'] && !isEmail($params['email'])) {
             throw new CompanyException(40006);
         }
     }

@@ -16,5 +16,6 @@ class UserException extends BaseException
         10007 => ['msg' => '密码输入错误'],
         10008 => ['msg' => '密码修改失败'],
         10009 => ['msg' => '用户信息更新失败'],
+        10010 => ['msg' => '公司创建失败'],
     ];
 }

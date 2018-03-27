@@ -12,4 +12,14 @@ class CompanyFacades
     {
         $this->_companyRepository = $repository;
     }
+
+    /**
+     * 新建公司
+     * @param $params
+     * @return array
+     */
+    public function addCompany($params)
+    {
+        return $this->_companyRepository->addCompany($params);
+    }
 }
