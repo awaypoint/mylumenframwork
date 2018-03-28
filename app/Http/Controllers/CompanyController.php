@@ -92,7 +92,7 @@ class CompanyController extends Controller
         $orderBy = $request->get('order_by') ?? 'id';
         $sortBy = $request->get('sort_by') ?? 'DESC';
         $orderArr = [$orderBy, $sortBy];
-        $result = $this->_companyRepository->getProductList($request, $page, $pageSize, $orderArr);
+        $result = $this->_companyRepository->getProductList($request->all(), $page, $pageSize, $orderArr);
         return responseTo($result);
     }
 
