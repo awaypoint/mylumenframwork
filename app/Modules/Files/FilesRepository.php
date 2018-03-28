@@ -243,6 +243,22 @@ class FilesRepository extends CommonRepository
     }
 
     /**
+     * 通过关联字段获取最新文件
+     * @param $companyId
+     * @param $relationField
+     * @return mixed
+     */
+    public function getFileByRelationField($companyId, $relationField)
+    {
+        $where = [
+            'company_id' => $companyId,
+            'relation_field' => $relationField,
+        ];
+        $result = $this->_fileModel->getOne($where, [], ['id', 'DESC']);
+        return $result;
+    }
+
+    /**
      * 构造关联数组
      * @param $fileInfo
      * @return array

@@ -74,4 +74,18 @@ class FilesController extends Controller
         $result = $this->_filesgRepository->delFile($request->get('id'));
         return responseTo($result, '删除文件成功');
     }
+
+    /**
+     * 通过关联字段获取文件
+     * @param Request $request
+     * @return array
+     */
+    public function getFileByRelationField(Request $request)
+    {
+        $this->validate($request, [
+            'relation_field' => 'required',
+        ]);
+        $result = $this->_filesgRepository->getFileByRelationField(getUserInfo()['company_id'], $request->get('relation_field'));
+        return responseTo($result);
+    }
 }
