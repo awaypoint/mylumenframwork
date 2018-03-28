@@ -84,8 +84,11 @@ class WasteRepository extends CommonRepository
     public function getWasteMaterialList($params, $page, $pageSize, $orderBy, $fileds = [])
     {
         $where = [];
-        if (isset($params['waste_code']) && $params['waste_code']) {
-            $where['waste_code'] = $params['waste_code'];
+        if (isset($params['name']) && $params['name']) {
+            $where[] = ['waste_name', 'LIKE', '%' . $params['name'] . '%'];
+            $where['built_in'] = [
+                'orWhere' => ['commonly_called', 'LIKE', '%' . $params['name'] . '%']
+            ];
         }
         $result = $this->_wasteMaterialModel->getList($where, $fileds, $page, $pageSize, $orderBy);
         if (isset($result['rows']) && !empty($result['rows'])) {
