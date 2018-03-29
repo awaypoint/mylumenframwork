@@ -84,8 +84,11 @@ class WasteRepository extends CommonRepository
     public function getWasteMaterialList($params, $page, $pageSize, $orderBy, $fileds = [])
     {
         $where = [];
-        if (isset($params['waste_code']) && $params['waste_code']) {
-            $where['waste_code'] = $params['waste_code'];
+        if (isset($params['name']) && $params['name']) {
+            $where[] = ['waste_name', 'LIKE', '%' . $params['name'] . '%'];
+            $where['built_in'] = [
+                'orWhere' => ['commonly_called', 'LIKE', '%' . $params['name'] . '%']
+            ];
         }
         $result = $this->_wasteMaterialModel->getList($where, $fileds, $page, $pageSize, $orderBy);
         if (isset($result['rows']) && !empty($result['rows'])) {
@@ -96,11 +99,11 @@ class WasteRepository extends CommonRepository
                 $wasteTypeIds[] = $item['waste_code'];
             }
             $wasteTypeIds = array_unique($wasteTypeIds);
-            $wasteTypeInfo = Setting::searchWasteTypeForList($wasteTypeIds, ['name'], 'id');
+            $wasteTypeInfo = Setting::searchWasteTypeForList($wasteTypeIds, ['name', 'code'], 'id');
             foreach ($result['rows'] as &$row) {
                 $row['waste_category_name'] = isset($wasteTypeInfo[$row['waste_category']]) ? $wasteTypeInfo[$row['waste_category']]['name'] : '';
                 $row['industry_name'] = isset($wasteTypeInfo[$row['industry']]) ? $wasteTypeInfo[$row['industry']]['name'] : '';
-                $row['waste_code_name'] = isset($wasteTypeInfo[$row['waste_code']]) ? $wasteTypeInfo[$row['waste_code']]['name'] : '';
+                $row['waste_code_name'] = isset($wasteTypeInfo[$row['waste_code']]) ? $wasteTypeInfo[$row['waste_code']]['code'] : '';
             }
         }
         return $result;
@@ -121,10 +124,10 @@ class WasteRepository extends CommonRepository
         $result = $this->_wasteMaterialModel->getOne($where);
         $this->_checkWastePermission($result['company_id']);
         $wasteTypeIds = [$result['waste_category'], $result['industry'], $result['waste_code']];
-        $wasteTypeInfo = Setting::searchWasteTypeForList($wasteTypeIds, ['name'], 'id');
+        $wasteTypeInfo = Setting::searchWasteTypeForList($wasteTypeIds, ['name', 'code'], 'id');
         $result['waste_category_name'] = isset($wasteTypeInfo[$result['waste_category']]) ? $wasteTypeInfo[$result['waste_category']]['name'] : '';
         $result['industry_name'] = isset($wasteTypeInfo[$result['industry']]) ? $wasteTypeInfo[$result['industry']]['name'] : '';
-        $result['waste_code_name'] = isset($wasteTypeInfo[$result['waste_code']]) ? $wasteTypeInfo[$result['waste_code']]['name'] : '';
+        $result['waste_code_name'] = isset($wasteTypeInfo[$result['waste_code']]) ? $wasteTypeInfo[$result['waste_code']]['code'] : '';
         return $result;
     }
 
