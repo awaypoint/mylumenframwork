@@ -25,7 +25,7 @@ class UserRepository extends CommonRepository
 
     public function loginByPassword($params)
     {
-        try{
+        try {
             $response = $this->_http->post(env('SERVER_REQUEST_URL') . 'oauth/token', [
                 'form_params' => [
                     'grant_type' => 'password',
@@ -36,14 +36,14 @@ class UserRepository extends CommonRepository
                     'scope' => '',
                 ],
             ]);
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             throw new UserException(10001);
         }
         $result = json_decode((string)$response->getBody(), true);
         //获取用户信息
         $userInfo = $this->getUserInfoByUsername($params['username']);
         Session::put('uid', $userInfo['id']);
-        Session::put('lifetime', time() + 30);
+        Session::put('lifetime', time() + env('LIFE_SEC', 10800));
         $result['uid'] = $userInfo['id'];
         $result['company_id'] = $userInfo['company_id'];
         $result['user_type'] = 1;
@@ -154,10 +154,10 @@ class UserRepository extends CommonRepository
         DB::beginTransaction();
         try {
             $companyParams = [
-                'name'=>$params['username'],
+                'name' => $params['username'],
             ];
             $companyResult = Company::addCompany($companyParams);
-            if (!$companyResult){
+            if (!$companyResult) {
                 DB::rollBack();
                 throw new UserException(10010);
             }
