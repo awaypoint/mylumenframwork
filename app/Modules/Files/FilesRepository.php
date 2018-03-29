@@ -58,6 +58,9 @@ class FilesRepository extends CommonRepository
 
     private function setFile($file)
     {
+        if ($file->getSize() <= 0 || $file->getSize() > 5242880){
+            throw new FilesException(50006);
+        }
         $this->_file = $file;
         $this->_originalName = $file->getClientOriginalName();
         $this->_originalExtension = $file->getClientOriginalExtension();

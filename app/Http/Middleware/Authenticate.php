@@ -41,13 +41,15 @@ class Authenticate
         //return responseTo('授权失败', '授权失败', 401);
         //}
         $nowTime = time();
+        if (env('APP_DEBUG')) {
+            Session::put('uid', 8);
+            Session::put('lifetime', $nowTime + env('LIFE_SEC', 10800));
+        }
         if (!Session::has('lifetime') || Session::get('lifetime') - $nowTime < 0) {
+            Session::flush();
             return responseTo('', '您长时间未操作，登录已过期！请重新登录', 401);
         }
         Session::put('lifetime', $nowTime + env('LIFE_SEC', 10800));
-        if (env('APP_DEBUG')) {
-            Session::put('uid', 8);
-        }
 
         return $next($request);
     }
