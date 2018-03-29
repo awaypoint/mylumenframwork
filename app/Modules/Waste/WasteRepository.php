@@ -124,10 +124,10 @@ class WasteRepository extends CommonRepository
         $result = $this->_wasteMaterialModel->getOne($where);
         $this->_checkWastePermission($result['company_id']);
         $wasteTypeIds = [$result['waste_category'], $result['industry'], $result['waste_code']];
-        $wasteTypeInfo = Setting::searchWasteTypeForList($wasteTypeIds, ['name'], 'id');
+        $wasteTypeInfo = Setting::searchWasteTypeForList($wasteTypeIds, ['name','code'], 'id');
         $result['waste_category_name'] = isset($wasteTypeInfo[$result['waste_category']]) ? $wasteTypeInfo[$result['waste_category']]['name'] : '';
         $result['industry_name'] = isset($wasteTypeInfo[$result['industry']]) ? $wasteTypeInfo[$result['industry']]['name'] : '';
-        $result['waste_code_name'] = isset($wasteTypeInfo[$result['waste_code']]) ? $wasteTypeInfo[$result['waste_code']]['name'] : '';
+        $result['waste_code_name'] = isset($wasteTypeInfo[$result['waste_code']]) ? $wasteTypeInfo[$result['waste_code']]['code'] : '';
         return $result;
     }
 
