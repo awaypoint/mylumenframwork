@@ -43,6 +43,7 @@ class UserRepository extends CommonRepository
         //获取用户信息
         $userInfo = $this->getUserInfoByUsername($params['username']);
         Session::put('uid', $userInfo['id']);
+        Session::put('lifetime', time() + 30);
         $result['uid'] = $userInfo['id'];
         $result['company_id'] = $userInfo['company_id'];
         $result['user_type'] = 1;

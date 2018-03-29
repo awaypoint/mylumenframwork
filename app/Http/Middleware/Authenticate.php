@@ -40,6 +40,9 @@ class Authenticate
         //if ($this->auth->guard($guard)->guest() && !env('APP_DEBUG')) {
             //return responseTo('授权失败', '授权失败', 401);
         //}
+        if (!Session::has('lifetime') || Session::get('lifetime') - time() < 0){
+            return responseTo('', '您长时间未操作，登录已过期！请重新登录', 401);
+        }
         if (env('APP_DEBUG')) {
             Session::put('uid', 8);
         }
