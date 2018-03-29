@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Modules\User\UserRepository;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
 
 class UserController extends Controller
 {
@@ -42,14 +41,5 @@ class UserController extends Controller
         ]);
         $result = $this->_userRepository->modifyPassword($request->all());
         return responseTo($result, '密码修改成功');
-    }
-
-    /**
-     * 登出
-     */
-    public function logOut()
-    {
-        Session::flush();
-        return responseTo('退出成功');
     }
 }
