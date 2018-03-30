@@ -90,6 +90,7 @@ class CompanyRepository extends CommonRepository
         }
         $result['iso'] = json_decode($result['iso'], true);
         $result['business_lic'] = json_decode($result['business_lic'], true);
+        $result['iso_files'] = $result['business_lic_files'] = [];
         $fileIds = array_merge($result['iso'], $result['business_lic']);
         if (!empty($fileIds)) {
             $fileInfo = Files::searchFilesForList($fileIds);
