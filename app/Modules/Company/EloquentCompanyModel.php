@@ -13,8 +13,8 @@ class EloquentCompanyModel extends CommonEloquentModel
     protected $dateFormat = 'U';
     //采用白名单模式
     public $fillable = ['id', 'name', 'company_status', 'credit_code', 'used_name', 'owner', 'type', 'contacts', 'tel', 'mobile',
-        'email', 'latitude', 'longitude', 'address', 'area', 'industry_category', 'production_time', 'province', 'city', 'area',
-        'annual_scale', 'business_lic', 'iso', 'remark'];
+        'email', 'latitude', 'longitude', 'address', 'industry_category', 'production_time', 'province', 'city', 'area',
+        'annual_scale', 'business_lic', 'iso', 'remark', 'province_code', 'city_code', 'area_code'];
 
     /**
      * 关联factory表

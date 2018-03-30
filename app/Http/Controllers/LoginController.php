@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Session;
 use Laravel\Lumen\Routing\Controller as BaseController;
 use App\Modules\User\UserRepository;
 use Illuminate\Http\Request;
@@ -48,5 +49,14 @@ class LoginController extends BaseController
 
         $result = $this->_userRepository->register($request->all());
         return responseTo($result, '注册成功');
+    }
+
+    /**
+     * 登出
+     */
+    public function logOut()
+    {
+        Session::flush();
+        return responseTo('退出成功');
     }
 }

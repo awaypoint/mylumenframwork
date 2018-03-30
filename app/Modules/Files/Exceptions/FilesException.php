@@ -12,5 +12,6 @@ class FilesException extends BaseException
         50003=>['msg'=>'您没有修改此文件权限'],
         50004=>['msg'=>'文件信息更新失败'],
         50005=>['msg'=>'文件删除失败'],
+        50006=>['msg'=>'只支持上传小于5M的文件'],
     ];
 }
