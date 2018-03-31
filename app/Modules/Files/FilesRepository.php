@@ -60,7 +60,7 @@ class FilesRepository extends CommonRepository
 
     private function setFile($file)
     {
-        if ($file->getSize() <= 0 || $file->getSize() > 5242880){
+        if ($file->getSize() <= 0 || $file->getSize() > 5242880) {
             throw new FilesException(50006);
         }
         $this->_file = $file;
@@ -185,7 +185,8 @@ class FilesRepository extends CommonRepository
             'company_id' => getUserInfo()['company_id'],
             'module_type' => $params['module_type'],
         ];
-        $fileInfo = $this->_fileModel->searchData($where);
+        $fields = ['id', 'relation_field', 'file_name', 'preview_url', 'url', 'extra_fields'];
+        $fileInfo = $this->_fileModel->searchData($where, $fields);
         $fileInfo = $this->_dealFilesRelation($fileInfo);
         $result = [];
         foreach (self::FILES_COMPANY_RELATION_FIELDS as $relationField => $name) {
@@ -209,7 +210,7 @@ class FilesRepository extends CommonRepository
      */
     public function searchFilesForList($fileIds, $type = 1)
     {
-        $fields = ['id', 'relation_field', 'file_name', 'url', 'extra_fields'];
+        $fields = ['id', 'relation_field', 'file_name', 'preview_url', 'url', 'extra_fields'];
         $fileInfo = $this->_fileModel->whereIn('id', $fileIds)
             ->select($fields)
             ->get()->toArray();
