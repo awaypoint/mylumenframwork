@@ -62,6 +62,21 @@ class CompanyController extends Controller
      */
     public function updateCompany(Request $request)
     {
+        $this->validate($request, [
+            'name' => 'required',
+            'used_name' => 'required',
+            'credit_code' => 'required',
+            'company_status' => 'required',
+            'type' => 'required',
+            'owner' => 'required',
+            'industry_category' => 'required',
+            'production_time' => 'required',
+            'annual_scale' => 'required',
+            'province_code' => 'required',
+            'city_code' => 'required',
+            'area_code' => 'required',
+            'address' => 'required',
+        ]);
         $result = $this->_companyRepository->updateCompany($request->all());
         return responseTo($result, '企业信息修改成功');
     }
@@ -120,6 +135,7 @@ class CompanyController extends Controller
     {
         $this->validate($request, [
             'id' => 'required',
+            'name' => 'required',
         ]);
         $userInfo = getUserInfo(['company_id']);
         $result = $this->_companyRepository->updateProduct($userInfo['company_id'], $request->get('id'), $request->all());

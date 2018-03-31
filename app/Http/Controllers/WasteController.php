@@ -28,6 +28,7 @@ class WasteController extends Controller
             'waste_category' => 'required',
             'industry' => 'required',
             'waste_code' => 'required',
+            'waste_name' => 'required',
         ]);
         $result = $this->_wasteRepository->addWasteMaterial($request->all());
         return responseTo($result, '添加危险废物信息成功');
@@ -75,6 +76,10 @@ class WasteController extends Controller
     {
         $this->validate($request, [
             'id' => 'required',
+            'waste_category' => 'required',
+            'industry' => 'required',
+            'waste_code' => 'required',
+            'waste_name' => 'required',
         ]);
         $result = $this->_wasteRepository->updateWasteMaterial($request->get('id'), $request->all());
         return responseTo($result, '修改危废信息成功');
@@ -118,6 +123,7 @@ class WasteController extends Controller
     {
         $this->validate($request, [
             'id' => 'required',
+            'item_no' => 'required',
         ]);
         $result = $this->_wasteRepository->updateWasteGasTube($request->get('id'), $request->all());
         return responseTo($result, '排放口修改成功');
@@ -189,6 +195,9 @@ class WasteController extends Controller
     {
         $this->validate($request, [
             'id' => 'required',
+            'tube_id' => 'required',
+            'type' => 'required',
+            'waste_name' => 'required',
         ]);
         $result = $this->_wasteRepository->updateWasteGas($request->get('id'), $request->all());
         return responseTo($result, '更新废气信息成功');
@@ -331,6 +340,7 @@ class WasteController extends Controller
     {
         $this->validate($request, [
             'id' => 'required',
+            'equipment' => 'required',
         ]);
         $result = $this->_wasteRepository->updateNoise($request->get('id'), $request->all());
         return responseTo($result, '修改噪音成功');
@@ -404,6 +414,7 @@ class WasteController extends Controller
     {
         $this->validate($request, [
             'id' => 'required',
+            'equipment' => 'required',
         ]);
         $result = $this->_wasteRepository->updateNucleus($request->get('id'), $request->all());
         return responseTo($result, '修改辐射成功');

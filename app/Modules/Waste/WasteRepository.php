@@ -537,10 +537,10 @@ class WasteRepository extends CommonRepository
                 if (!empty($row['gases'])) {
                     $newGas = [];
                     foreach ($row['gases'] as $gas) {
-                        $wasteIds[] = $gas['waste_name'];
                         if (isset($params['waste_name']) && $params['waste_name'] && strpos($gas['waste_name'], $params['waste_name']) === false) {
                             continue;
                         }
+                        $wasteIds[] = $gas['waste_name'];
                         $tmp = [
                             'type_name' => Waste::WASTE_GAS_TYPE_MAP[$gas['type']] ?? '',
                         ];
@@ -577,9 +577,8 @@ class WasteRepository extends CommonRepository
                 }
                 if (!empty($item['gases'])) {
                     foreach ($item['gases'] as &$newGas) {
-                        $newGas['waste'] = '';
                         if (isset($wasteInfo[$newGas['waste_name']])) {
-                            $newGas['waste'] = $wasteInfo[$newGas['waste_name']]['name'];
+                            $newGas['waste_name'] = $wasteInfo[$newGas['waste_name']]['name'];
                         }
                     }
                 }
@@ -730,11 +729,11 @@ class WasteRepository extends CommonRepository
                 if (!empty($row['water'])) {
                     $newWater = [];
                     foreach ($row['water'] as $water) {
-                        //污染物信息
-                        $wasteIds[] = $water['waste_name'];
                         if (isset($params['waste_name']) && $params['waste_name'] && strpos($water['waste_name'], $params['waste_name']) === false) {
                             continue;
                         }
+                        //污染物信息
+                        $wasteIds[] = $water['waste_name'];
                         $tmp = [
                             'type_name' => Waste::WASTE_WATER_TYPE_MAP[$water['type']] ?? '',
                         ];
@@ -771,9 +770,8 @@ class WasteRepository extends CommonRepository
                 }
                 if (!empty($item['water'])) {
                     foreach ($item['water'] as &$newWater) {
-                        $newWater['waste'] = '';
                         if (isset($wasteInfo[$newWater['waste_name']])) {
-                            $newWater['waste'] = $wasteInfo[$newWater['waste_name']]['name'];
+                            $newWater['waste_name'] = $wasteInfo[$newWater['waste_name']]['name'];
                         }
                     }
                 }
