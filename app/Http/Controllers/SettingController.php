@@ -120,6 +120,7 @@ class SettingController extends Controller
     public function addWaste(Request $request)
     {
         $this->validate($request, [
+            'type' => 'required',
             'name' => 'required',
         ]);
         $result = $this->_settingRepository->addWaste($request->all());
@@ -133,6 +134,9 @@ class SettingController extends Controller
      */
     public function getWasteCombo(Request $request)
     {
+        $this->validate($request, [
+            'type' => 'required'
+        ]);
         $result = $this->_settingRepository->getWasteCombo($request->all());
         return responseTo($result);
     }

@@ -5,6 +5,7 @@ namespace App\Modules\Setting;
 use App\Modules\Common\CommonRepository;
 use App\Modules\Role\Facades\Role;
 use App\Modules\Setting\Exceptions\SettingException;
+use App\Modules\Setting\Facades\Setting;
 use App\Modules\User\Facades\User;
 
 class SettingRepository extends CommonRepository
@@ -190,7 +191,11 @@ class SettingRepository extends CommonRepository
      */
     public function addWaste($params)
     {
+        if (!isset(Setting::SETTING_WASTE_TYPE_MAP[$params['type']])){
+            throw new SettingException(30003);
+        }
         $addData = [
+            'type' => $params['type'],
             'name' => $params['name'],
             'code' => $params['code'] ?? '',
         ];
@@ -212,9 +217,11 @@ class SettingRepository extends CommonRepository
      */
     public function getWasteCombo($params)
     {
-        $where = [];
-        if (isset($params['name']) && $params['name']){
-            $where[] = ['name','LIKE','%'.$params['name'].'%'];
+        $where = [
+            'type' => $params['type'],
+        ];
+        if (isset($params['name']) && $params['name']) {
+            $where[] = ['name', 'LIKE', '%' . $params['name'] . '%'];
         }
         return $this->_wasteModel->searchData($where);
     }

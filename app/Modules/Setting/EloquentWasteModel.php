@@ -12,5 +12,5 @@ class EloquentWasteModel extends CommonEloquentModel
     protected $table = 'waste';
     protected $dateFormat = 'U';
     //采用白名单模式
-    public $fillable = ['id', 'name', 'code'];
+    public $fillable = ['id', 'type', 'name', 'code'];
 }
