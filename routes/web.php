@@ -30,6 +30,10 @@ $app->group(['prefix' => '/setting', 'middleware' => 'auth'], function () use ($
     $app->get('getWasteTypeCombo', 'SettingController@getWasteTypeCombo');
     $app->put('updateUserMenu', 'SettingController@updateUserMenu');
     $app->post('forbittenAdmin', 'SettingController@forbittenAdmin');
+    $app->post('addIndustrialPark', 'SettingController@addIndustrialPark');
+    $app->get('getIndustrialParkCombo', 'SettingController@getIndustrialParkCombo');
+    $app->post('addWaste', 'SettingController@addWaste');
+    $app->get('getWasteCombo', 'SettingController@getWasteCombo');
 });
 //用户
 $app->group(['prefix' => 'users', 'middleware' => 'auth'], function () use ($app) {

@@ -14,7 +14,7 @@ class EloquentCompanyModel extends CommonEloquentModel
     //采用白名单模式
     public $fillable = ['id', 'name', 'company_status', 'credit_code', 'used_name', 'owner', 'type', 'contacts', 'tel', 'mobile',
         'email', 'latitude', 'longitude', 'address', 'industry_category', 'production_time', 'province', 'city', 'area',
-        'annual_scale', 'business_lic', 'iso', 'remark', 'province_code', 'city_code', 'area_code'];
+        'annual_scale', 'business_lic', 'iso', 'remark', 'province_code', 'city_code', 'area_code', 'industrial_park_code', 'industrial_park'];
 
     /**
      * 关联factory表

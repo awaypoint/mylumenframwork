@@ -4,12 +4,16 @@ namespace App\Modules\Setting;
 
 use App\Modules\Common\CommonRepository;
 use App\Modules\Role\Facades\Role;
+use App\Modules\Setting\Exceptions\SettingException;
 use App\Modules\User\Facades\User;
 
 class SettingRepository extends CommonRepository
 {
     private $_menuModel;
     private $_wasteTypeModel;
+    private $_industrialParkModel;
+    private $_wasteModel;
+
     private $_myPermissions = [];
     private $_hideMenuIds = [];
 
@@ -17,11 +21,15 @@ class SettingRepository extends CommonRepository
 
     public function __construct(
         EloquentMenuModel $menuModel,
-        EloquentWasteTypeModel $wasteTypeModel
+        EloquentWasteTypeModel $wasteTypeModel,
+        EloquentIndustrialParkModel $industrialParkModel,
+        EloquentWasteModel $wasteModel
     )
     {
         $this->_menuModel = $menuModel;
         $this->_wasteTypeModel = $wasteTypeModel;
+        $this->_industrialParkModel = $industrialParkModel;
+        $this->_wasteModel = $wasteModel;
     }
 
     /**
@@ -123,5 +131,91 @@ class SettingRepository extends CommonRepository
             }
         }
         return $result;
+    }
+
+    /**
+     * 添加工业园区
+     * @param $params
+     * @return array
+     * @throws SettingException
+     */
+    public function addIndustrialPark($params)
+    {
+        $addData = [
+            'name' => $params['name'],
+            'province_code' => $params['province_code'],
+            'city_code' => $params['city_code'],
+            'area_code' => $params['area_code'],
+        ];
+        try {
+            $result = $this->_industrialParkModel->add($addData);
+            if (!$result) {
+                throw new SettingException(30001);
+            }
+            return ['id' => $result];
+        } catch (\Exception $e) {
+            throw new SettingException(30001);
+        }
+    }
+
+    /**
+     * 获取工业园区列表
+     * @param $params
+     * @return mixed
+     */
+    public function getIndustrialParkCombo($params)
+    {
+        $where = [];
+        if (isset($params['name']) && $params['name']) {
+            $where[] = ['name', 'LIKE', '%' . $params['name'] . '%'];
+        }
+        if (isset($params['province_code']) && $params['province_code'] > 0) {
+            $where[] = ['province_code', '=', $params['province_code']];
+        }
+        if (isset($params['city_code']) && $params['city_code'] > 0) {
+            $where[] = ['city_code', '=', $params['city_code']];
+        }
+        if (isset($params['area_code']) && $params['area_code'] > 0) {
+            $where[] = ['area_code', '=', $params['area_code']];
+        }
+        $fileds = ['id', 'name'];
+        $result = $this->_industrialParkModel->searchData($where, $fileds);
+        return $result;
+    }
+
+    /**
+     * 添加污染物
+     * @param $params
+     * @throws SettingException
+     */
+    public function addWaste($params)
+    {
+        $addData = [
+            'name' => $params['name'],
+            'code' => $params['code'] ?? '',
+        ];
+        try {
+            $result = $this->_wasteModel->add($addData);
+            if (!$result) {
+                throw new SettingException(30002);
+            }
+            return ['id' => $result];
+        } catch (\Exception $e) {
+            throw new SettingException(30002);
+        }
+    }
+
+    /**
+     * 获取污染物下拉框
+     * @param $params
+     * @return mixed
+     */
+    public function getWasteCombo($params)
+    {
+        $where = [];
+        if (isset($params['name']) && $params['name']){
+            $where[] = ['name','LIKE','%'.$params['name'].'%'];
+        }
+        return $this->_wasteModel->searchData($where);
     }
 }

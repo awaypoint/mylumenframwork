@@ -83,4 +83,57 @@ class SettingController extends Controller
         $result = $relationModel->addBatch($addData);
         return responseTo($result);
     }
+
+    /**
+     * 添加工业园区
+     * @param Request $request
+     * @return array
+     */
+    public function addIndustrialPark(Request $request)
+    {
+        $this->validate($request, [
+            'name' => 'required',
+            'province_code' => 'required',
+            'city_code' => 'required',
+            'area_code' => 'required',
+        ]);
+        $result = $this->_settingRepository->addIndustrialPark($request->all());
+        return responseTo($result, '添加工业园区成功');
+    }
+
+    /**
+     * 获取工业园区列表
+     * @param Request $request
+     * @return array
+     */
+    public function getIndustrialParkCombo(Request $request)
+    {
+        $result = $this->_settingRepository->getIndustrialParkCombo($request->all());
+        return responseTo($result);
+    }
+
+    /**
+     * 添加污染物
+     * @param Request $request
+     * @return array
+     */
+    public function addWaste(Request $request)
+    {
+        $this->validate($request, [
+            'name' => 'required',
+        ]);
+        $result = $this->_settingRepository->addWaste($request->all());
+        return responseTo($result);
+    }
+
+    /**
+     * 获取污染物下拉框
+     * @param Request $request
+     * @return array
+     */
+    public function getWasteCombo(Request $request)
+    {
+        $result = $this->_settingRepository->getWasteCombo($request->all());
+        return responseTo($result);
+    }
 }
