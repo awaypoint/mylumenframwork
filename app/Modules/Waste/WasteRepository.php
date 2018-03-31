@@ -313,12 +313,13 @@ class WasteRepository extends CommonRepository
         if (!isset(Waste::WASTE_GAS_TYPE_MAP[$params['type']])) {
             throw new WasteException(60006);
         }
+        Setting::checkWasteExist($params['waste_name'], Setting::SETTING_WASTE_GAS_TYPE, ['id']);
         $userInfo = getUserInfo();
         $addData = [
             'company_id' => $userInfo['company_id'],
             'tube_id' => $params['tube_id'],
             'type' => $params['type'],
-            'waste_name' => $params['waste_name'] ?? '',
+            'waste_name' => $params['waste_name'],
             'gas_discharge' => $params['gas_discharge'] ?? 0,
             'equipment' => $params['equipment'] ?? '',
             'discharge_level' => $params['discharge_level'] ?? 0,
@@ -353,6 +354,9 @@ class WasteRepository extends CommonRepository
         $where = [
             'id' => $id,
         ];
+        if (isset($params['waste_name']) && $params['waste_name']) {
+            Setting::checkWasteExist($params['waste_name'], Setting::SETTING_WASTE_GAS_TYPE, ['id']);
+        }
         $model = $this->_wasteGasModel->where($where)->first();
         if (is_null($model)) {
             throw new WasteException(60003);
@@ -487,6 +491,9 @@ class WasteRepository extends CommonRepository
         $tubeWhere = [
             'id' => $result['tube_id'],
         ];
+        //污染物信息
+        $wasteInfo = Setting::checkWasteExist($result['waste_name'], Setting::SETTING_WASTE_GAS_TYPE, ['name']);
+        $result['waste'] = $wasteInfo['name'];
         $result['type_name'] = Waste::WASTE_GAS_TYPE_MAP[$result['type']] ?? '';
         $gasTubeInfo = $this->_wasteTubeModel->getOne($tubeWhere, ['item_no']);
         if (is_null($gasTubeInfo)) {
@@ -520,7 +527,7 @@ class WasteRepository extends CommonRepository
         $gasFields = ['id', 'type', 'waste_name', 'gas_discharge', 'discharge_level', 'equipment', 'technique', 'installations', 'remark'];
         $result = $this->_wasteTubeModel->getList($where, $tubeFields);
         if (isset($result['rows']) && !empty($result['rows'])) {
-            $allFileIds = [];
+            $wasteInfo = $wasteIds = $filesInfo = $allFileIds = [];
             foreach ($result['rows'] as &$row) {
                 $row['pics_files'] = [];
                 $row['check_files'] = [];
@@ -530,6 +537,7 @@ class WasteRepository extends CommonRepository
                 if (!empty($row['gases'])) {
                     $newGas = [];
                     foreach ($row['gases'] as $gas) {
+                        $wasteIds[] = $gas['waste_name'];
                         if (isset($params['waste_name']) && $params['waste_name'] && strpos($gas['waste_name'], $params['waste_name']) === false) {
                             continue;
                         }
@@ -548,19 +556,30 @@ class WasteRepository extends CommonRepository
             }
             if (!empty($allFileIds)) {
                 $filesInfo = Files::searchFilesForList($allFileIds, 2);
-                foreach ($result['rows'] as &$item) {
-                    if (!empty($item['pics'])) {
-                        foreach ($item['pics'] as $pic) {
-                            if (isset($filesInfo[$pic])) {
-                                $item['pics_files'][] = $filesInfo[$pic];
-                            }
+            }
+            if (!empty($wasteIds)) {
+                $wasteInfo = Setting::searchWasteForList($wasteIds, ['name'], 'id');
+            }
+            foreach ($result['rows'] as &$item) {
+                if (!empty($item['pics'])) {
+                    foreach ($item['pics'] as $pic) {
+                        if (isset($filesInfo[$pic])) {
+                            $item['pics_files'][] = $filesInfo[$pic];
                         }
                     }
-                    if (!empty($item['check'])) {
-                        foreach ($item['check'] as $check) {
-                            if (isset($filesInfo[$check])) {
-                                $item['check_files'][] = $filesInfo[$check];
-                            }
+                }
+                if (!empty($item['check'])) {
+                    foreach ($item['check'] as $check) {
+                        if (isset($filesInfo[$check])) {
+                            $item['check_files'][] = $filesInfo[$check];
+                        }
+                    }
+                }
+                if (!empty($item['gases'])) {
+                    foreach ($item['gases'] as &$newGas) {
+                        $newGas['waste'] = '';
+                        if (isset($wasteInfo[$newGas['waste_name']])) {
+                            $newGas['waste'] = $wasteInfo[$newGas['waste_name']]['name'];
                         }
                     }
                 }
@@ -580,12 +599,13 @@ class WasteRepository extends CommonRepository
         if (!isset(Waste::WASTE_WATER_TYPE_MAP[$params['type']])) {
             throw new WasteException(60013);
         }
+        Setting::checkWasteExist($params['waste_name'], Setting::SETTING_WASTE_WATER_TYPE, ['id']);
         $userInfo = getUserInfo();
         $addData = [
             'company_id' => $userInfo['company_id'],
             'tube_id' => $params['tube_id'],
             'type' => $params['type'],
-            'waste_name' => $params['waste_name'] ?? '',
+            'waste_name' => $params['waste_name'],
             'water_discharge' => $params['water_discharge'] ?? 0,
             'discharge_level' => $params['discharge_level'] ?? 0,
             'technique' => $params['technique'] ?? '',
@@ -619,6 +639,9 @@ class WasteRepository extends CommonRepository
         ];
         if (isset($params['type']) && !isset(Waste::WASTE_WATER_TYPE_MAP[$params['type']])) {
             throw new WasteException(60013);
+        }
+        if (isset($params['waste_name']) && $params['name']) {
+            Setting::checkWasteExist($params['waste_name'], Setting::SETTING_WASTE_WATER_TYPE, ['id']);
         }
         $model = $this->_wasteWaterModel->where($where)->first();
         if (is_null($model)) {
@@ -669,6 +692,8 @@ class WasteRepository extends CommonRepository
         $tubeWhere = [
             'id' => $result['tube_id'],
         ];
+        $wasteInfo = Setting::checkWasteExist($result['waste_name'], Setting::SETTING_WASTE_WATER_TYPE, ['name']);
+        $result['waste'] = $wasteInfo['name'];
         $result['type_name'] = Waste::WASTE_WATER_TYPE_MAP[$result['type']] ?? '';
         $gasTubeInfo = $this->_wasteTubeModel->getOne($tubeWhere, ['item_no']);
         if (is_null($gasTubeInfo)) {
@@ -695,7 +720,7 @@ class WasteRepository extends CommonRepository
         $waterFields = ['id', 'type', 'waste_name', 'water_discharge', 'discharge_level', 'water_direction', 'technique', 'waste_plants', 'daily_process', 'remark'];
         $result = $this->_wasteTubeModel->getList($where, $tubeFields, $page, $pageSize, $orderBy);
         if (isset($result['rows']) && !empty($result['rows'])) {
-            $allFileIds = [];
+            $wasteInfo = $filesInfo = $wasteIds = $allFileIds = [];
             foreach ($result['rows'] as &$row) {
                 $row['pics_files'] = [];
                 $row['check_files'] = [];
@@ -705,6 +730,8 @@ class WasteRepository extends CommonRepository
                 if (!empty($row['water'])) {
                     $newWater = [];
                     foreach ($row['water'] as $water) {
+                        //污染物信息
+                        $wasteIds[] = $water['waste_name'];
                         if (isset($params['waste_name']) && $params['waste_name'] && strpos($water['waste_name'], $params['waste_name']) === false) {
                             continue;
                         }
@@ -723,19 +750,30 @@ class WasteRepository extends CommonRepository
             }
             if (!empty($allFileIds)) {
                 $filesInfo = Files::searchFilesForList($allFileIds, 2);
-                foreach ($result['rows'] as &$item) {
-                    if (!empty($item['pics'])) {
-                        foreach ($item['pics'] as $pic) {
-                            if (isset($filesInfo[$pic])) {
-                                $item['pics_files'][] = $filesInfo[$pic];
-                            }
+            }
+            if (!empty($wasteIds)) {
+                $wasteInfo = Setting::searchWasteForList($wasteIds, ['name'], 'id');
+            }
+            foreach ($result['rows'] as &$item) {
+                if (!empty($item['pics'])) {
+                    foreach ($item['pics'] as $pic) {
+                        if (isset($filesInfo[$pic])) {
+                            $item['pics_files'][] = $filesInfo[$pic];
                         }
                     }
-                    if (!empty($item['check'])) {
-                        foreach ($item['check'] as $check) {
-                            if (isset($filesInfo[$check])) {
-                                $item['check_files'][] = $filesInfo[$check];
-                            }
+                }
+                if (!empty($item['check'])) {
+                    foreach ($item['check'] as $check) {
+                        if (isset($filesInfo[$check])) {
+                            $item['check_files'][] = $filesInfo[$check];
+                        }
+                    }
+                }
+                if (!empty($item['water'])) {
+                    foreach ($item['water'] as &$newWater) {
+                        $newWater['waste'] = '';
+                        if (isset($wasteInfo[$newWater['waste_name']])) {
+                            $newWater['waste'] = $wasteInfo[$newWater['waste_name']]['name'];
                         }
                     }
                 }

@@ -174,6 +174,7 @@ class WasteController extends Controller
         $this->validate($request, [
             'tube_id' => 'required',
             'type' => 'required',
+            'waste_name' => 'required',
         ]);
         $result = $this->_wasteRepository->addWasteGas($request->all());
         return responseTo($result, '添加废气信息成功');
@@ -242,6 +243,7 @@ class WasteController extends Controller
         $this->validate($request, [
             'tube_id' => 'required',
             'type' => 'required',
+            'waste_name' => 'required',
         ]);
         $result = $this->_wasteRepository->addWasterWater($request->all());
         return responseTo($result, '添加废水信息成功');

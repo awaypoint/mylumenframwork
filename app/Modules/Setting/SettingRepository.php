@@ -191,7 +191,7 @@ class SettingRepository extends CommonRepository
      */
     public function addWaste($params)
     {
-        if (!isset(Setting::SETTING_WASTE_TYPE_MAP[$params['type']])){
+        if (!isset(Setting::SETTING_WASTE_TYPE_MAP[$params['type']])) {
             throw new SettingException(30003);
         }
         $addData = [
@@ -224,5 +224,52 @@ class SettingRepository extends CommonRepository
             $where[] = ['name', 'LIKE', '%' . $params['name'] . '%'];
         }
         return $this->_wasteModel->searchData($where);
+    }
+
+    /**
+     * 通过条件获取污染物名称
+     * @param $id
+     * @param array $fields
+     * @return mixed
+     */
+    public function checkWasteExist($id, $type, $fields = [])
+    {
+        $where = [
+            'id' => $id,
+            'type' => $type,
+        ];
+        $result = $this->_wasteModel->getOne($where, $fields);
+        if (is_null($result)) {
+            throw new SettingException(30004);
+        }
+        return $result;
+    }
+
+    /**
+     * 污染物列表匹配
+     * @param $wasteIds
+     * @param array $fields
+     * @param string $indexKey
+     * @param array $replaceWhere
+     * @return array|mixed
+     */
+    public function searchWasteForList($wasteIds, $fields = [], $indexKey = '', $replaceWhere = [])
+    {
+        $where = [
+            'built_in' => [
+                'whereIn' => ['id', $wasteIds],
+            ]
+        ];
+        if (!empty($replaceWhere)) {
+            $where = $replaceWhere;
+        }
+        if (!empty($fields) && $indexKey) {
+            $fields = array_unique(array_merge($fields, [$indexKey]));
+        }
+        $result = $this->_wasteModel->searchData($where, $fields);
+        if ($indexKey) {
+            $result = array_column($result, null, $indexKey);
+        }
+        return $result;
     }
 }
