@@ -444,6 +444,18 @@ class WasteRepository extends CommonRepository
             throw new WasteException(60008);
         }
         $this->_checkWastePermission($model->company_id);
+        $dateWhere = [
+            'company_id' => $model->company_id,
+            'tube_id' => $id,
+        ];
+        $existGas = $this->_wasteGasModel->getOne($dateWhere, ['id']);
+        if (!is_null($existGas)) {
+            throw new WasteException(60018);
+        }
+        $existWater = $this->_wasteWaterModel->getOne($where, ['id']);
+        if (!is_null($existWater)) {
+            throw new WasteException(60019);
+        }
         try {
             $result = $model->delete();
             if ($result === false) {
