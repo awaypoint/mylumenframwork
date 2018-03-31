@@ -54,6 +54,7 @@ $app->group(['prefix' => 'files', 'middleware' => 'auth'], function () use ($app
     $app->put('updateFileExtraFields', 'FilesController@updateFileExtraFields');
     $app->delete('delFile', 'FilesController@delFile');
     $app->get('getFileByRelationField', 'FilesController@getFileByRelationField');
+    $app->post('testExcel', 'FilesController@testExcel');
 });
 //产污情况
 $app->group(['prefix' => 'waste', 'middleware' => 'auth'], function () use ($app) {

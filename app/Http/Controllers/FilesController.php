@@ -88,4 +88,9 @@ class FilesController extends Controller
         $result = $this->_filesgRepository->getFileByRelationField(getUserInfo()['company_id'], $request->get('relation_field'));
         return responseTo($result);
     }
+
+    public function testExcel(Request $request)
+    {
+        $this->_filesgRepository->excel2Html($request->file('text'));
+    }
 }

@@ -7,6 +7,8 @@ use App\Modules\Files\Exceptions\FilesException;
 use App\Modules\Files\Facades\Files;
 use JohnLui\AliyunOSS;
 use Exception;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Writer\Html;
 
 class FilesRepository extends CommonRepository
 {
@@ -90,11 +92,13 @@ class FilesRepository extends CommonRepository
             throw new FilesException(50001);
         }
         $url = $this->getPublicObjectURL($prefix . $ossKey);
-        $fileLogId = $this->addFilesLog($userInfo['company_id'], $relationField, $ossKey, $url);
+        $previewUrl = $url;
+        $fileLogId = $this->addFilesLog($userInfo['company_id'], $relationField, $ossKey, $url, $previewUrl);
         $returnData = [
             'id' => $fileLogId,
             'file_name' => $this->_originalName,
             'url' => $url,
+            'preview_url' => $previewUrl,
         ];
         return $returnData;
     }
@@ -106,13 +110,14 @@ class FilesRepository extends CommonRepository
      * @param $url
      * @throws FilesException
      */
-    public function addFilesLog($companyId, $relationField, $ossKey, $url)
+    public function addFilesLog($companyId, $relationField, $ossKey, $url, $previewUrl = '')
     {
         $addData = [
             'company_id' => $companyId,
             'relation_field' => $relationField,
             'file_name' => $this->_originalName,
             'url' => $url,
+            'preview_url' => $previewUrl,
             'oss_key' => $ossKey,
             'extra_fields' => '',
             'module_type' => 0,
@@ -259,6 +264,15 @@ class FilesRepository extends CommonRepository
         ];
         $result = $this->_fileModel->getOne($where, [], ['id', 'DESC']);
         return $result;
+    }
+
+    public function excel2Html($file)
+    {
+        $this->setFile($file);
+        $objReader = IOFactory::createReader('Xls');
+        $objExcel = $objReader->load($this->_pathname);
+        $htmlWrite = new Html($objExcel);
+        $htmlWrite->save('D:\test.htm');
     }
 
     /**

@@ -12,5 +12,5 @@ class EloquentFilesModel extends CommonEloquentModel
     protected $table = 'files';
     protected $dateFormat = 'U';
     //采用白名单模式
-    public $fillable = ['id','module_type', 'company_id', 'relation_field', 'file_name', 'url', 'oss_key', 'remark', 'extra_fields'];
+    public $fillable = ['id', 'module_type', 'company_id', 'relation_field', 'file_name', 'preview_url', 'url', 'oss_key', 'remark', 'extra_fields'];
 }
