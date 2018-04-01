@@ -441,7 +441,7 @@ class CompanyRepository extends CommonRepository
             if (!empty($params['business_lic'])) {
                 foreach ($params['business_lic'] as $param) {
                     if (!is_numeric($param)) {
-                        throw new CompanyException(40007, ['fileName' => 'business_lic认证']);
+                        throw new CompanyException(40007, ['fileName' => '营业执照']);
                     }
                 }
             }
