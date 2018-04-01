@@ -93,4 +93,5 @@ $app->group(['prefix' => 'waste', 'middleware' => 'auth'], function () use ($app
     $app->get('getNucleusList', 'WasteController@getNucleusList');
     $app->delete('delNucleus', 'WasteController@delNucleus');
     $app->get('getWasteGasReport', 'WasteController@getWasteGasReport');
+    $app->get('getWasteWaterReport', 'WasteController@getWasteWaterReport');
 });

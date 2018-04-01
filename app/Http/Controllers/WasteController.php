@@ -475,4 +475,15 @@ class WasteController extends Controller
         $result = $this->_wasteRepository->getWasteGasReport($request->all());
         return responseTo($result);
     }
+
+    /**
+     * 获取废水柱状图
+     * @param Request $request
+     * @return array
+     */
+    public function getWasteWaterReport(Request $request)
+    {
+        $result = $this->_wasteRepository->getWasteWaterReport($request->all());
+        return responseTo($result);
+    }
 }

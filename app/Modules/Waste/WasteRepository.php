@@ -1124,6 +1124,37 @@ class WasteRepository extends CommonRepository
     }
 
     /**
+     * 获取废水柱状图
+     * @param $params
+     * @return array
+     */
+    public function getWasteWaterReport($params)
+    {
+        $where = [];
+        if (isset($params['start_time']) && $params['start_time'] > 0) {
+            $where[] = ['created_at', '>=', $params['start_time']];
+        }
+        if (isset($params['end_time']) && $params['end_time'] > 0) {
+            $where[] = ['created_at', '<=', $params['end_time']];
+        }
+        $fieldStr = 'SUM(water_discharge) as installations, COUNT(DISTINCT company_id) AS company_num,waste_name';
+        $result = $this->_wasteWaterModel->select(DB::raw($fieldStr))
+            ->where($where)
+            ->groupBy('waste_name')
+            ->get()->toArray();
+        if (!empty($result)) {
+            $wasteId = array_column($result, 'waste_name');
+            $wasteInfo = Setting::searchWasteForList($wasteId, ['name'], 'id');
+            foreach ($result as &$item) {
+                if (isset($wasteInfo[$item['waste_name']])) {
+                    $item['waste_name'] = $wasteInfo[$item['waste_name']]['name'];
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
      * 检验权限
      * @param $companyId
      * @throws WasteException
