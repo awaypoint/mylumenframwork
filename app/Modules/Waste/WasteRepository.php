@@ -539,23 +539,7 @@ class WasteRepository extends CommonRepository
                 $row['check'] = json_decode($row['check'], true);
                 $allFileIds = array_merge($allFileIds, $row['pics'], $row['check']);
                 if (!empty($row['gases'])) {
-                    $newGas = [];
-                    foreach ($row['gases'] as $gas) {
-                        if (isset($params['waste_name']) && $params['waste_name'] && strpos($gas['waste_name'], $params['waste_name']) === false) {
-                            continue;
-                        }
-                        $wasteIds[] = $gas['waste_name'];
-                        $tmp = [
-                            'type_name' => Waste::WASTE_GAS_TYPE_MAP[$gas['type']] ?? '',
-                        ];
-                        foreach ($gasFields as $gasField) {
-                            if (isset($gas[$gasField])) {
-                                $tmp[$gasField] = $gas[$gasField];
-                            }
-                        }
-                        $newGas[] = $tmp;
-                    }
-                    $row['gases'] = $newGas;
+                    $wasteIds = array_column($row['gases'], 'waste_name');
                 }
             }
             if (!empty($allFileIds)) {
@@ -580,11 +564,26 @@ class WasteRepository extends CommonRepository
                     }
                 }
                 if (!empty($item['gases'])) {
-                    foreach ($item['gases'] as &$newGas) {
-                        if (isset($wasteInfo[$newGas['waste_name']])) {
-                            $newGas['waste_name'] = $wasteInfo[$newGas['waste_name']]['name'];
+                    $newGas = [];
+                    foreach ($item['gases'] as $gas) {
+                        if (isset($wasteInfo[$gas['waste_name']])) {
+                            $newGasWasteName = $wasteInfo[$gas['waste_name']]['name'];
+                            if (isset($params['waste_name']) && $params['waste_name'] && strpos($newGasWasteName, $params['waste_name']) === false) {
+                                continue;
+                            }
+                            $tmp = [
+                                'type_name' => Waste::WASTE_GAS_TYPE_MAP[$gas['type']] ?? '',
+                                'waste' => $newGasWasteName,
+                            ];
+                            foreach ($gasFields as $gasField) {
+                                if (isset($gas[$gasField])) {
+                                    $tmp[$gasField] = $gas[$gasField];
+                                }
+                            }
+                            $newGas[] = $tmp;
                         }
                     }
+                    $item['gases'] = $newGas;
                 }
             }
         }
@@ -643,7 +642,7 @@ class WasteRepository extends CommonRepository
         if (isset($params['type']) && !isset(Waste::WASTE_WATER_TYPE_MAP[$params['type']])) {
             throw new WasteException(60013);
         }
-        if (isset($params['waste_name']) && $params['name']) {
+        if (isset($params['waste_name']) && $params['waste_name']) {
             Setting::checkWasteExist($params['waste_name'], Setting::SETTING_WASTE_WATER_TYPE, ['id']);
         }
         $model = $this->_wasteWaterModel->where($where)->first();
@@ -731,24 +730,7 @@ class WasteRepository extends CommonRepository
                 $row['check'] = json_decode($row['check'], true);
                 $allFileIds = array_merge($allFileIds, $row['pics'], $row['check']);
                 if (!empty($row['water'])) {
-                    $newWater = [];
-                    foreach ($row['water'] as $water) {
-                        if (isset($params['waste_name']) && $params['waste_name'] && strpos($water['waste_name'], $params['waste_name']) === false) {
-                            continue;
-                        }
-                        //污染物信息
-                        $wasteIds[] = $water['waste_name'];
-                        $tmp = [
-                            'type_name' => Waste::WASTE_WATER_TYPE_MAP[$water['type']] ?? '',
-                        ];
-                        foreach ($waterFields as $waterField) {
-                            if (isset($water[$waterField])) {
-                                $tmp[$waterField] = $water[$waterField];
-                            }
-                        }
-                        $newWater[] = $tmp;
-                    }
-                    $row['water'] = $newWater;
+                    $wasteIds = array_column($row['water'], 'waste_name');
                 }
             }
             if (!empty($allFileIds)) {
@@ -773,11 +755,26 @@ class WasteRepository extends CommonRepository
                     }
                 }
                 if (!empty($item['water'])) {
-                    foreach ($item['water'] as &$newWater) {
-                        if (isset($wasteInfo[$newWater['waste_name']])) {
-                            $newWater['waste_name'] = $wasteInfo[$newWater['waste_name']]['name'];
+                    $newWater = [];
+                    foreach ($item['water'] as $w) {
+                        if (isset($wasteInfo[$w['waste_name']])) {
+                            $newWaterName = $wasteInfo[$w['waste_name']]['name'];
+                            if (isset($params['waste_name']) && $params['waste_name'] && strpos($newWaterName, $params['waste_name']) === false) {
+                                continue;
+                            }
+                            $tmp = [
+                                'type_name' => Waste::WASTE_WATER_TYPE_MAP[$w['type']] ?? '',
+                                'waste' => $newWaterName,
+                            ];
+                            foreach ($waterFields as $waterField) {
+                                if (isset($w[$waterField])) {
+                                    $tmp[$waterField] = $w[$waterField];
+                                }
+                            }
+                            $newWater[] = $tmp;
                         }
                     }
+                    $item['water'] = $newWater;
                 }
             }
         }

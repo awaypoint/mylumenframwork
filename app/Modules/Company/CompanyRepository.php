@@ -58,7 +58,7 @@ class CompanyRepository extends CommonRepository
             'address' => $params['address'] ?? '',
             'contacts' => $params['contacts'] ?? '',
             'tel' => $params['tel'] ?? '',
-            'mobile' => $params['mobile'] ?? -1,
+            'mobile' => $params['mobile'] ?? 0,
             'email' => $params['email'] ?? '',
             'latitude' => $params['latitude'] ?? '',
             'longitude' => $params['longitude'] ?? '',
