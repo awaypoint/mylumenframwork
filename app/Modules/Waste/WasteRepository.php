@@ -1092,10 +1092,23 @@ class WasteRepository extends CommonRepository
         }
     }
 
+    /**
+     * 获取废气报表
+     * @param $params
+     * @return array
+     */
     public function getWasteGasReport($params)
     {
+        $where = [];
+        if (isset($params['start_time']) && $params['start_time'] > 0) {
+            $where[] = ['created_at', '>=', $params['start_time']];
+        }
+        if (isset($params['end_time']) && $params['end_time'] > 0) {
+            $where[] = ['created_at', '<=', $params['end_time']];
+        }
         $fieldStr = 'SUM(installations) as installations, COUNT(DISTINCT company_id) AS company_num,waste_name';
         $result = $this->_wasteGasModel->select(DB::raw($fieldStr))
+            ->where($where)
             ->groupBy('waste_name')
             ->get()->toArray();
         if (!empty($result)) {
