@@ -459,7 +459,7 @@ class WasteRepository extends CommonRepository
                 throw new WasteException(60018);
             }
         } elseif ($model->type == Waste::WASTE_WATER_TUBE_TYPE) {
-            $existWater = $this->_wasteWaterModel->getOne($where, ['id']);
+            $existWater = $this->_wasteWaterModel->getOne($dateWhere, ['id']);
             if (!is_null($existWater)) {
                 throw new WasteException(60019);
             }
