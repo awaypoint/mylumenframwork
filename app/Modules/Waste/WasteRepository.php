@@ -518,7 +518,7 @@ class WasteRepository extends CommonRepository
      * @param $params
      * @return mixed
      */
-    public function getWasteGasList($companyId, $params)
+    public function getWasteGasList($companyId, $params, $page = 1, $pageSize = 10, $orderBy = [])
     {
         $where = [
             'company_id' => $companyId,
@@ -529,7 +529,7 @@ class WasteRepository extends CommonRepository
         ];
         $tubeFields = ['id', 'item_no', 'height', 'pics', 'check'];
         $gasFields = ['id', 'type', 'waste_name', 'gas_discharge', 'discharge_level', 'equipment', 'technique', 'installations', 'remark'];
-        $result = $this->_wasteTubeModel->getList($where, $tubeFields);
+        $result = $this->_wasteTubeModel->getList($where, $tubeFields, $page, $pageSize, $orderBy);
         if (isset($result['rows']) && !empty($result['rows'])) {
             $wasteInfo = $wasteIds = $filesInfo = $allFileIds = [];
             foreach ($result['rows'] as &$row) {

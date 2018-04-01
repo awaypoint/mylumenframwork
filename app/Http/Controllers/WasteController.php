@@ -238,7 +238,12 @@ class WasteController extends Controller
      */
     public function getWasteGasList(Request $request)
     {
-        $result = $this->_wasteRepository->getWasteGasList(getUserInfo()['company_id'], $request->all());
+        $page = $request->get('page') ?? 0;
+        $pageSigze = $request->get('page_size') ?? 0;
+        $orderBy = $request->get('order_by') ?? 'id';
+        $sortBy = $request->get('sort_by') ?? 'DESC';
+
+        $result = $this->_wasteRepository->getWasteGasList(getUserInfo()['company_id'], $request->all(), $page, $pageSigze, [$orderBy, $sortBy]);
         return responseTo($result);
     }
 
