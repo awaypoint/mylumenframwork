@@ -464,4 +464,15 @@ class WasteController extends Controller
         $result = $this->_wasteRepository->delNucleus($request->get('id'));
         return responseTo($result, '辐射信息删除成功');
     }
+
+    /**
+     * 获取废气柱状图
+     * @param Request $request
+     * @return array
+     */
+    public function getWasteGasReport(Request $request)
+    {
+        $result = $this->_wasteRepository->getWasteGasReport($request->all());
+        return responseTo($result);
+    }
 }

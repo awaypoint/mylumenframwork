@@ -8,6 +8,7 @@ use App\Modules\Role\Facades\Role;
 use App\Modules\Setting\Facades\Setting;
 use App\Modules\Waste\Exceptions\WasteException;
 use App\Modules\Waste\Facades\Waste;
+use Illuminate\Support\Facades\DB;
 
 class WasteRepository extends CommonRepository
 {
@@ -1089,6 +1090,24 @@ class WasteRepository extends CommonRepository
         } catch (\Exception $e) {
             throw new WasteException(60005);
         }
+    }
+
+    public function getWasteGasReport($params)
+    {
+        $fieldStr = 'SUM(installations) as installations, COUNT(DISTINCT company_id) AS company_num,waste_name';
+        $result = $this->_wasteGasModel->select(DB::raw($fieldStr))
+            ->groupBy('waste_name')
+            ->get()->toArray();
+        if (!empty($result)) {
+            $wasteId = array_column($result, 'waste_name');
+            $wasteInfo = Setting::searchWasteForList($wasteId, ['name'], 'id');
+            foreach ($result as &$item) {
+                if (isset($wasteInfo[$item['waste_name']])) {
+                    $item['waste_name'] = $wasteInfo[$item['waste_name']]['name'];
+                }
+            }
+        }
+        return $result;
     }
 
     /**
