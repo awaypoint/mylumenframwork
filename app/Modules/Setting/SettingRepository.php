@@ -185,6 +185,44 @@ class SettingRepository extends CommonRepository
     }
 
     /**
+     * 更新工业园区
+     * @param $id
+     * @param $params
+     * @throws SettingException
+     */
+    public function updateIndustrialPark($id, $params)
+    {
+        $where = [
+            'id' => $id,
+        ];
+        $model = $this->_industrialParkModel->where($where)->first();
+        if (is_null($model)) {
+            throw new SettingException(30005);
+        }
+        $updateData = [];
+        $guardFillble = ['id'];
+        foreach ($params as $fileld => $value) {
+            if (in_array($fileld, $guardFillble)) {
+                continue;
+            }
+            if (isset($model->$fileld)) {
+                $updateData[$fileld] = $params[$fileld];
+            }
+        }
+        if (!empty($updateData)) {
+            try {
+                $result = $model->update($updateData);
+                if ($result === false) {
+                    throw new SettingException(30006);
+                }
+            } catch (\Exception $e) {
+                throw new SettingException(30006);
+            }
+        }
+        return ['id' => $id];
+    }
+
+    /**
      * 添加污染物
      * @param $params
      * @throws SettingException

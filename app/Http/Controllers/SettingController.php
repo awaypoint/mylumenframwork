@@ -113,6 +113,24 @@ class SettingController extends Controller
     }
 
     /**
+     * 更新工业园区
+     * @param Request $request
+     * @return array
+     */
+    public function updateIndustrialPark(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required',
+            'name' => 'required',
+            'province_code' => 'required',
+            'city_code' => 'required',
+            'area_code' => 'required',
+        ]);
+        $result = $this->_settingRepository->updateIndustrialPark($request->get('id'), $request->all());
+        return responseTo($result);
+    }
+
+    /**
      * 添加污染物
      * @param Request $request
      * @return array

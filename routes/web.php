@@ -34,6 +34,7 @@ $app->group(['prefix' => '/setting', 'middleware' => 'auth'], function () use ($
     $app->get('getIndustrialParkCombo', 'SettingController@getIndustrialParkCombo');
     $app->post('addWaste', 'SettingController@addWaste');
     $app->get('getWasteCombo', 'SettingController@getWasteCombo');
+    $app->put('updateIndustrialPark', 'SettingController@updateIndustrialPark');
 });
 //用户
 $app->group(['prefix' => 'users', 'middleware' => 'auth'], function () use ($app) {
