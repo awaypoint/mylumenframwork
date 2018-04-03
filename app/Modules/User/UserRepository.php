@@ -4,6 +4,7 @@ namespace App\Modules\User;
 
 use App\Modules\Common\CommonRepository;
 use App\Modules\Company\Facades\Company;
+use App\Modules\Role\Facades\Role;
 use GuzzleHttp\Client;
 use App\Modules\User\Exceptions\UserException;
 use Illuminate\Support\Facades\DB;
@@ -46,7 +47,8 @@ class UserRepository extends CommonRepository
         Session::put('lifetime', time() + env('LIFE_SEC', 10800));
         $result['uid'] = $userInfo['id'];
         $result['company_id'] = $userInfo['company_id'];
-        $result['user_type'] = 1;
+        $result['role_type'] = $userInfo['role_type'];
+        $result['hide_menu_ids'] = $userInfo['hide_menu_ids'];
         $result['username'] = $userInfo['username'];
         $result['avatar_url'] = $userInfo['avatar_url'];
         //设置缓存
@@ -79,6 +81,8 @@ class UserRepository extends CommonRepository
                 'id' => Session::get('uid'),
             ];
             $userInfo = $this->_userModel->getOne($where);
+            $roleInfo = Role::getRoleInfo($userInfo['role_id'], ['type']);
+            $userInfo['role_type'] = is_null($roleInfo) ? Role::ROLE_COMMON_TYPE : $roleInfo['type'];
             $userInfo['hide_menu_ids'] = json_decode($userInfo['hide_menu_ids'], true);
             unset($userInfo['password']);
             Session::put('user_info', $userInfo);

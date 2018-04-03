@@ -127,7 +127,21 @@ class SettingController extends Controller
             'area_code' => 'required',
         ]);
         $result = $this->_settingRepository->updateIndustrialPark($request->get('id'), $request->all());
-        return responseTo($result);
+        return responseTo($result, '编辑工业园区成功');
+    }
+
+    /**
+     * 删除工业园区
+     * @param Request $request
+     * @return array
+     */
+    public function delIndustrialPark(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required',
+        ]);
+        $result = $this->_settingRepository->delIndustrialPark($request->get('id'));
+        return responseTo($result, '删除工业园区成功');
     }
 
     /**
@@ -142,6 +156,36 @@ class SettingController extends Controller
             'name' => 'required',
         ]);
         $result = $this->_settingRepository->addWaste($request->all());
+        return responseTo($result);
+    }
+
+    /**
+     * 更新污染物
+     * @param Request $request
+     * @return array
+     */
+    public function updateWaste(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required',
+            'type' => 'required',
+            'name' => 'required',
+        ]);
+        $result = $this->_settingRepository->updateWaste($request->get('id'), $request->all());
+        return responseTo($result);
+    }
+
+    /**
+     * 删除污染物
+     * @param Request $request
+     * @return array
+     */
+    public function delWaste(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required',
+        ]);
+        $result = $this->_settingRepository->delWaste($request->get('id'));
         return responseTo($result);
     }
 

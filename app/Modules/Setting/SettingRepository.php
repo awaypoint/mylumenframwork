@@ -192,34 +192,17 @@ class SettingRepository extends CommonRepository
      */
     public function updateIndustrialPark($id, $params)
     {
-        $where = [
-            'id' => $id,
-        ];
-        $model = $this->_industrialParkModel->where($where)->first();
-        if (is_null($model)) {
-            throw new SettingException(30005);
-        }
-        $updateData = [];
-        $guardFillble = ['id'];
-        foreach ($params as $fileld => $value) {
-            if (in_array($fileld, $guardFillble)) {
-                continue;
-            }
-            if (isset($model->$fileld)) {
-                $updateData[$fileld] = $params[$fileld];
-            }
-        }
-        if (!empty($updateData)) {
-            try {
-                $result = $model->update($updateData);
-                if ($result === false) {
-                    throw new SettingException(30006);
-                }
-            } catch (\Exception $e) {
-                throw new SettingException(30006);
-            }
-        }
-        return ['id' => $id];
+        return $this->_industrialParkModel->up($id, $params);
+    }
+
+    /**
+     * 删除工业园区
+     * @param $id
+     * @return bool|null
+     */
+    public function delIndustrialPark($id)
+    {
+        return $this->_industrialParkModel->del($id);
     }
 
     /**
@@ -246,6 +229,27 @@ class SettingRepository extends CommonRepository
         } catch (\Exception $e) {
             throw new SettingException(30002);
         }
+    }
+
+    /**
+     * 更新污染物
+     * @param $id
+     * @param $params
+     * @return array
+     */
+    public function updateWaste($id, $params)
+    {
+        return $this->_wasteModel->up($id, $params);
+    }
+
+    /**
+     * 删除污染物
+     * @param $id
+     * @return bool|null
+     */
+    public function delWaste($id)
+    {
+        return $this->_wasteModel->del($id);
     }
 
     /**

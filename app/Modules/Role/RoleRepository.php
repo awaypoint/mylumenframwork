@@ -53,10 +53,11 @@ class RoleRepository extends CommonRepository
     /**
      * 获取角色信息
      * @param $roleId
+     * @param array $fields
      * @return mixed
      */
-    public function getRoleInfo($roleId)
+    public function getRoleInfo($roleId, $fields = [])
     {
-        return $this->_roleModel->getOne(['id' => $roleId]);
+        return $this->_roleModel->getOne(['id' => $roleId], $fields);
     }
 }

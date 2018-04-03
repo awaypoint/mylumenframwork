@@ -28,8 +28,8 @@ class RoleFacades
      * @param $roleId
      * @return mixed
      */
-    public function getRoleInfo($roleId)
+    public function getRoleInfo($roleId, $fields = [])
     {
-        return $this->_roleRepository->getRoleInfo($roleId);
+        return $this->_roleRepository->getRoleInfo($roleId, $fields);
     }
 }

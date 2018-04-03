@@ -13,5 +13,6 @@ class SettingException extends BaseException
         30004=>['msg'=>'污染物不存在'],
         30005=>['msg'=>'工业园区不存在'],
         30006=>['msg'=>'工业园区更新失败'],
+        30007=>['msg'=>'工业园区删除失败'],
     ];
 }

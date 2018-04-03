@@ -141,36 +141,7 @@ class WasteRepository extends CommonRepository
      */
     public function updateWasteMaterial($id, $params)
     {
-        $where = [
-            'id' => $id,
-        ];
-        $model = $this->_wasteMaterialModel->where($where)->first();
-        if (is_null($model)) {
-            throw new WasteException(60003);
-        }
-        $this->_checkWastePermission($model->company_id);
-        $updateData = [];
-        $guardFillble = ['id'];
-        foreach ($params as $fileld => $value) {
-            if (in_array($fileld, $guardFillble)) {
-                continue;
-            }
-            if (isset($model->$fileld)) {
-                $updateData[$fileld] = $params[$fileld];
-            }
-        }
-        $returnData = ['id' => $id];
-        if (!empty($updateData)) {
-            try {
-                $result = $model->update($updateData);
-                if ($result === false) {
-                    throw new WasteException(60004);
-                }
-            } catch (\Exception $e) {
-                throw new WasteException(60004);
-            }
-        }
-        return $returnData;
+        return $this->_wasteMaterialModel->up($id, $params);
     }
 
     /**
@@ -181,23 +152,7 @@ class WasteRepository extends CommonRepository
      */
     public function delWasteMaterial($id)
     {
-        $where = [
-            'id' => $id,
-        ];
-        $isExist = $this->_wasteMaterialModel->getOne($where, ['company_id']);
-        if (is_null($isExist)) {
-            throw new WasteException(60003);
-        }
-        $this->_checkWastePermission($isExist['company_id']);
-        try {
-            $result = $this->_wasteMaterialModel->deleteData($id);
-            if ($result === false) {
-                throw new WasteException(60005);
-            }
-            return true;
-        } catch (\Exception $e) {
-            throw new WasteException(60005);
-        }
+        return $this->_wasteMaterialModel->del($id);
     }
 
     /**

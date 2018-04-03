@@ -4,19 +4,22 @@ namespace App\Modules\Common;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use App\Exceptions\BaseException;
 
 class CommonEloquentModel extends Model
 {
+    public $guardFillable = ['id'];
+
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
-        $this::saving(function ($model){
-            if ($model->table == 'users' || $model->table == 'company'){
+        $this::saving(function ($model) {
+            if ($model->table == 'users' || $model->table == 'company') {
                 return true;
             }
             $model->updated_by = getUserInfo()['id'];
         });
-        $this::updating(function ($model){
+        $this::updating(function ($model) {
             $model->updated_by = getUserInfo()['id'];
         });
     }
@@ -154,6 +157,83 @@ class CommonEloquentModel extends Model
         }
         $model->select(DB::raw('count(' . $countField . ') AS count' . $strFields));
         return $model->get()->toArray();
+    }
+
+    /**
+     * 新删除
+     * @param $id
+     * @param bool $isForce
+     * @return bool|null
+     * @throws BaseException
+     */
+    public function del($id, $isForce = false)
+    {
+        $where = [
+            'id' => $id,
+        ];
+        $model = $this->where($where)->first();
+        if (is_null($model)) {
+            throw new BaseException(407);
+        }
+        $companyId = $model->company_id ?? 0;
+        //检验权限
+        checkCompanyPermission($companyId);
+        try {
+            if ($isForce) {
+                $result = $model->forceDelete();
+            } else {
+                $result = $model->delete();
+            }
+            if (!$result) {
+                throw new BaseException(00001);
+            }
+            return $result;
+        } catch (\Exception $e) {
+            throw new BaseException(00001);
+        }
+    }
+
+    /**
+     * 新编辑
+     * @param $id
+     * @param $params
+     * @param null $model
+     * @return array
+     * @throws BaseException
+     */
+    public function up($id, $params, $model = null)
+    {
+        if (is_null($model)) {
+            $where = [
+                'id' => $id,
+            ];
+            $model = $this->where($where)->first();
+        }
+        if (is_null($model)) {
+            throw new BaseException(407);
+        }
+        $companyId = $model->company_id ?? 0;
+        checkCompanyPermission($companyId);
+        $updateData = [];
+        foreach ($params as $fileld => $value) {
+            if (in_array($fileld, $this->guardFillable)) {
+                continue;
+            }
+            if (isset($model->$fileld)) {
+                $updateData[$fileld] = $params[$fileld];
+            }
+        }
+        if (!empty($updateData)) {
+            try {
+                $result = $model->update($updateData);
+                if ($result === false) {
+                    throw new BaseException(00002);
+                }
+            } catch (\Exception $e) {
+                throw new BaseException(00002);
+            }
+        }
+        return ['id' => $id];
     }
 
     /**

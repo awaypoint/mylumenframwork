@@ -1,8 +1,9 @@
 <?php
 
 use App\Modules\User\Facades\User;
-use App\Modules\User\Exceptions\UserException;
 use Illuminate\Support\Facades\Session;
+use App\Modules\Role\Facades\Role;
+use App\Exceptions\BaseException;
 
 /**
  * 统一返回
@@ -107,25 +108,24 @@ if (!function_exists('getUserInfo')) {
 }
 
 /**
- * 检验是否为超级管理员
- */
-if (!function_exists('checkIsSuperUser')) {
-    function checkIsSuperUser($uid, $fields = [])
-    {
-        $userInfo = getUserInfo($uid, $fields);
-        if (!$userInfo['is_superuser']) {
-            throw new UserException(10010);
-        }
-        return $userInfo;
-    }
-}
-
-/**
  * 设置用户缓存
  */
 if (!function_exists('setUserCache')) {
     function setUserCache($cache)
     {
         Session::put('user_info', $cache);
+    }
+}
+
+/**
+ * 检查用户权限
+ */
+if (!function_exists('checkCompanyPermission')) {
+    function checkCompanyPermission($companyId = 0)
+    {
+        $userInfo = getUserInfo();
+        if ($userInfo['role_type'] == Role::ROLE_COMMON_TYPE && $companyId != $userInfo['company_id']){
+            throw new BaseException(406);
+        }
     }
 }
