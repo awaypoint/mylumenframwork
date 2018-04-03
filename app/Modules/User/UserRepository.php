@@ -43,11 +43,12 @@ class UserRepository extends CommonRepository
         $result = json_decode((string)$response->getBody(), true);
         //获取用户信息
         $userInfo = $this->getUserInfoByUsername($params['username']);
+        $roleInfo = Role::getRoleInfo($userInfo['role_id']);
         Session::put('uid', $userInfo['id']);
         Session::put('lifetime', time() + env('LIFE_SEC', 10800));
         $result['uid'] = $userInfo['id'];
         $result['company_id'] = $userInfo['company_id'];
-        $result['role_type'] = $userInfo['role_type'];
+        $result['role_type'] = $roleInfo['type'];
         $result['hide_menu_ids'] = $userInfo['hide_menu_ids'];
         $result['username'] = $userInfo['username'];
         $result['avatar_url'] = $userInfo['avatar_url'];
