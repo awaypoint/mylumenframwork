@@ -53,8 +53,6 @@ class UserRepository extends CommonRepository
         $result['hide_menu_ids'] = $userInfo['hide_menu_ids'];
         $result['username'] = $userInfo['username'];
         $result['avatar_url'] = $userInfo['avatar_url'];
-        //设置缓存
-        setUserCache($userInfo);
 
         return $result;
     }
