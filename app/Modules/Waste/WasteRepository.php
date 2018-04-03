@@ -196,39 +196,9 @@ class WasteRepository extends CommonRepository
      */
     public function updateWasteGasTube($id, $params)
     {
-        $where = [
-            'id' => $id,
-        ];
-        $model = $this->_wasteTubeModel->where($where)->first();
-        if (is_null($model)) {
-            throw new WasteException(60008);
-        }
-        $this->_checkWastePermission($model->company_id);
-        $updateData = [];
-        $guardFillble = ['id', 'type'];
-        foreach ($params as $field => $value) {
-            if (in_array($field, $guardFillble)) {
-                continue;
-            }
-            if (isset($model->$field)) {
-                if ($field == 'pics' || $field == 'check') {
-                    $value = json_encode($value, JSON_UNESCAPED_UNICODE);
-                }
-                $updateData[$field] = $value;
-            }
-        }
-        try {
-            $returnData = ['id' => $id];
-            if (!empty($updateData)) {
-                $result = $model->update($updateData);
-                if ($result === false) {
-                    throw new WasteException(60009);
-                }
-            }
-            return $returnData;
-        } catch (\Exception $e) {
-            throw new WasteException(60009);
-        }
+        $fileFields = ['pics', 'check'];
+        dealFileFields($fileFields, $params);
+        return $this->_wasteTubeModel->up($id, $params);
     }
 
     /**
@@ -307,42 +277,12 @@ class WasteRepository extends CommonRepository
      */
     public function updateWasteGas($id, $params)
     {
-        $where = [
-            'id' => $id,
-        ];
         if (isset($params['waste_name']) && $params['waste_name']) {
             Setting::checkWasteExist($params['waste_name'], Setting::SETTING_WASTE_GAS_TYPE, ['id']);
         }
-        $model = $this->_wasteGasModel->where($where)->first();
-        if (is_null($model)) {
-            throw new WasteException(60003);
-        }
-        $this->_checkWastePermission($model->company_id);
-        $updateData = [];
-        $guardFillble = ['id'];
-        foreach ($params as $fileld => $value) {
-            if (in_array($fileld, $guardFillble)) {
-                continue;
-            }
-            if ($fileld == 'technique_pic') {
-                $value = json_encode($value, JSON_UNESCAPED_UNICODE);
-            }
-            if (isset($model->$fileld)) {
-                $updateData[$fileld] = $value;
-            }
-        }
-        $returnData = ['id' => $id];
-        if (!empty($updateData)) {
-            try {
-                $result = $model->update($updateData);
-                if ($result === false) {
-                    throw new WasteException(60004);
-                }
-            } catch (\Exception $e) {
-                throw new WasteException(60004);
-            }
-        }
-        return $returnData;
+        $fileFields = ['technique_pic'];
+        dealFileFields($fileFields, $params);
+        return $this->_wasteGasModel->up($id, $params);
     }
 
     /**
@@ -353,24 +293,7 @@ class WasteRepository extends CommonRepository
      */
     public function delWasteGas($id)
     {
-        $where = [
-            'id' => $id,
-        ];
-        $model = $this->_wasteGasModel->where($where)->first();
-        if (is_null($model)) {
-            throw new WasteException(60003);
-        }
-        $isExist = $model->toArray();
-        $this->_checkWastePermission($isExist['company_id']);
-        try {
-            $result = $model->delete();
-            if ($result === false) {
-                throw new WasteException(60005);
-            }
-            return true;
-        } catch (\Exception $e) {
-            throw new WasteException(60005);
-        }
+        return $this->_wasteGasModel->del($id);
     }
 
     /**
@@ -403,7 +326,6 @@ class WasteRepository extends CommonRepository
         if (is_null($model)) {
             throw new WasteException(60008);
         }
-        $this->_checkWastePermission($model->company_id);
         $dateWhere = [
             'company_id' => $model->company_id,
             'tube_id' => $id,
@@ -416,15 +338,7 @@ class WasteRepository extends CommonRepository
         if (!is_null($existWater)) {
             throw new WasteException(60019);
         }
-        try {
-            $result = $model->delete();
-            if ($result === false) {
-                throw new WasteException(60010);
-            }
-            return true;
-        } catch (\Exception $e) {
-            throw new WasteException(60010);
-        }
+        return $this->_wasteTubeModel->del($id, false, $model);
     }
 
     /**
@@ -589,42 +503,13 @@ class WasteRepository extends CommonRepository
      */
     public function updateWasteWater($id, $params)
     {
-        $where = [
-            'id' => $id,
-        ];
         if (isset($params['type']) && !isset(Waste::WASTE_WATER_TYPE_MAP[$params['type']])) {
             throw new WasteException(60013);
         }
         if (isset($params['waste_name']) && $params['name']) {
             Setting::checkWasteExist($params['waste_name'], Setting::SETTING_WASTE_WATER_TYPE, ['id']);
         }
-        $model = $this->_wasteWaterModel->where($where)->first();
-        if (is_null($model)) {
-            throw new WasteException(60003);
-        }
-        $this->_checkWastePermission($model->company_id);
-        $updateData = [];
-        $guardFillble = ['id'];
-        foreach ($params as $fileld => $value) {
-            if (in_array($fileld, $guardFillble)) {
-                continue;
-            }
-            if (isset($model->$fileld)) {
-                $updateData[$fileld] = $value;
-            }
-        }
-        $returnData = ['id' => $id];
-        if (!empty($updateData)) {
-            try {
-                $result = $model->update($updateData);
-                if ($result === false) {
-                    throw new WasteException(60004);
-                }
-            } catch (\Exception $e) {
-                throw new WasteException(60004);
-            }
-        }
-        return $returnData;
+        return $this->_wasteWaterModel->up($id, $params);
     }
 
     /**
@@ -744,23 +629,7 @@ class WasteRepository extends CommonRepository
      */
     public function delWasteWater($id)
     {
-        $where = [
-            'id' => $id,
-        ];
-        $model = $this->_wasteWaterModel->where($where)->first();
-        if (is_null($model)) {
-            throw new WasteException(60003);
-        }
-        $this->_checkWastePermission($model->company_id);
-        try {
-            $result = $model->delete();
-            if ($result === false) {
-                throw new WasteException(60005);
-            }
-            return true;
-        } catch (\Exception $e) {
-            throw new WasteException(60005);
-        }
+        return $this->_wasteWaterModel->del($id);
     }
 
     /**
@@ -802,36 +671,7 @@ class WasteRepository extends CommonRepository
      */
     public function updateNoise($id, $params)
     {
-        $where = [
-            'id' => $id,
-        ];
-        $model = $this->_noiseModel->where($where)->first();
-        if (is_null($model)) {
-            throw new WasteException(60003);
-        }
-        $this->_checkWastePermission($model->company_id);
-        $updateData = [];
-        $guardFillble = ['id'];
-        foreach ($params as $fileld => $value) {
-            if (in_array($fileld, $guardFillble)) {
-                continue;
-            }
-            if (isset($model->$fileld)) {
-                $updateData[$fileld] = $value;
-            }
-        }
-        $returnData = ['id' => $id];
-        if (!empty($updateData)) {
-            try {
-                $result = $model->update($updateData);
-                if ($result === false) {
-                    throw new WasteException(60004);
-                }
-            } catch (\Exception $e) {
-                throw new WasteException(60004);
-            }
-        }
-        return $returnData;
+        return $this->_noiseModel->up($id, $params);
     }
 
     /**
@@ -882,23 +722,7 @@ class WasteRepository extends CommonRepository
      */
     public function delNoise($id)
     {
-        $where = [
-            'id' => $id,
-        ];
-        $model = $this->_noiseModel->where($where)->first();
-        if (is_null($model)) {
-            throw new WasteException(60003);
-        }
-        $this->_checkWastePermission($model->company_id);
-        try {
-            $result = $model->delete();
-            if ($result === false) {
-                throw new WasteException(60005);
-            }
-            return true;
-        } catch (\Exception $e) {
-            throw new WasteException(60005);
-        }
+        return $this->_noiseModel->del($id);
     }
 
     /**
@@ -948,36 +772,7 @@ class WasteRepository extends CommonRepository
      */
     public function updateNucleus($id, $params)
     {
-        $where = [
-            'id' => $id,
-        ];
-        $model = $this->_nucleusModel->where($where)->first();
-        if (is_null($model)) {
-            throw new WasteException(60003);
-        }
-        $this->_checkWastePermission($model->company_id);
-        $updateData = [];
-        $guardFillble = ['id'];
-        foreach ($params as $fileld => $value) {
-            if (in_array($fileld, $guardFillble)) {
-                continue;
-            }
-            if (isset($model->$fileld)) {
-                $updateData[$fileld] = $value;
-            }
-        }
-        $returnData = ['id' => $id];
-        if (!empty($updateData)) {
-            try {
-                $result = $model->update($updateData);
-                if ($result === false) {
-                    throw new WasteException(60004);
-                }
-            } catch (\Exception $e) {
-                throw new WasteException(60004);
-            }
-        }
-        return $returnData;
+        return $this->_nucleusModel->up($id, $params);
     }
 
     /**
@@ -1028,23 +823,7 @@ class WasteRepository extends CommonRepository
      */
     public function delNucleus($id)
     {
-        $where = [
-            'id' => $id,
-        ];
-        $model = $this->_nucleusModel->where($where)->first();
-        if (is_null($model)) {
-            throw new WasteException(60003);
-        }
-        $this->_checkWastePermission($model->company_id);
-        try {
-            $result = $model->delete();
-            if ($result === false) {
-                throw new WasteException(60005);
-            }
-            return true;
-        } catch (\Exception $e) {
-            throw new WasteException(60005);
-        }
+        return $this->_nucleusModel->del($id);
     }
 
     /**

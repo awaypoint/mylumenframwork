@@ -166,12 +166,14 @@ class CommonEloquentModel extends Model
      * @return bool|null
      * @throws BaseException
      */
-    public function del($id, $isForce = false)
+    public function del($id, $isForce = false, $model = null)
     {
-        $where = [
-            'id' => $id,
-        ];
-        $model = $this->where($where)->first();
+        if (is_null($model)) {
+            $where = [
+                'id' => $id,
+            ];
+            $model = $this->where($where)->first();
+        }
         if (is_null($model)) {
             throw new BaseException(407);
         }

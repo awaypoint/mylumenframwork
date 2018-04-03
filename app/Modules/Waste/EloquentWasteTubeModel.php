@@ -13,6 +13,8 @@ class EloquentWasteTubeModel extends CommonEloquentModel
     protected $dateFormat = 'U';
     //采用白名单模式
     public $fillable = ['id', 'type', 'company_id', 'item_no', 'height', 'pics', 'check', 'remark'];
+    //不可编辑字段
+    public $guardFillable = ['id', 'type'];
 
     /**
      * 关联gas表

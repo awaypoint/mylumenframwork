@@ -93,7 +93,7 @@ if (!function_exists('isMobile')) {
 if (!function_exists('isEmail')) {
     function isEmail($email)
     {
-        return filter_var($email,FILTER_VALIDATE_EMAIL) ? true : false;
+        return filter_var($email, FILTER_VALIDATE_EMAIL) ? true : false;
     }
 }
 
@@ -124,8 +124,29 @@ if (!function_exists('checkCompanyPermission')) {
     function checkCompanyPermission($companyId = 0)
     {
         $userInfo = getUserInfo();
-        if ($userInfo['role_type'] == Role::ROLE_COMMON_TYPE && $companyId != $userInfo['company_id']){
+        if ($userInfo['role_type'] == Role::ROLE_COMMON_TYPE && $companyId != $userInfo['company_id']) {
             throw new BaseException(406);
+        }
+    }
+}
+
+/**
+ * 处理文件字段
+ */
+if (!function_exists('dealFileFields')) {
+    function dealFileFields(array $fields, array &$params)
+    {
+        foreach ($fields as $field) {
+            if (isset($params[$field])) {
+                if (!is_array($params[$field])) {
+                    throw new BaseException(00003, ['field' => $field]);
+                }
+                if (!empty($params[$field])) {
+                    $params[$field] = json_encode($params[$field], JSON_UNESCAPED_UNICODE);
+                } else {
+                    $params[$field] = '[]';
+                }
+            }
         }
     }
 }

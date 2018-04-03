@@ -31,6 +31,7 @@ class BaseException extends \Exception
         501 => [ 'msg' => "服务器不支持当前请求所需要的某个功能。"],
         00001 => [ 'msg' => "删除失败"],
         00002 => [ 'msg' => "编辑失败"],
+        00003 => [ 'msg' => '{$field}参数错误'],
     ];
 
     protected $_codeList = [];
