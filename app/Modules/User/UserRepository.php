@@ -44,6 +44,7 @@ class UserRepository extends CommonRepository
         //获取用户信息
         $userInfo = $this->getUserInfoByUsername($params['username']);
         $roleInfo = Role::getRoleInfo($userInfo['role_id'], ['type']);
+        $userInfo['role_type'] = $roleInfo['type'];
         Session::put('uid', $userInfo['id']);
         Session::put('lifetime', time() + env('LIFE_SEC', 10800));
         $result['uid'] = $userInfo['id'];
@@ -86,7 +87,7 @@ class UserRepository extends CommonRepository
             $userInfo['role_type'] = is_null($roleInfo) ? Role::ROLE_COMMON_TYPE : $roleInfo['type'];
             $userInfo['hide_menu_ids'] = json_decode($userInfo['hide_menu_ids'], true);
             unset($userInfo['password']);
-            Session::put('user_info', $userInfo);
+            setUserCache($userInfo);
         }
         $result = Session::get('user_info');
         if (!empty($fields)) {
@@ -119,7 +120,7 @@ class UserRepository extends CommonRepository
         //重新设置缓存
         $userInfo = $this->getUserInfo();
         $userInfo['company_id'] = $companyId;
-        Session::put('user_info', $userInfo);
+        setUserCache($userInfo);
     }
 
     /**
