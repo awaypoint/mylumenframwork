@@ -58,7 +58,7 @@ class CompanyRepository extends CommonRepository
             'address' => $params['address'] ?? '',
             'contacts' => $params['contacts'] ?? '',
             'tel' => $params['tel'] ?? '',
-            'mobile' => $params['mobile'] ?? '',
+            'mobile' => $params['mobile'] ?? 0,
             'email' => $params['email'] ?? '',
             'latitude' => $params['latitude'] ?? '',
             'longitude' => $params['longitude'] ?? '',
@@ -421,6 +421,30 @@ class CompanyRepository extends CommonRepository
         }
         if (isset($params['email']) && $params['email'] && !isEmail($params['email'])) {
             throw new CompanyException(40006);
+        }
+        if (isset($params['iso'])) {
+            if (!is_array($params['iso'])) {
+                throw new CompanyException(40007, ['fileName' => 'iso认证']);
+            }
+            if (!empty($params['iso'])) {
+                foreach ($params['iso'] as $param) {
+                    if (!is_numeric($param)) {
+                        throw new CompanyException(40007, ['fileName' => 'iso认证']);
+                    }
+                }
+            }
+        }
+        if (isset($params['business_lic'])) {
+            if (!is_array($params['business_lic'])) {
+                throw new CompanyException(40007, ['fileName' => '营业执照']);
+            }
+            if (!empty($params['business_lic'])) {
+                foreach ($params['business_lic'] as $param) {
+                    if (!is_numeric($param)) {
+                        throw new CompanyException(40007, ['fileName' => '营业执照']);
+                    }
+                }
+            }
         }
     }
 
