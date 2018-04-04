@@ -150,3 +150,18 @@ if (!function_exists('dealFileFields')) {
         }
     }
 }
+
+/**
+ * 获取控制器分页信息
+ */
+if (!function_exists('getPageSuit')) {
+    function getPageSuit($request)
+    {
+        $page = $request->get('page') ?? 1;
+        $pageSize = $request->get('page_size') ?? 10;
+        $orderBy = $request->get('order_by') ?? 'id';
+        $sortBy = $request->get('sort_by') ?? 'DESC';
+        $order = [$orderBy, $sortBy];
+        return [$page, $pageSize, $order];
+    }
+}

@@ -222,9 +222,12 @@ class CompanyRepository extends CommonRepository
     public function getProductList($params, $page = 1, $pageSize = 10, $orderBy = [], $fields = [])
     {
         $userInfo = getUserInfo(['company_id']);
-        $where = [
-            'company_id' => $userInfo['company_id'],
-        ];
+        $where = [];
+        if ($userInfo['role_type'] == User::USER_COMMON_ROLE_TYPE) {
+            $where['company_id'] = $userInfo['company_id'];
+        } elseif (isset($params['company_id']) && $params['company_id']) {
+            $where['company_id'] = $params['company_id'];
+        }
         if (isset($params['name']) && $params['name']) {
             $where[] = ['name', 'LIKE', '%' . $params['name'] . '%'];
         }
@@ -396,6 +399,45 @@ class CompanyRepository extends CommonRepository
             'company_id' => $companyId
         ];
         return $this->_factoryModel->deleteByFields($where, true);
+    }
+
+    /**
+     * 获取公司列表
+     * @param $params
+     * @param int $page
+     * @param int $pageSize
+     * @param array $orderBy
+     * @param array $fields
+     * @return mixed
+     * @throws CompanyException
+     */
+    public function getCompanyList($params, $page = 1, $pageSize = 10, $orderBy = [], $fields = [])
+    {
+        $userInfo = getUserInfo();
+        if ($userInfo['role_type'] == User::USER_COMMON_ROLE_TYPE) {
+            throw new CompanyException(40017);
+        }
+        $where = [];
+        if (isset($params['province_code']) && $params['province_code']) {
+            $where['province_code'] = $params['province_code'];
+        }
+        if (isset($params['city_code']) && $params['city_code']) {
+            $where['city_code'] = $params['city_code'];
+        }
+        if (isset($params['area_code']) && $params['area_code']) {
+            $where['area_code'] = $params['area_code'];
+        }
+        if (isset($params['industrial_park_code']) && $params['industrial_park_code']) {
+            $where['industrial_park_code'] = $params['industrial_park_code'];
+        }
+        if (isset($params['company_status']) && $params['company_status']) {
+            $where['company_status'] = $params['company_status'];
+        }
+        if (isset($params['name']) && $params['name']) {
+            $where[] = ['name', 'LIKE', '%' . $params['name'] . '%'];
+        }
+        $result = $this->_companyModel->getList($where, $fields, $page, $pageSize, $orderBy);
+        return $result;
     }
 
     /**

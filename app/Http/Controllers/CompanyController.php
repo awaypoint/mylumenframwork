@@ -102,12 +102,8 @@ class CompanyController extends Controller
      */
     public function getProductList(Request $request)
     {
-        $page = $request->get('page') ?? 0;
-        $pageSize = $request->get('page_size') ?? 0;
-        $orderBy = $request->get('order_by') ?? 'id';
-        $sortBy = $request->get('sort_by') ?? 'DESC';
-        $orderArr = [$orderBy, $sortBy];
-        $result = $this->_companyRepository->getProductList($request->all(), $page, $pageSize, $orderArr);
+        list($page, $pageSize, $order) = getPageSuit($request);
+        $result = $this->_companyRepository->getProductList($request->all(), $page, $pageSize, $order);
         return responseTo($result);
     }
 
@@ -155,5 +151,18 @@ class CompanyController extends Controller
         $userInfo = getUserInfo(['company_id']);
         $result = $this->_companyRepository->delProduct($userInfo['company_id'], $request->get('id'));
         return responseTo($result, '产品删除成功');
+    }
+
+    /**
+     * 获取公司列表
+     * @param Request $request
+     * @return array
+     */
+    public function getCompanyList(Request $request)
+    {
+        list($page, $pageSize, $order) = getPageSuit($request);
+        $fields = ['id', 'name', 'province', 'city', 'area', 'industrial_park', 'industry_category', 'company_status', 'contacts', 'mobile'];
+        $result = $this->_companyRepository->getCompanyList($request->all(), $page, $pageSize, $order, $fields);
+        return responseTo($result);
     }
 }

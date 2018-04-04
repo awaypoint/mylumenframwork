@@ -23,5 +23,6 @@ class CompanyException extends BaseException
         40014=>['msg'=>'分厂信息添加失败'],
         40015=>['msg'=>'分厂信息删除失败'],
         40016=>['msg'=>'分厂地址不能为空'],
+        40017=>['msg'=>'您没有查看公司列表的权限'],
     ];
 }

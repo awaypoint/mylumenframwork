@@ -156,7 +156,7 @@ class SettingController extends Controller
             'name' => 'required',
         ]);
         $result = $this->_settingRepository->addWaste($request->all());
-        return responseTo($result);
+        return responseTo($result, '添加污染物成功');
     }
 
     /**
@@ -172,7 +172,7 @@ class SettingController extends Controller
             'name' => 'required',
         ]);
         $result = $this->_settingRepository->updateWaste($request->get('id'), $request->all());
-        return responseTo($result);
+        return responseTo($result, '修改污染物成功');
     }
 
     /**
@@ -201,5 +201,10 @@ class SettingController extends Controller
         ]);
         $result = $this->_settingRepository->getWasteCombo($request->all());
         return responseTo($result);
+    }
+
+    public function addAdminUser()
+    {
+        
     }
 }
