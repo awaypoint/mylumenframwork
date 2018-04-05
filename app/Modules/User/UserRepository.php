@@ -186,15 +186,19 @@ class UserRepository extends CommonRepository
      */
     public function modifyPassword($params)
     {
-        $userInfo = $this->getUserInfo(['id']);
+        $userInfo = $this->getUserInfo();
+        $uid = $userInfo['id'];
+        if ($userInfo['role_type'] == Role::ROLE_SUPER_ADMIN_TYPE && isset($params['id'])) {
+            $uid = $params['id'];
+        }
         $where = [
-            'id' => $userInfo['id'],
+            'id' => $uid,
         ];
         $checkPassword = $this->_userModel->getOne($where, ['password']);
         if (is_null($checkPassword)) {
             throw new UserException(10006);
         }
-        if ($checkPassword['password'] != $params['old_password']) {
+        if (!isset($params['reset']) && $checkPassword['password'] != $params['old_password']) {
             throw new UserException(10007);
         }
         $updateData = [
@@ -264,5 +268,36 @@ class UserRepository extends CommonRepository
         } catch (\Exception $e) {
             throw new UserException(10011);
         }
+    }
+
+    /**
+     * 获取用户列表
+     * @param $params
+     * @param int $page
+     * @param int $pageSize
+     * @param array $orderBy
+     * @return mixed
+     */
+    public function getUserList($params, $page = 1, $pageSize = 10, $orderBy = [])
+    {
+        $where = [
+            'built_in' => [
+                'join' => ['role', 'users.role_id', '=', 'role.id']
+            ]
+        ];
+        if (isset($params['username']) && $params['username']) {
+            $where[] = ['users.username', 'LIKE', '%' . $params['username'] . '%'];
+        }
+        if (isset($params['role_type']) && $params['role_type']) {
+            $where[] = ['role.type', '=', $params['role_type']];
+        }
+        $fields = ['users.id', 'users.username', 'role.type AS rolt_type'];
+        $result = $this->_userModel->getList($where, $fields, $page, $pageSize, $orderBy);
+        if (isset($result['rows']) && !empty($result['rows'])) {
+            foreach ($result['rows'] as &$row) {
+                $row['role_type'] = Role::ROLE_TYPE_MAP[$row['rolt_type']] ?? '无';
+            }
+        }
+        return $result;
     }
 }
