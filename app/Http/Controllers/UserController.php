@@ -42,4 +42,18 @@ class UserController extends Controller
         $result = $this->_userRepository->modifyPassword($request->all());
         return responseTo($result, '密码修改成功');
     }
+
+    /**
+     * 添加管理员帐号
+     * @param Request $request
+     * @return array
+     */
+    public function addAdminUser(Request $request)
+    {
+        $this->validate($request, [
+            'username' => 'required',
+        ]);
+        $result = $this->_userRepository->addAdminUser($request->all());
+        return responseTo($result, '管理员帐号添加成功');
+    }
 }

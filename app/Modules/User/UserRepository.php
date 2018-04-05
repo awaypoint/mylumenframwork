@@ -227,4 +227,42 @@ class UserRepository extends CommonRepository
         Session::put('user_info', $userInfo);
         return true;
     }
+
+    /**
+     * 添加管理员帐号
+     * @param $params
+     * @return array
+     * @throws UserException
+     */
+    public function addAdminUser($params)
+    {
+        $userInfo = $this->getUserInfo();
+        if ($userInfo['role_type'] != Role::ROLE_SUPER_ADMIN_TYPE) {
+            throw new UserException(10012);
+        }
+        $nameWhere = [
+            'username' => $params['username'],
+        ];
+        $isNameRegistered = $this->_userModel->getOne($nameWhere, ['id']);
+        if (!is_null($isNameRegistered)) {
+            throw new UserException(10003, ['name' => $params['username']]);
+        }
+        $addData = [
+            'username' => $params['username'],
+            'password' => md5(123456),
+            'role_id' => Role::ROLE_ADMIN_TYPE,
+            'mobile' => $params['mobile'] ?? 0,
+            'avatar_url' => $params['avatar_url'] ?? '',
+            'hide_menu_ids' => '[]',
+        ];
+        try {
+            $result = $this->_userModel->add($addData);
+            if (!$result) {
+                throw new UserException(10011);
+            }
+            return ['id' => $result];
+        } catch (\Exception $e) {
+            throw new UserException(10011);
+        }
+    }
 }

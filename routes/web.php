@@ -43,6 +43,7 @@ $app->group(['prefix' => '/setting', 'middleware' => 'auth'], function () use ($
 $app->group(['prefix' => 'users', 'middleware' => 'auth'], function () use ($app) {
     $app->get('getUserInfo', 'UserController@getUserInfo');
     $app->put('modifyPassword', 'UserController@modifyPassword');
+    $app->post('addAdminUser', 'UserController@addAdminUser');
 });
 //企业信息
 $app->group(['prefix' => 'company', 'middleware' => 'auth'], function () use ($app) {

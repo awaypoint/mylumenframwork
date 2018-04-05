@@ -221,7 +221,7 @@ class CompanyRepository extends CommonRepository
      */
     public function getProductList($params, $page = 1, $pageSize = 10, $orderBy = [], $fields = [])
     {
-        $userInfo = getUserInfo(['company_id']);
+        $userInfo = getUserInfo();
         $where = [];
         if ($userInfo['role_type'] == User::USER_COMMON_ROLE_TYPE) {
             $where['company_id'] = $userInfo['company_id'];
