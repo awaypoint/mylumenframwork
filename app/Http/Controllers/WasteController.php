@@ -43,9 +43,7 @@ class WasteController extends Controller
     {
         list($page, $pageSigze, $order) = getPageSuit($request);
 
-        $params = $request->all();
-        $params['company_id'] = getUserInfo()['company_id'];
-        $result = $this->_wasteRepository->getWasteMaterialList($params, $page, $pageSigze, $order);
+        $result = $this->_wasteRepository->getWasteMaterialList($request->all(), $page, $pageSigze, $order);
         return responseTo($result);
     }
 
@@ -291,13 +289,9 @@ class WasteController extends Controller
      */
     public function getWasteWaterList(Request $request)
     {
-        $page = $request->get('page') ?? 0;
-        $pageSigze = $request->get('page_size') ?? 0;
-        $orderBy = $request->get('order_by') ?? 'id';
-        $sortBy = $request->get('sort_by') ?? 'DESC';
+        list($page,$pageSigze,$order) = getPageSuit($request);
 
-        $order = [$orderBy, $sortBy];
-        $result = $this->_wasteRepository->getWasteWaterList(getUserInfo()['company_id'], $request->all(), $page, $pageSigze, $order);
+        $result = $this->_wasteRepository->getWasteWaterList($request->all(), $page, $pageSigze, $order);
         return responseTo($result);
     }
 

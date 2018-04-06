@@ -562,7 +562,7 @@ class WasteRepository extends CommonRepository
      * 获取废水信息列表
      * @param $params
      */
-    public function getWasteWaterList($companyId, $params, $page = 0, $pageSize = 0, $orderBy = [])
+    public function getWasteWaterList($params, $page = 0, $pageSize = 0, $orderBy = [])
     {
         $where = [
             'type' => Waste::WASTE_WATER_TUBE_TYPE,
