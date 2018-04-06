@@ -49,9 +49,9 @@ class CompanyController extends Controller
      * 获取公司信息详情
      * @return array
      */
-    public function getCompanyDetail()
+    public function getCompanyDetail(Request $request)
     {
-        $result = $this->_companyRepository->getCompanyDetail(getUserInfo()['company_id']);
+        $result = $this->_companyRepository->getCompanyDetail($request->all());
         return responseTo($result);
     }
 
@@ -117,8 +117,7 @@ class CompanyController extends Controller
         $this->validate($request, [
             'id' => 'required',
         ]);
-        $userInfo = getUserInfo(['company_id']);
-        $result = $this->_companyRepository->getProductDetail($userInfo['company_id'], $request->get('id'));
+        $result = $this->_companyRepository->getProductDetail($request->all(), $request->get('id'));
         return responseTo($result);
     }
 
@@ -133,8 +132,7 @@ class CompanyController extends Controller
             'id' => 'required',
             'name' => 'required',
         ]);
-        $userInfo = getUserInfo(['company_id']);
-        $result = $this->_companyRepository->updateProduct($userInfo['company_id'], $request->get('id'), $request->all());
+        $result = $this->_companyRepository->updateProduct($request->get('id'), $request->all());
         return responseTo($result, '产品修改成功');
     }
 
@@ -148,8 +146,7 @@ class CompanyController extends Controller
         $this->validate($request, [
             'id' => 'required',
         ]);
-        $userInfo = getUserInfo(['company_id']);
-        $result = $this->_companyRepository->delProduct($userInfo['company_id'], $request->get('id'));
+        $result = $this->_companyRepository->delProduct($request->get('id'));
         return responseTo($result, '产品删除成功');
     }
 

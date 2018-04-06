@@ -155,9 +155,7 @@ class FilesRepository extends CommonRepository
         if (is_null($model)) {
             throw new FilesException(50002);
         }
-        if ($model->company_id != getUserInfo()['company_id']) {
-            throw new FilesException(50003);
-        }
+        checkCompanyPermission($model->company_id);
         $updateData = [
             'relation_field' => $params['relation_field'],
             'module_type' => $params['module_type'] ?? Files::FILES_COMPANY_MODULE_TYPE,
@@ -181,8 +179,10 @@ class FilesRepository extends CommonRepository
      */
     public function getCompanyFiles($params)
     {
+        $companyId = $params['company_id'] ?? getUserInfo()['company_id'];
+        checkCompanyPermission($companyId);
         $where = [
-            'company_id' => getUserInfo()['company_id'],
+            'company_id' => $companyId,
             'module_type' => $params['module_type'],
         ];
         $fields = ['id', 'relation_field', 'file_name', 'preview_url', 'url', 'extra_fields'];
@@ -225,30 +225,11 @@ class FilesRepository extends CommonRepository
     /**
      * 删除文件
      * @param $id
-     * @return array
-     * @throws FilesException
+     * @return bool|null
      */
     public function delFile($id)
     {
-        $where = [
-            'id' => $id,
-        ];
-        $isExist = $this->_fileModel->getOne($where, ['company_id']);
-        if (is_null($isExist)) {
-            throw new FilesException(50002);
-        }
-        if ($isExist['company_id'] != getUserInfo()['company_id']) {
-            throw new FilesException(50003);
-        }
-        try {
-            $result = $this->_fileModel->deleteData($id);
-            if (!$result) {
-                throw new FilesException(50005);
-            }
-            return ['id' => $id];
-        } catch (\Exception $e) {
-            throw new FilesException(50005);
-        }
+        return $this->_fileModel->del($id);
     }
 
     /**
@@ -257,11 +238,13 @@ class FilesRepository extends CommonRepository
      * @param $relationField
      * @return mixed
      */
-    public function getFileByRelationField($companyId, $relationField)
+    public function getFileByRelationField($params)
     {
+        $companyId = $params['company_id'] ?? getUserInfo()['company_id'];
+        checkCompanyPermission($companyId);
         $where = [
             'company_id' => $companyId,
-            'relation_field' => $relationField,
+            'relation_field' => $params['relation_field'],
         ];
         $result = $this->_fileModel->getOne($where, [], ['id', 'DESC']);
         return $result;

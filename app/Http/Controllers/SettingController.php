@@ -202,9 +202,4 @@ class SettingController extends Controller
         $result = $this->_settingRepository->getWasteCombo($request->all());
         return responseTo($result);
     }
-
-    public function addAdminUser()
-    {
-        
-    }
 }

@@ -41,14 +41,10 @@ class WasteController extends Controller
      */
     public function getWasteMaterialList(Request $request)
     {
-        $page = $request->get('page') ?? 0;
-        $pageSigze = $request->get('page_size') ?? 0;
-        $orderBy = $request->get('order_by') ?? 'id';
-        $sortBy = $request->get('sort_by') ?? 'DESC';
+        list($page, $pageSigze, $order) = getPageSuit($request);
 
         $params = $request->all();
         $params['company_id'] = getUserInfo()['company_id'];
-        $order = [$orderBy, $sortBy];
         $result = $this->_wasteRepository->getWasteMaterialList($params, $page, $pageSigze, $order);
         return responseTo($result);
     }
@@ -227,7 +223,7 @@ class WasteController extends Controller
         $this->validate($request, [
             'id' => 'required',
         ]);
-        $result = $this->_wasteRepository->getWasteGasDetail(getUserInfo()['company_id'], $request->get('id'));
+        $result = $this->_wasteRepository->getWasteGasDetail($request->get('id'));
         return responseTo($result);
     }
 
@@ -238,12 +234,9 @@ class WasteController extends Controller
      */
     public function getWasteGasList(Request $request)
     {
-        $page = $request->get('page') ?? 0;
-        $pageSigze = $request->get('page_size') ?? 0;
-        $orderBy = $request->get('order_by') ?? 'id';
-        $sortBy = $request->get('sort_by') ?? 'DESC';
+        list($page, $pageSigze, $order) = getPageSuit($request);
 
-        $result = $this->_wasteRepository->getWasteGasList(getUserInfo()['company_id'], $request->all(), $page, $pageSigze, [$orderBy, $sortBy]);
+        $result = $this->_wasteRepository->getWasteGasList($request->all(), $page, $pageSigze, $order);
         return responseTo($result);
     }
 
@@ -372,13 +365,9 @@ class WasteController extends Controller
      */
     public function getNoiseList(Request $request)
     {
-        $page = $request->get('page') ?? 0;
-        $pageSigze = $request->get('page_size') ?? 0;
-        $orderBy = $request->get('order_by') ?? 'id';
-        $sortBy = $request->get('sort_by') ?? 'DESC';
+        list($page, $pageSigze, $order) = getPageSuit($request);
 
-        $order = [$orderBy, $sortBy];
-        $result = $this->_wasteRepository->getNoiseList(getUserInfo()['company_id'], $request->all(), $page, $pageSigze, $order);
+        $result = $this->_wasteRepository->getNoiseList($request->all(), $page, $pageSigze, $order);
         return responseTo($result);
     }
 
@@ -446,13 +435,9 @@ class WasteController extends Controller
      */
     public function getNucleusList(Request $request)
     {
-        $page = $request->get('page') ?? 0;
-        $pageSigze = $request->get('page_size') ?? 0;
-        $orderBy = $request->get('order_by') ?? 'id';
-        $sortBy = $request->get('sort_by') ?? 'DESC';
+        list($page, $pageSigze, $order) = getPageSuit($request);
 
-        $order = [$orderBy, $sortBy];
-        $result = $this->_wasteRepository->getNucleusList(getUserInfo()['company_id'], $request->all(), $page, $pageSigze, $order);
+        $result = $this->_wasteRepository->getNucleusList($request->all(), $page, $pageSigze, $order);
         return responseTo($result);
     }
 

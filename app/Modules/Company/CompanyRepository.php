@@ -80,8 +80,11 @@ class CompanyRepository extends CommonRepository
      * @return mixed
      * @throws CompanyException
      */
-    public function getCompanyDetail($companyId)
+    public function getCompanyDetail($params)
     {
+        $userInfo = getUserInfo();
+        $companyId = $params['company_id'] ?? $userInfo['company_id'];
+        checkCompanyPermission($companyId);
         $where = [
             'id' => $companyId,
             'built_in' => [
@@ -123,10 +126,9 @@ class CompanyRepository extends CommonRepository
     public function updateCompany($params)
     {
         $userInfo = getUserInfo();
-        if ($userInfo['company_id'] <= 0) {
-            throw new CompanyException(40008);
-        }
-        $this->_validate($params, $userInfo['company_id']);
+        $companyId = $params['company_id'] ?? $userInfo['company_id'];
+        checkCompanyPermission($companyId);
+        $this->_validate($params, $companyId);
         $where = [
             'id' => $userInfo['company_id'],
         ];
@@ -269,8 +271,10 @@ class CompanyRepository extends CommonRepository
      * @return mixed
      * @throws CompanyException
      */
-    public function getProductDetail($companyId, $id, $fields = [])
+    public function getProductDetail($params, $id, $fields = [])
     {
+        $companyId = $params['company_id'] ?? getUserInfo()['company_id'];
+        checkCompanyPermission($companyId);
         $where = [
             'company_id' => $companyId,
             'id' => $id,
@@ -299,42 +303,12 @@ class CompanyRepository extends CommonRepository
      * @return array
      * @throws CompanyException
      */
-    public function updateProduct($companyId, $id, $params)
+    public function updateProduct($id, $params)
     {
-        $where = [
-            'company_id' => $companyId,
-            'id' => $id,
-        ];
         $this->_proValidate($params);
-        $model = $this->_productModel->where($where)->first();
-        if (is_null($model)) {
-            throw new CompanyException(40011);
-        }
-        try {
-            $updateData = [];
-            $guardFillable = ['id'];
-            foreach ($params as $field => $value) {
-                if (in_array($field, $guardFillable)) {
-                    continue;
-                }
-                if ($field == 'process_flow') {
-                    $value = json_encode($value, JSON_UNESCAPED_UNICODE);
-                }
-                if (isset($model->$field)) {
-                    $updateData[$field] = $value;
-                }
-            }
-
-            if (!empty($updateData)) {
-                $result = $model->update($updateData);
-                if (!$result) {
-                    throw new CompanyException(40012);
-                }
-            }
-            return ['id' => $id];
-        } catch (\Exception $e) {
-            throw new CompanyException(40012);
-        }
+        $fileFields = ['process_flow'];
+        dealFileFields($fileFields, $params);
+        return $this->_productModel->up($id, $params);
     }
 
     /**
@@ -344,21 +318,9 @@ class CompanyRepository extends CommonRepository
      * @return mixed
      * @throws CompanyException
      */
-    public function delProduct($companyId, $id)
+    public function delProduct($id)
     {
-        $where = [
-            'company_id' => $companyId,
-            'id' => $id,
-        ];
-        $isExist = $this->_productModel->getOne($where, ['id']);
-        if (is_null($isExist)) {
-            throw new CompanyException(40011);
-        }
-        $result = $this->_productModel->deleteByFields($where);
-        if (!$result) {
-            throw new CompanyException(40013);
-        }
-        return $result;
+        return $this->_productModel->del($id);
     }
 
     /**

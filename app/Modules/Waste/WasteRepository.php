@@ -84,7 +84,13 @@ class WasteRepository extends CommonRepository
      */
     public function getWasteMaterialList($params, $page, $pageSize, $orderBy, $fileds = [])
     {
+        $userInfo = getUserInfo();
         $where = [];
+        if ($userInfo['role_type'] == Role::ROLE_COMMON_TYPE) {
+            $where['company_id'] = $userInfo['company_id'];
+        } elseif (isset($params['company_id']) && $params['company_id']) {
+            $where['company_id'] = $params['company_id'];
+        }
         if (isset($params['name']) && $params['name']) {
             $where[] = ['waste_name', 'LIKE', '%' . $params['name'] . '%'];
             $where['built_in'] = [
@@ -123,7 +129,7 @@ class WasteRepository extends CommonRepository
             'id' => $id,
         ];
         $result = $this->_wasteMaterialModel->getOne($where);
-        $this->_checkWastePermission($result['company_id']);
+        checkCompanyPermission($result['company_id']);
         $wasteTypeIds = [$result['waste_category'], $result['industry'], $result['waste_code']];
         $wasteTypeInfo = Setting::searchWasteTypeForList($wasteTypeIds, ['name', 'code'], 'id');
         $result['waste_category_name'] = isset($wasteTypeInfo[$result['waste_category']]) ? $wasteTypeInfo[$result['waste_category']]['name'] : '';
@@ -216,7 +222,7 @@ class WasteRepository extends CommonRepository
         if (is_null($result)) {
             throw new WasteException(60008);
         }
-        $this->_checkWastePermission($result['company_id']);
+        checkCompanyPermission($result['company_id']);
         $result['pics'] = json_decode($result['pics'], true);
         $result['check'] = json_decode($result['check'], true);
         $allFileIds = array_merge($result['pics'], $result['check']);
@@ -302,8 +308,10 @@ class WasteRepository extends CommonRepository
      */
     public function getWasteGasTubeCombo($params)
     {
+        $companyId = $params['company_id'] ?? getUserInfo()['company_id'];
+        checkCompanyPermission($companyId);
         $where = [
-            'company_id' => getUserInfo()['company_id'],
+            'company_id' => $companyId,
             'type' => $params['type'],
         ];
         $fields = ['id', 'item_no'];
@@ -326,6 +334,7 @@ class WasteRepository extends CommonRepository
         if (is_null($model)) {
             throw new WasteException(60008);
         }
+        checkCompanyPermission($model->company_id);
         $dateWhere = [
             'company_id' => $model->company_id,
             'tube_id' => $id,
@@ -350,17 +359,16 @@ class WasteRepository extends CommonRepository
      * @return mixed
      * @throws WasteException
      */
-    public function getWasteGasDetail($companyId, $id)
+    public function getWasteGasDetail($id)
     {
         $where = [
             'id' => $id,
-            'company_id' => $companyId,
         ];
         $result = $this->_wasteGasModel->getOne($where);
         if (is_null($result)) {
             throw new WasteException(60011);
         }
-        $this->_checkWastePermission($result['company_id']);
+        checkCompanyPermission($result['company_id']);
         $tubeWhere = [
             'id' => $result['tube_id'],
         ];
@@ -387,15 +395,20 @@ class WasteRepository extends CommonRepository
      * @param $params
      * @return mixed
      */
-    public function getWasteGasList($companyId, $params, $page = 1, $pageSize = 10, $orderBy = [])
+    public function getWasteGasList($params, $page = 1, $pageSize = 10, $orderBy = [])
     {
         $where = [
-            'company_id' => $companyId,
             'type' => Waste::WASTE_GAS_TUBE_TYPE,
             'built_in' => [
                 'with' => 'gases',
             ]
         ];
+        $userInfo = getUserInfo();
+        if ($userInfo['role_type'] == Role::ROLE_COMMON_TYPE) {
+            $where['company_id'] = $userInfo['company_id'];
+        } elseif (isset($params['company_id']) && $params['company_id']) {
+            $where['company_id'] = $params['company_id'];
+        }
         $tubeFields = ['id', 'item_no', 'height', 'pics', 'check'];
         $gasFields = ['id', 'type', 'waste_name', 'gas_discharge', 'discharge_level', 'equipment', 'technique', 'installations', 'remark'];
         $result = $this->_wasteTubeModel->getList($where, $tubeFields, $page, $pageSize, $orderBy);
@@ -530,7 +543,7 @@ class WasteRepository extends CommonRepository
         if (is_null($result)) {
             throw new WasteException(60014);
         }
-        $this->_checkWastePermission($result['company_id']);
+        checkCompanyPermission($result['company_id']);
         $tubeWhere = [
             'id' => $result['tube_id'],
         ];
@@ -552,12 +565,17 @@ class WasteRepository extends CommonRepository
     public function getWasteWaterList($companyId, $params, $page = 0, $pageSize = 0, $orderBy = [])
     {
         $where = [
-            'company_id' => $companyId,
             'type' => Waste::WASTE_WATER_TUBE_TYPE,
             'built_in' => [
                 'with' => 'water',
             ]
         ];
+        $userInfo = getUserInfo();
+        if ($userInfo['role_type'] == Role::ROLE_COMMON_TYPE) {
+            $where['company_id'] = $userInfo['company_id'];
+        } elseif (isset($params['company_id']) && $params['company_id']) {
+            $where['company_id'] = $params['company_id'];
+        }
         $tubeFields = ['id', 'item_no', 'height', 'pics', 'check'];
         $waterFields = ['id', 'type', 'waste_name', 'water_discharge', 'discharge_level', 'water_direction', 'technique', 'waste_plants', 'daily_process', 'remark'];
         $result = $this->_wasteTubeModel->getList($where, $tubeFields, $page, $pageSize, $orderBy);
@@ -691,7 +709,7 @@ class WasteRepository extends CommonRepository
         if (is_null($result)) {
             throw new WasteException(60015);
         }
-        $this->_checkWastePermission($result['company_id']);
+        checkCompanyPermission($result['company_id']);
         return $result;
     }
 
@@ -700,11 +718,15 @@ class WasteRepository extends CommonRepository
      * @param $params
      * @return mixed
      */
-    public function getNoiseList($companyId, $params, $page = 1, $pageSize = 10, $orderBy = [])
+    public function getNoiseList($params, $page = 1, $pageSize = 10, $orderBy = [])
     {
-        $where = [
-            'company_id' => $companyId,
-        ];
+        $userInfo = getUserInfo();
+        $where = [];
+        if ($userInfo['role_type'] == Role::ROLE_COMMON_TYPE) {
+            $where['company_id'] = $userInfo['company_id'];
+        } elseif (isset($params['company_id']) && $params['company_id']) {
+            $where['company_id'] = $params['company_id'];
+        }
         if (isset($params['equipment']) && $params['equipment']) {
             $where['built_in'] = [
                 'where' => ['equipment', 'LIKE', '%' . $params['equipment'] . '%']
@@ -792,7 +814,7 @@ class WasteRepository extends CommonRepository
         if (is_null($result)) {
             throw new WasteException(60017);
         }
-        $this->_checkWastePermission($result['company_id']);
+        checkCompanyPermission($result['company_id']);
         return $result;
     }
 
@@ -801,11 +823,15 @@ class WasteRepository extends CommonRepository
      * @param $params
      * @return mixed
      */
-    public function getNucleusList($companyId, $params, $page = 1, $pageSize = 10, $orderBy = [])
+    public function getNucleusList($params, $page = 1, $pageSize = 10, $orderBy = [])
     {
-        $where = [
-            'company_id' => $companyId,
-        ];
+        $userInfo = getUserInfo();
+        $where = [];
+        if ($userInfo['role_type'] == Role::ROLE_COMMON_TYPE) {
+            $where['company_id'] = $userInfo['company_id'];
+        } elseif (isset($params['company_id']) && $params['company_id']) {
+            $where['company_id'] = $params['company_id'];
+        }
         if (isset($params['equipment']) && $params['equipment']) {
             $where['built_in'] = [
                 'where' => ['equipment', 'LIKE', '%' . $params['equipment'] . '%']
@@ -886,19 +912,5 @@ class WasteRepository extends CommonRepository
             }
         }
         return $result;
-    }
-
-    /**
-     * 检验权限
-     * @param $companyId
-     * @throws WasteException
-     */
-    private function _checkWastePermission($companyId)
-    {
-        $userInfo = getUserInfo();
-        $roleInfo = Role::getRoleInfo($userInfo['role_id']);
-        if ($roleInfo == Role::ROLE_COMMON_TYPE && $companyId != $userInfo['company_id']) {
-            throw new WasteException(60002);
-        };
     }
 }

@@ -85,7 +85,7 @@ class FilesController extends Controller
         $this->validate($request, [
             'relation_field' => 'required',
         ]);
-        $result = $this->_filesgRepository->getFileByRelationField(getUserInfo()['company_id'], $request->get('relation_field'));
+        $result = $this->_filesgRepository->getFileByRelationField($request->all());
         return responseTo($result);
     }
 
