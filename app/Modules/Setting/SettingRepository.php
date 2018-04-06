@@ -145,8 +145,11 @@ class SettingRepository extends CommonRepository
         $addData = [
             'name' => $params['name'],
             'province_code' => $params['province_code'],
+            'province' => $params['province'],
             'city_code' => $params['city_code'],
+            'citye' => $params['citye'],
             'area_code' => $params['area_code'],
+            'area' => $params['area'],
         ];
         try {
             $result = $this->_industrialParkModel->add($addData);
@@ -181,6 +184,34 @@ class SettingRepository extends CommonRepository
         }
         $fileds = ['id', 'name'];
         $result = $this->_industrialParkModel->searchData($where, $fileds);
+        return $result;
+    }
+
+    /**
+     * 获取工业园区列表
+     * @param $params
+     * @param int $page
+     * @param int $pageSize
+     * @param array $order
+     * @param array $fields
+     * @return mixed
+     */
+    public function getIndustrialParkList($params, $page = 1, $pageSize = 10, $order = [], $fields = [])
+    {
+        $where = [];
+        if (isset($params['province_code']) && $params['province_code']) {
+            $where['province_code'] = $params['province_code'];
+        }
+        if (isset($params['city_code']) && $params['city_code']) {
+            $where['city_code'] = $params['city_code'];
+        }
+        if (isset($params['area_code']) && $params['area_code']) {
+            $where['area_code'] = $params['area_code'];
+        }
+        if (isset($params['name']) && $params['name']) {
+            $where[] = ['name', 'LIKE', '%' . $params['name'] . '%'];
+        }
+        $result = $this->_industrialParkModel->getList($where, $fields, $page, $pageSize, $order);
         return $result;
     }
 

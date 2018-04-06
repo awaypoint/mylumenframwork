@@ -38,6 +38,7 @@ $app->group(['prefix' => '/setting', 'middleware' => 'auth'], function () use ($
     $app->delete('delIndustrialPark', 'SettingController@delIndustrialPark');
     $app->put('updateWaste', 'SettingController@updateWaste');
     $app->delete('delWaste', 'SettingController@delWaste');
+    $app->get('getIndustrialParkList', 'SettingController@getIndustrialParkList');
 });
 //用户
 $app->group(['prefix' => 'users', 'middleware' => 'auth'], function () use ($app) {

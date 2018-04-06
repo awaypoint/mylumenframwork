@@ -94,8 +94,11 @@ class SettingController extends Controller
         $this->validate($request, [
             'name' => 'required',
             'province_code' => 'required',
+            'province' => 'required',
             'city_code' => 'required',
+            'city' => 'required',
             'area_code' => 'required',
+            'area' => 'required',
         ]);
         $result = $this->_settingRepository->addIndustrialPark($request->all());
         return responseTo($result, '添加工业园区成功');
@@ -109,6 +112,19 @@ class SettingController extends Controller
     public function getIndustrialParkCombo(Request $request)
     {
         $result = $this->_settingRepository->getIndustrialParkCombo($request->all());
+        return responseTo($result);
+    }
+
+    /**
+     * 获取工业园区列表
+     * @param Request $request
+     * @return array
+     */
+    public function getIndustrialParkList(Request $request)
+    {
+        list($page, $pageSize, $order) = getPageSuit($request);
+
+        $result = $this->_settingRepository->getIndustrialParkList($request->all(), $page, $pageSize, $order);
         return responseTo($result);
     }
 

@@ -12,5 +12,5 @@ class EloquentIndustrialParkModel extends CommonEloquentModel
     protected $table = 'industrial_park';
     protected $dateFormat = 'U';
     //采用白名单模式
-    public $fillable = ['id', 'name', 'province_code', 'city_code', 'area_code'];
+    public $fillable = ['id', 'name', 'province_code', 'city_code', 'area_code', 'province', 'city', 'area'];
 }
