@@ -300,4 +300,19 @@ class UserRepository extends CommonRepository
         }
         return $result;
     }
+
+    /**
+     * 删除用户
+     * @param $id
+     * @return bool|null
+     * @throws UserException
+     */
+    public function delUsers($id)
+    {
+        $userInfo = $this->getUserInfo();
+        if ($userInfo['role_type'] != Role::ROLE_SUPER_ADMIN_TYPE) {
+            throw new UserException(10012);
+        }
+        return $this->_userModel->del($id);
+    }
 }

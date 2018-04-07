@@ -404,6 +404,9 @@ class CompanyRepository extends CommonRepository
         if (isset($params['company_status']) && $params['company_status']) {
             $where['company_status'] = $params['company_status'];
         }
+        if (isset($params['industry_category']) && $params['industry_category']) {
+            $where['industry_category'] = $params['industry_category'];
+        }
         if (isset($params['name']) && $params['name']) {
             $where[] = ['name', 'LIKE', '%' . $params['name'] . '%'];
         }

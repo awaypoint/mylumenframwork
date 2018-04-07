@@ -85,4 +85,18 @@ class UserController extends Controller
         $result = $this->_userRepository->getUserList($request->all(), $page, $pageSize, $order);
         return responseTo($result);
     }
+
+    /**
+     * 删除用户
+     * @param Request $request
+     * @return array
+     */
+    public function delUsers(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required',
+        ]);
+        $result = $this->_userRepository->delUsers($request->get('id'));
+        return responseTo($result, '删除用户成功');
+    }
 }
