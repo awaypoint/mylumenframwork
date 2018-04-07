@@ -737,7 +737,7 @@ class WasteRepository extends CommonRepository
         }
         $result = $this->_noiseModel->getList($where, [], $page, $pageSize, $orderBy);
         if (isset($result['rows']) && !empty($result['rows'])) {
-            $companyIds = array_unique(array_column($result['rows'],'company_id'));
+            $companyIds = array_unique(array_column($result['rows'], 'company_id'));
             $companyInfo = Company::searchCompanyForList($companyIds);
             foreach ($result['rows'] as &$row) {
                 $row['company_name'] = isset($companyInfo[$row['company_id']]) ? $companyInfo[$row['company_id']]['name'] : '';
@@ -847,7 +847,7 @@ class WasteRepository extends CommonRepository
         }
         $result = $this->_nucleusModel->getList($where, [], $page, $pageSize, $orderBy);
         if (isset($result['rows']) && !empty($result['rows'])) {
-            $companyIds = array_unique(array_column($result['rows'],'company_id'));
+            $companyIds = array_unique(array_column($result['rows'], 'company_id'));
             $companyInfo = Company::searchCompanyForList($companyIds);
             foreach ($result['rows'] as &$row) {
                 $row['company_name'] = isset($companyInfo[$row['company_id']]) ? $companyInfo[$row['company_id']]['name'] : '';
@@ -899,6 +899,30 @@ class WasteRepository extends CommonRepository
     }
 
     /**
+     * 获取行业废气报表
+     * @param $params
+     * @return array
+     */
+    public function getWasteGasReportByIndustry($params)
+    {
+        $where = [];
+        if (isset($params['start_time']) && $params['start_time'] > 0) {
+            $where[] = ['protect_waste_gas.created_at', '>=', $params['start_time']];
+        }
+        if (isset($params['end_time']) && $params['end_time'] > 0) {
+            $where[] = ['protect_waste_gas.created_at', '<=', $params['end_time']];
+        }
+        $fieldStr = 'SUM(protect_waste_gas.installations) as installations,protect_company.industry_category';
+        $result = DB::table('waste_gas')
+            ->select(DB::raw($fieldStr))
+            ->where($where)
+            ->join('company','company.id','=','waste_gas.company_id')
+            ->groupBy('company.industry_category')
+            ->get()->toArray();
+        return $result;
+    }
+
+    /**
      * 获取废水柱状图
      * @param $params
      * @return array
@@ -925,6 +949,60 @@ class WasteRepository extends CommonRepository
                     $item['waste_name'] = $wasteInfo[$item['waste_name']]['name'];
                 }
             }
+        }
+        return $result;
+    }
+
+    /**
+     * 获取行业废水报表
+     * @param $params
+     * @return array
+     */
+    public function getWasteWaterReportByIndustry($params)
+    {
+        $where = [];
+        if (isset($params['start_time']) && $params['start_time'] > 0) {
+            $where[] = ['protect_waste_gas.created_at', '>=', $params['start_time']];
+        }
+        if (isset($params['end_time']) && $params['end_time'] > 0) {
+            $where[] = ['protect_waste_water.created_at', '<=', $params['end_time']];
+        }
+        $fieldStr = 'SUM(protect_waste_water.water_discharge) as installations,protect_company.industry_category';
+        $result = DB::table('waste_water')
+            ->select(DB::raw($fieldStr))
+            ->where($where)
+            ->join('company','company.id','=','waste_water.company_id')
+            ->groupBy('company.industry_category')
+            ->get()->toArray();
+        return $result;
+    }
+
+    public function getWasteGasAdminList($params, $page = 1, $pageSize = 10, $orderBy = [])
+    {
+        $userInfo = getUserInfo();
+        $where = [
+            'built_in' => [
+                'join' => ['waste', 'waste.id', '=', 'waste_gas.waste_name'],
+                'leftJoin' => ['tube', 'tube.id', '=', 'waste_gas.tube_id'],
+            ]
+        ];
+        if ($userInfo['role_type'] == Role::ROLE_COMMON_TYPE) {
+            $where['waste_gas.company_id'] = $userInfo['company_id'];
+        } elseif (isset($params['company_id']) && $params['company_id']) {
+            $where['waste_gas.company_id'] = $params['company_id'];
+        }
+        if (isset($params['waste']) && $params['waste']) {
+            $where[] = ['waste_gas.waste_name', 'LIKE', '%' . $params['waste'] . '%'];
+        }
+        $fields = [];
+        foreach ($this->_wasteGasModel->fillable as $field) {
+            $fields[] = 'waste_gas.'.$field;
+        }
+        $fields[] = ['waste.name AS waste','tube.item_no','tube.'];
+        $fields[] = 'tube.name AS tube_name';
+        $result = $this->_wasteGasModel->getList($where, $fields, $page, $pageSize);
+        if (isset($result['rows']) && !empty($result['rows'])){
+            $companyIds = $tubeIds = [];
         }
         return $result;
     }

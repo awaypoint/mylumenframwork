@@ -105,4 +105,7 @@ $app->group(['prefix' => 'waste', 'middleware' => 'auth'], function () use ($app
     $app->delete('delNucleus', 'WasteController@delNucleus');
     $app->get('getWasteGasReport', 'WasteController@getWasteGasReport');
     $app->get('getWasteWaterReport', 'WasteController@getWasteWaterReport');
+    $app->get('getWasteGasAdminList', 'WasteController@getWasteGasAdminList');
+    $app->get('getWasteGasReportByIndustry', 'WasteController@getWasteGasReportByIndustry');
+    $app->get('getWasteWaterReportByIndustry', 'WasteController@getWasteWaterReportByIndustry');
 });

@@ -130,7 +130,7 @@ class CompanyRepository extends CommonRepository
         checkCompanyPermission($companyId);
         $this->_validate($params, $companyId);
         $where = [
-            'id' => $userInfo['company_id'],
+            'id' => $companyId,
         ];
         $model = $this->_companyModel->where($where)->first();
         if (is_null($model)) {

@@ -480,4 +480,26 @@ class WasteController extends Controller
         $result = $this->_wasteRepository->getWasteWaterReport($request->all());
         return responseTo($result);
     }
+
+    /**
+     * 获取行业废气排放量
+     * @param Request $request
+     * @return array
+     */
+    public function getWasteGasReportByIndustry(Request $request)
+    {
+        $result = $this->_wasteRepository->getWasteGasReportByIndustry($request->all());
+        return responseTo($result);
+    }
+
+    /**
+     * 获取行业废水排放量
+     * @param Request $request
+     * @return array
+     */
+    public function getWasteWaterReportByIndustry(Request $request)
+    {
+        $result = $this->_wasteRepository->getWasteWaterReportByIndustry($request->all());
+        return responseTo($result);
+    }
 }
