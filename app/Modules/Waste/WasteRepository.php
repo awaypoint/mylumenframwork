@@ -448,22 +448,23 @@ class WasteRepository extends CommonRepository
                 if (!empty($item['gases'])) {
                     $newGas = [];
                     foreach ($item['gases'] as $gas) {
+                        $newGasWasteName = '';
                         if (isset($wasteInfo[$gas['waste_name']])) {
                             $newGasWasteName = $wasteInfo[$gas['waste_name']]['name'];
-                            if (isset($params['waste_name']) && $params['waste_name'] && strpos($newGasWasteName, $params['waste_name']) === false) {
-                                continue;
-                            }
-                            $tmp = [
-                                'type_name' => Waste::WASTE_GAS_TYPE_MAP[$gas['type']] ?? '',
-                                'waste' => $newGasWasteName,
-                            ];
-                            foreach ($gasFields as $gasField) {
-                                if (isset($gas[$gasField])) {
-                                    $tmp[$gasField] = $gas[$gasField];
-                                }
-                            }
-                            $newGas[] = $tmp;
                         }
+                        if (isset($params['waste_name']) && $params['waste_name'] && strpos($newGasWasteName, $params['waste_name']) === false) {
+                            continue;
+                        }
+                        $tmp = [
+                            'type_name' => Waste::WASTE_GAS_TYPE_MAP[$gas['type']] ?? '',
+                            'waste' => $newGasWasteName,
+                        ];
+                        foreach ($gasFields as $gasField) {
+                            if (isset($gas[$gasField])) {
+                                $tmp[$gasField] = $gas[$gasField];
+                            }
+                        }
+                        $newGas[] = $tmp;
                     }
                     $item['gases'] = $newGas;
                 }

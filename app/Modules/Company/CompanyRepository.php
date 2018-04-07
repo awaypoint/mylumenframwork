@@ -235,28 +235,37 @@ class CompanyRepository extends CommonRepository
         }
         $result = $this->_productModel->getList($where, $fields, $page, $pageSize, $orderBy);
         if (isset($result['rows']) && !empty($result['rows'])) {
-            $fileIds = [];
+            $fileInfos = $companyInfos = $fileIds = $companyIds = [];
             foreach ($result['rows'] as $row) {
                 if (!is_array($row['process_flow'])) {
                     $row['process_flow'] = json_decode($row['process_flow'], true);
                 }
                 $fileIds = array_merge($fileIds, $row['process_flow']);
+                $companyIds[] = $row['company_id'];
             }
             $fileIds = array_unique($fileIds);
+            $companyIds = array_unique($companyIds);
             if (!empty($fileIds)) {
                 $fileInfos = Files::searchFilesForList($fileIds, 2);
-                foreach ($result['rows'] as &$newRow) {
-                    if (!is_array($newRow['process_flow'])) {
-                        $newRow['process_flow'] = json_decode($newRow['process_flow'], true);
-                    }
-                    $newRow['process_flow_files'] = [];
-                    if (!empty($newRow['process_flow'])) {
-                        foreach ($newRow['process_flow'] as $flow) {
-                            if (isset($fileInfos[$flow])) {
-                                $newRow['process_flow_files'][] = $fileInfos[$flow];
-                            }
+            }
+            if (!empty($companyIds)) {
+                $companyInfos = $this->searchForList($companyIds, ['name'], 'id');
+            }
+            foreach ($result['rows'] as &$newRow) {
+                if (!is_array($newRow['process_flow'])) {
+                    $newRow['process_flow'] = json_decode($newRow['process_flow'], true);
+                }
+                $newRow['process_flow_files'] = [];
+                if (!empty($newRow['process_flow'])) {
+                    foreach ($newRow['process_flow'] as $flow) {
+                        if (isset($fileInfos[$flow])) {
+                            $newRow['process_flow_files'][] = $fileInfos[$flow];
                         }
                     }
+                }
+                $newRow['company_name'] = '';
+                if (isset($companyInfos[$newRow['company_id']])) {
+                    $newRow['company_name'] = $companyInfos[$newRow['company_id']]['name'];
                 }
             }
         }
@@ -400,6 +409,19 @@ class CompanyRepository extends CommonRepository
         }
         $result = $this->_companyModel->getList($where, $fields, $page, $pageSize, $orderBy);
         return $result;
+    }
+
+    /**
+     * 匹配
+     * @param $ids
+     * @param array $fields
+     * @param string $indexKey
+     * @param array $replaceWhere
+     * @return array
+     */
+    public function searchForList($ids, $fields = [], $indexKey = '', $replaceWhere = [])
+    {
+        return $this->_companyModel->searchForList($ids, $fields, $indexKey, $replaceWhere);
     }
 
     /**

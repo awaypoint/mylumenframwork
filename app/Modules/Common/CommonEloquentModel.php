@@ -239,6 +239,35 @@ class CommonEloquentModel extends Model
     }
 
     /**
+     * 匹配写公共
+     * @param $model
+     * @param $ids
+     * @param array $fields
+     * @param string $indexKey
+     * @param array $replaceWhere
+     * @return array
+     */
+    public function searchForList($ids, $fields = [], $indexKey = '', $replaceWhere = [])
+    {
+        $where = [
+            'built_in' => [
+                'whereIn' => ['id', $ids],
+            ]
+        ];
+        if (!empty($replaceWhere)) {
+            $where = $replaceWhere;
+        }
+        if (!empty($fields) && $indexKey) {
+            $fields = array_unique(array_merge($fields, [$indexKey]));
+        }
+        $result = $this->searchData($where, $fields);
+        if ($indexKey) {
+            $result = array_column($result, null, $indexKey);
+        }
+        return $result;
+    }
+
+    /**
      * 构造模型
      * @param $where
      * @return mixed
