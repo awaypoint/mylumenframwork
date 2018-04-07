@@ -242,7 +242,7 @@ class FilesRepository extends CommonRepository
      */
     public function getFileByRelationField($params)
     {
-        $companyId = $params['company_id'] ?? getUserInfo()['company_id'];
+        $companyId = isset($params['company_id']) && $params['company_id'] ? $params['company_id'] : getUserInfo()['company_id'];
         checkCompanyPermission($companyId);
         $where = [
             'company_id' => $companyId,

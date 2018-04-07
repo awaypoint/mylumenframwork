@@ -22,4 +22,14 @@ class FilesFacades
     {
         return $this->_filesRepository->searchFilesForList($fileIds, $type);
     }
+
+    /**
+     * 通过关联字段获取文件信息
+     * @param $params
+     * @return mixed
+     */
+    public function getFileByRelationField($params)
+    {
+        return $this->_filesRepository->getFileByRelationField($params);
+    }
 }

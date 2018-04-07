@@ -737,8 +737,17 @@ class WasteRepository extends CommonRepository
         if (isset($result['rows']) && !empty($result['rows'])) {
             $companyIds = array_unique(array_column($result['rows'], 'company_id'));
             $companyInfo = Company::searchCompanyForList($companyIds);
+            $checkFiles = [];
+            foreach ($companyIds as $cmpId) {
+                $fileParams = [
+                    'company_id' => $cmpId,
+                    'relation_field' => 'noise',
+                ];
+                $checkFiles[$cmpId] = Files::getFileByRelationField($fileParams);
+            }
             foreach ($result['rows'] as &$row) {
                 $row['company_name'] = isset($companyInfo[$row['company_id']]) ? $companyInfo[$row['company_id']]['name'] : '';
+                $row['noise_files'] = isset($checkFiles[$row['company_id']]) ? $checkFiles[$row['company_id']] : [];
             }
         }
         return $result;
@@ -846,8 +855,16 @@ class WasteRepository extends CommonRepository
         if (isset($result['rows']) && !empty($result['rows'])) {
             $companyIds = array_unique(array_column($result['rows'], 'company_id'));
             $companyInfo = Company::searchCompanyForList($companyIds);
+            foreach ($companyIds as $cmpId) {
+                $fileParams = [
+                    'company_id' => $cmpId,
+                    'relation_field' => 'noise',
+                ];
+                $checkFiles[$cmpId] = Files::getFileByRelationField($fileParams);
+            }
             foreach ($result['rows'] as &$row) {
                 $row['company_name'] = isset($companyInfo[$row['company_id']]) ? $companyInfo[$row['company_id']]['name'] : '';
+                $row['noise_files'] = isset($checkFiles[$row['company_id']]) ? $checkFiles[$row['company_id']] : [];
             }
         }
         return $result;
