@@ -311,7 +311,7 @@ class WasteRepository extends CommonRepository
      */
     public function getWasteGasTubeCombo($params)
     {
-        $companyId = $params['company_id'] ?? getUserInfo()['company_id'];
+        $companyId = isset($params['company_id']) && $params['company_id'] ? $params['company_id'] : getUserInfo()['company_id'];
         checkCompanyPermission($companyId);
         $where = [
             'company_id' => $companyId,
@@ -537,11 +537,10 @@ class WasteRepository extends CommonRepository
      * @return mixed
      * @throws WasteException
      */
-    public function getWasteWaterDetail($companyId, $id)
+    public function getWasteWaterDetail($id)
     {
         $where = [
             'id' => $id,
-            'company_id' => $companyId,
         ];
         $result = $this->_wasteWaterModel->getOne($where);
         if (is_null($result)) {
@@ -704,11 +703,10 @@ class WasteRepository extends CommonRepository
      * @return mixed
      * @throws WasteException
      */
-    public function getNoiseDetail($companyId, $id)
+    public function getNoiseDetail($id)
     {
         $where = [
             'id' => $id,
-            'company_id' => $companyId,
         ];
         $result = $this->_noiseModel->getOne($where);
         if (is_null($result)) {
@@ -814,11 +812,10 @@ class WasteRepository extends CommonRepository
      * @return mixed
      * @throws WasteException
      */
-    public function getNucleusDetail($companyId, $id)
+    public function getNucleusDetail($id)
     {
         $where = [
             'id' => $id,
-            'company_id' => $companyId,
         ];
         $result = $this->_nucleusModel->getOne($where);
         if (is_null($result)) {
@@ -916,7 +913,7 @@ class WasteRepository extends CommonRepository
         $result = DB::table('waste_gas')
             ->select(DB::raw($fieldStr))
             ->where($where)
-            ->join('company','company.id','=','waste_gas.company_id')
+            ->join('company', 'company.id', '=', 'waste_gas.company_id')
             ->groupBy('company.industry_category')
             ->get()->toArray();
         return $result;
@@ -971,7 +968,7 @@ class WasteRepository extends CommonRepository
         $result = DB::table('waste_water')
             ->select(DB::raw($fieldStr))
             ->where($where)
-            ->join('company','company.id','=','waste_water.company_id')
+            ->join('company', 'company.id', '=', 'waste_water.company_id')
             ->groupBy('company.industry_category')
             ->get()->toArray();
         return $result;
@@ -995,23 +992,24 @@ class WasteRepository extends CommonRepository
         $result = DB::table('waste_material')
             ->select(DB::raw($fieldStr))
             ->where($where)
-            ->join('company','company.id','=','waste_material.company_id')
+            ->join('company', 'company.id', '=', 'waste_material.company_id')
             ->groupBy('company.industry_category')
-//            ->toSql();
             ->get()->toArray();
-//        echo $result;die;
         return $result;
     }
 
+    /**
+     * 废气管理员列表
+     * @param $params
+     * @param int $page
+     * @param int $pageSize
+     * @param array $orderBy
+     * @return mixed
+     */
     public function getWasteGasAdminList($params, $page = 1, $pageSize = 10, $orderBy = [])
     {
         $userInfo = getUserInfo();
-        $where = [
-            'built_in' => [
-                'join' => ['waste', 'waste.id', '=', 'waste_gas.waste_name'],
-                'leftJoin' => ['tube', 'tube.id', '=', 'waste_gas.tube_id'],
-            ]
-        ];
+        $where = [];
         if ($userInfo['role_type'] == Role::ROLE_COMMON_TYPE) {
             $where['waste_gas.company_id'] = $userInfo['company_id'];
         } elseif (isset($params['company_id']) && $params['company_id']) {
@@ -1022,13 +1020,114 @@ class WasteRepository extends CommonRepository
         }
         $fields = [];
         foreach ($this->_wasteGasModel->fillable as $field) {
-            $fields[] = 'waste_gas.'.$field;
+            $fields[] = 'waste_gas.' . $field;
         }
-        $fields[] = ['waste.name AS waste','tube.item_no','tube.'];
-        $fields[] = 'tube.name AS tube_name';
-        $result = $this->_wasteGasModel->getList($where, $fields, $page, $pageSize);
-        if (isset($result['rows']) && !empty($result['rows'])){
-            $companyIds = $tubeIds = [];
+        $fields = array_merge($fields, ['waste.name AS waste', 'tube.item_no', 'tube.pics', 'tube.check']);
+        $result = DB::table('waste_gas')
+            ->select($fields)
+            ->where($where)
+            ->join('tube', 'tube.id', '=', 'waste_gas.tube_id')
+            ->join('waste', 'waste.id', '=', 'waste_gas.waste_name')
+//            ->orderBy($orderBy)
+            ->offset(($page - 1) * $pageSize)
+            ->limit($pageSize)
+            ->get()->toArray();
+        if (!empty($result)) {
+            $companyIds = $fileIds = [];
+            foreach ($result as &$item) {
+                $item->pics = json_decode($item->pics, true);
+                $item->check = json_decode($item->check, true);
+                $fileIds = array_merge($fileIds, $item->pics);
+                $fileIds = array_merge($fileIds, $item->check);
+                $companyIds[] = $item->company_id;
+            }
+            $fileIds = array_unique($fileIds);
+            $companyIds = array_unique($companyIds);
+            $fileInfo = Files::searchFilesForList($fileIds, 2);
+            $companyInfo = Company::searchCompanyForList($companyIds);
+            foreach ($result as &$gas) {
+                $gas->pics_files = $gas->check_files = [];
+                if (!empty($gas->pics)) {
+                    foreach ($gas->pics as $pic) {
+                        if (isset($fileInfo[$pic])) {
+                            $gas->pics_files[] = $fileInfo[$pic];
+                        }
+                    }
+                    foreach ($gas->check as $check) {
+                        if (isset($fileInfo[$check])) {
+                            $gas->check_files[] = $fileInfo[$check];
+                        }
+                    }
+                }
+                $gas->company_name = isset($companyInfo[$gas->company_id]) ? $companyInfo[$gas->company_id]['name'] : '';
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * 废水管理员列表
+     * @param $params
+     * @param int $page
+     * @param int $pageSize
+     * @param array $orderBy
+     * @return mixed
+     */
+    public function getWasteWaterAdminList($params, $page = 1, $pageSize = 10, $orderBy = [])
+    {
+        $userInfo = getUserInfo();
+        $where = [];
+        if ($userInfo['role_type'] == Role::ROLE_COMMON_TYPE) {
+            $where['waste_water.company_id'] = $userInfo['company_id'];
+        } elseif (isset($params['company_id']) && $params['company_id']) {
+            $where['waste_water.company_id'] = $params['company_id'];
+        }
+        if (isset($params['waste']) && $params['waste']) {
+            $where[] = ['waste_water.waste_name', 'LIKE', '%' . $params['waste'] . '%'];
+        }
+        $fields = [];
+        foreach ($this->_wasteWaterModel->fillable as $field) {
+            $fields[] = 'waste_water.' . $field;
+        }
+        $fields = array_merge($fields, ['waste.name AS waste', 'tube.item_no', 'tube.pics', 'tube.check']);
+        $result = DB::table('waste_water')
+            ->select($fields)
+            ->where($where)
+            ->join('tube', 'tube.id', '=', 'waste_water.tube_id')
+            ->join('waste', 'waste.id', '=', 'waste_water.waste_name')
+//            ->orderBy($orderBy)
+            ->offset(($page - 1) * $pageSize)
+            ->limit($pageSize)
+            ->get()->toArray();
+        if (!empty($result)) {
+            $companyIds = $fileIds = [];
+            foreach ($result as &$item) {
+                $item->pics = json_decode($item->pics, true);
+                $item->check = json_decode($item->check, true);
+                $fileIds = array_merge($fileIds, $item->pics);
+                $fileIds = array_merge($fileIds, $item->check);
+                $companyIds[] = $item->company_id;
+            }
+            $fileIds = array_unique($fileIds);
+            $companyIds = array_unique($companyIds);
+            $fileInfo = Files::searchFilesForList($fileIds, 2);
+            $companyInfo = Company::searchCompanyForList($companyIds);
+            foreach ($result as &$gas) {
+                $gas->pics_files = $gas->check_files = [];
+                if (!empty($gas->pics)) {
+                    foreach ($gas->pics as $pic) {
+                        if (isset($fileInfo[$pic])) {
+                            $gas->pics_files[] = $fileInfo[$pic];
+                        }
+                    }
+                    foreach ($gas->check as $check) {
+                        if (isset($fileInfo[$check])) {
+                            $gas->check_files[] = $fileInfo[$check];
+                        }
+                    }
+                }
+                $gas->company_name = isset($companyInfo[$gas->company_id]) ? $companyInfo[$gas->company_id]['name'] : '';
+            }
         }
         return $result;
     }

@@ -62,6 +62,7 @@ $app->group(['prefix' => 'company', 'middleware' => 'auth'], function () use ($a
     $app->get('getCompanyFiles', 'FilesController@getCompanyFiles');
     $app->get('getCompanyList', 'CompanyController@getCompanyList');
     $app->get('getCompanyCombo', 'CompanyController@getCompanyCombo');
+    $app->get('getIndustryReport', 'CompanyController@getIndustryReport');
 });
 //文件
 $app->group(['prefix' => 'files', 'middleware' => 'auth'], function () use ($app) {
@@ -106,6 +107,7 @@ $app->group(['prefix' => 'waste', 'middleware' => 'auth'], function () use ($app
     $app->get('getWasteGasReport', 'WasteController@getWasteGasReport');
     $app->get('getWasteWaterReport', 'WasteController@getWasteWaterReport');
     $app->get('getWasteGasAdminList', 'WasteController@getWasteGasAdminList');
+    $app->get('getWasteWaterAdminList', 'WasteController@getWasteWaterAdminList');
     $app->get('getWasteGasReportByIndustry', 'WasteController@getWasteGasReportByIndustry');
     $app->get('getWasteWaterReportByIndustry', 'WasteController@getWasteWaterReportByIndustry');
     $app->get('getWasteMaterialReport', 'WasteController@getWasteMaterialReport');

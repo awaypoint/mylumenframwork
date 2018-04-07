@@ -440,6 +440,21 @@ class CompanyRepository extends CommonRepository
     }
 
     /**
+     * 获取行业统计数据
+     * @return array
+     */
+    public function getIndustryReport()
+    {
+        $where = [];
+        $fieldStr = 'COUNT(DISTINCT id) AS company_num,industry_category';
+        $result = $this->_companyModel->select(DB::raw($fieldStr))
+            ->where($where)
+            ->groupBy('industry_category')
+            ->get()->toArray();
+        return $result;
+    }
+
+    /**
      * 添加企业信息参数验证
      * @param $params
      * @throws CompanyException

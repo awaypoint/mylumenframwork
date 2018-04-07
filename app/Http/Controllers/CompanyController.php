@@ -173,4 +173,14 @@ class CompanyController extends Controller
         $result = $this->_companyRepository->getCompanyCombo();
         return responseTo($result);
     }
+
+    /**
+     * 获取行业统计
+     * @return array
+     */
+    public function getIndustryReport()
+    {
+        $result = $this->_companyRepository->getIndustryReport();
+        return responseTo($result);
+    }
 }

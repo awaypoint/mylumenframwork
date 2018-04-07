@@ -237,7 +237,7 @@ class WasteController extends Controller
     }
 
     /**
-     *
+     *获取废气管理员列表
      * @param Request $request
      * @return array
      */
@@ -245,6 +245,18 @@ class WasteController extends Controller
     {
         list($page, $pageSize, $order) = getPageSuit($request);
         $result = $this->_wasteRepository->getWasteGasAdminList($request->all(), $page, $pageSize, $order);
+        return responseTo($result);
+    }
+
+    /**
+     *获取废水管理员列表
+     * @param Request $request
+     * @return array
+     */
+    public function getWasteWaterAdminList(Request $request)
+    {
+        list($page, $pageSize, $order) = getPageSuit($request);
+        $result = $this->_wasteRepository->getWasteWaterAdminList($request->all(), $page, $pageSize, $order);
         return responseTo($result);
     }
 
@@ -288,7 +300,7 @@ class WasteController extends Controller
         $this->validate($request, [
             'id' => 'required',
         ]);
-        $result = $this->_wasteRepository->getWasteWaterDetail(getUserInfo()['company_id'], $request->get('id'));
+        $result = $this->_wasteRepository->getWasteWaterDetail($request->get('id'));
         return responseTo($result);
     }
 
@@ -358,7 +370,7 @@ class WasteController extends Controller
         $this->validate($request, [
             'id' => 'required',
         ]);
-        $result = $this->_wasteRepository->getNoiseDetail(getUserInfo()['company_id'], $request->get('id'));
+        $result = $this->_wasteRepository->getNoiseDetail($request->get('id'));
         return responseTo($result);
     }
 
@@ -419,7 +431,7 @@ class WasteController extends Controller
     }
 
     /**
-     * 获取噪音详情
+     * 获取核详情
      * @param Request $request
      * @return array
      */
@@ -428,7 +440,7 @@ class WasteController extends Controller
         $this->validate($request, [
             'id' => 'required',
         ]);
-        $result = $this->_wasteRepository->getNucleusDetail(getUserInfo()['company_id'], $request->get('id'));
+        $result = $this->_wasteRepository->getNucleusDetail($request->get('id'));
         return responseTo($result);
     }
 
