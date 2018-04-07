@@ -616,22 +616,23 @@ class WasteRepository extends CommonRepository
                 if (!empty($item['water'])) {
                     $newWater = [];
                     foreach ($item['water'] as $w) {
+                        $newWaterName = '';
                         if (isset($wasteInfo[$w['waste_name']])) {
                             $newWaterName = $wasteInfo[$w['waste_name']]['name'];
-                            if (isset($params['waste_name']) && $params['waste_name'] && strpos($newWaterName, $params['waste_name']) === false) {
-                                continue;
-                            }
-                            $tmp = [
-                                'type_name' => Waste::WASTE_WATER_TYPE_MAP[$w['type']] ?? '',
-                                'waste' => $newWaterName,
-                            ];
-                            foreach ($waterFields as $waterField) {
-                                if (isset($w[$waterField])) {
-                                    $tmp[$waterField] = $w[$waterField];
-                                }
-                            }
-                            $newWater[] = $tmp;
                         }
+                        if (isset($params['waste_name']) && $params['waste_name'] && strpos($newWaterName, $params['waste_name']) === false) {
+                            continue;
+                        }
+                        $tmp = [
+                            'type_name' => Waste::WASTE_WATER_TYPE_MAP[$w['type']] ?? '',
+                            'waste' => $newWaterName,
+                        ];
+                        foreach ($waterFields as $waterField) {
+                            if (isset($w[$waterField])) {
+                                $tmp[$waterField] = $w[$waterField];
+                            }
+                        }
+                        $newWater[] = $tmp;
                     }
                     $item['water'] = $newWater;
                 }
