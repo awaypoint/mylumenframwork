@@ -856,19 +856,20 @@ class WasteRepository extends CommonRepository
         }
         $result = $this->_nucleusModel->getList($where, [], $page, $pageSize, $orderBy);
         if (isset($result['rows']) && !empty($result['rows'])) {
+            $checkFiles = [];
             $companyIds = array_unique(array_column($result['rows'], 'company_id'));
             $companyInfo = Company::searchCompanyForList($companyIds);
             foreach ($companyIds as $cmpId) {
                 $fileParams = [
                     'company_id' => $cmpId,
-                    'relation_field' => 'noise',
+                    'relation_field' => 'radiation',
                 ];
                 $checkFiles[$cmpId] = Files::getFileByRelationField($fileParams);
             }
             foreach ($result['rows'] as &$row) {
-                $row['noise_files'] = [];
+                $row['radiation_files'] = [];
                 if (isset($checkFiles[$row['company_id']])) {
-                    $row['noise_files'][] = $checkFiles[$row['company_id']];
+                    $row['radiation_files'][] = $checkFiles[$row['company_id']];
                 }
                 $row['company_name'] = isset($companyInfo[$row['company_id']]) ? $companyInfo[$row['company_id']]['name'] : '';
             }
