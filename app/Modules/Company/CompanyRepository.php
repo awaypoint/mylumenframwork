@@ -428,6 +428,18 @@ class CompanyRepository extends CommonRepository
     }
 
     /**
+     * 获取企业下拉框
+     * @return mixed
+     */
+    public function getCompanyCombo()
+    {
+        $where = [];
+        $fields = ['id', 'name'];
+        $result = $this->_companyModel->searchData($where, $fields);
+        return $result;
+    }
+
+    /**
      * 添加企业信息参数验证
      * @param $params
      * @throws CompanyException

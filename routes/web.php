@@ -47,7 +47,7 @@ $app->group(['prefix' => 'users', 'middleware' => 'auth'], function () use ($app
     $app->post('addAdminUser', 'UserController@addAdminUser');
     $app->put('resetPassword', 'UserController@resetPassword');
     $app->get('getUserList', 'UserController@getUserList');
-    $app->delete('delUsers', 'UserController@delUsers');
+    $app->delete('delUser', 'UserController@delUser');
 });
 //企业信息
 $app->group(['prefix' => 'company', 'middleware' => 'auth'], function () use ($app) {
@@ -61,6 +61,7 @@ $app->group(['prefix' => 'company', 'middleware' => 'auth'], function () use ($a
     $app->delete('delProduct', 'CompanyController@delProduct');
     $app->get('getCompanyFiles', 'FilesController@getCompanyFiles');
     $app->get('getCompanyList', 'CompanyController@getCompanyList');
+    $app->get('getCompanyCombo', 'CompanyController@getCompanyCombo');
 });
 //文件
 $app->group(['prefix' => 'files', 'middleware' => 'auth'], function () use ($app) {

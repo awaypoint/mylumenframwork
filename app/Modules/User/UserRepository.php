@@ -307,7 +307,7 @@ class UserRepository extends CommonRepository
      * @return bool|null
      * @throws UserException
      */
-    public function delUsers($id)
+    public function delUser($id)
     {
         $userInfo = $this->getUserInfo();
         if ($userInfo['role_type'] != Role::ROLE_SUPER_ADMIN_TYPE) {

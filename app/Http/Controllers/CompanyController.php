@@ -162,4 +162,15 @@ class CompanyController extends Controller
         $result = $this->_companyRepository->getCompanyList($request->all(), $page, $pageSize, $order, $fields);
         return responseTo($result);
     }
+
+    /**
+     * 获取企业下拉框
+     * @param Request $request
+     * @return array
+     */
+    public function getCompanyCombo(Request $request)
+    {
+        $result = $this->_companyRepository->getCompanyCombo();
+        return responseTo($result);
+    }
 }

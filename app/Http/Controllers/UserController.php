@@ -91,12 +91,12 @@ class UserController extends Controller
      * @param Request $request
      * @return array
      */
-    public function delUsers(Request $request)
+    public function delUser(Request $request)
     {
         $this->validate($request, [
             'id' => 'required',
         ]);
-        $result = $this->_userRepository->delUsers($request->get('id'));
+        $result = $this->_userRepository->delUser($request->get('id'));
         return responseTo($result, '删除用户成功');
     }
 }
