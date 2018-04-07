@@ -282,7 +282,7 @@ class CompanyRepository extends CommonRepository
      */
     public function getProductDetail($params, $id, $fields = [])
     {
-        $companyId = $params['company_id'] ?? getUserInfo()['company_id'];
+        $companyId = isset($params['company_id']) && $params['company_id'] ? $params['company_id'] : getUserInfo()['company_id'];
         checkCompanyPermission($companyId);
         $where = [
             'company_id' => $companyId,

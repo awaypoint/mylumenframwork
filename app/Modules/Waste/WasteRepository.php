@@ -977,6 +977,32 @@ class WasteRepository extends CommonRepository
         return $result;
     }
 
+    /**
+     * 获取危废年产量
+     * @param $params
+     * @return mixed
+     */
+    public function getWasteMaterialReport($params)
+    {
+        $where = [];
+        if (isset($params['start_time']) && $params['start_time'] > 0) {
+            $where[] = ['protect_waste_material.created_at', '>=', $params['start_time']];
+        }
+        if (isset($params['end_time']) && $params['end_time'] > 0) {
+            $where[] = ['protect_waste_material.created_at', '<=', $params['end_time']];
+        }
+        $fieldStr = 'SUM(protect_waste_material.annual_scale) as installations,protect_company.industry_category';
+        $result = DB::table('waste_material')
+            ->select(DB::raw($fieldStr))
+            ->where($where)
+            ->join('company','company.id','=','waste_material.company_id')
+            ->groupBy('company.industry_category')
+//            ->toSql();
+            ->get()->toArray();
+//        echo $result;die;
+        return $result;
+    }
+
     public function getWasteGasAdminList($params, $page = 1, $pageSize = 10, $orderBy = [])
     {
         $userInfo = getUserInfo();
