@@ -93,9 +93,8 @@ class WasteRepository extends CommonRepository
             $where['company_id'] = $params['company_id'];
         }
         if (isset($params['name']) && $params['name']) {
-            $where[] = ['waste_name', 'LIKE', '%' . $params['name'] . '%'];
             $where['built_in'] = [
-                'orWhere' => ['commonly_called', 'LIKE', '%' . $params['name'] . '%']
+                'whereRaw' => "(commonly_called LIKE '%" . $params['name'] . "%' OR waste_name LIKE '%" . $params['name'] . "%')",
             ];
         }
         $result = $this->_wasteMaterialModel->getList($where, $fileds, $page, $pageSize, $orderBy);
@@ -399,7 +398,7 @@ class WasteRepository extends CommonRepository
      * @param $params
      * @return mixed
      */
-    public function getWasteGasList($params,$orderBy = ['id','DESC'])
+    public function getWasteGasList($params, $orderBy = ['id', 'DESC'])
     {
         $where = [
             'type' => Waste::WASTE_GAS_TUBE_TYPE,
@@ -734,11 +733,16 @@ class WasteRepository extends CommonRepository
             $where['company_id'] = $params['company_id'];
         }
         if (isset($params['equipment']) && $params['equipment']) {
-            $where['built_in'] = [
-                'where' => ['equipment', 'LIKE', '%' . $params['equipment'] . '%']
-            ];
+            $where[] = ['equipment', 'LIKE', '%' . $params['equipment'] . '%'];
         }
         $result = $this->_noiseModel->getList($where, [], $page, $pageSize, $orderBy);
+        if (isset($result['rows']) && !empty($result['rows'])) {
+            $companyIds = array_unique(array_column($result['rows'],'company_id'));
+            $companyInfo = Company::searchCompanyForList($companyIds);
+            foreach ($result['rows'] as &$row) {
+                $row['company_name'] = isset($companyInfo[$row['company_id']]) ? $companyInfo[$row['company_id']]['name'] : '';
+            }
+        }
         return $result;
     }
 
@@ -839,11 +843,16 @@ class WasteRepository extends CommonRepository
             $where['company_id'] = $params['company_id'];
         }
         if (isset($params['equipment']) && $params['equipment']) {
-            $where['built_in'] = [
-                'where' => ['equipment', 'LIKE', '%' . $params['equipment'] . '%']
-            ];
+            $where[] = ['equipment', 'LIKE', '%' . $params['equipment'] . '%'];
         }
         $result = $this->_nucleusModel->getList($where, [], $page, $pageSize, $orderBy);
+        if (isset($result['rows']) && !empty($result['rows'])) {
+            $companyIds = array_unique(array_column($result['rows'],'company_id'));
+            $companyInfo = Company::searchCompanyForList($companyIds);
+            foreach ($result['rows'] as &$row) {
+                $row['company_name'] = isset($companyInfo[$row['company_id']]) ? $companyInfo[$row['company_id']]['name'] : '';
+            }
+        }
         return $result;
     }
 

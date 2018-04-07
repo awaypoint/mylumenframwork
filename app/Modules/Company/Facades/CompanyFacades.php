@@ -31,7 +31,7 @@ class CompanyFacades
      * @param array $replaceWhere
      * @return array
      */
-    public function searchCompanyForList($ids, $fields = [], $indexKey = '', $replaceWhere = [])
+    public function searchCompanyForList($ids, $fields = ['name'], $indexKey = 'id', $replaceWhere = [])
     {
         return $this->_companyRepository->searchForList($ids, $fields, $indexKey, $replaceWhere);
     }
