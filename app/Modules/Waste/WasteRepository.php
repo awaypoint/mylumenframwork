@@ -379,7 +379,7 @@ class WasteRepository extends CommonRepository
         $wasteInfo = Setting::checkWasteExist($result['waste_name'], Setting::SETTING_WASTE_GAS_TYPE, ['name']);
         $result['waste'] = $wasteInfo['name'];
         $result['type_name'] = Waste::WASTE_GAS_TYPE_MAP[$result['type']] ?? '';
-        $gasTubeInfo = $this->_wasteTubeModel->getOne($tubeWhere, ['item_no']);
+        $gasTubeInfo = $this->_wasteTubeModel->select(['item_no'])->withTrashed()->where($tubeWhere)->first();
         if (is_null($gasTubeInfo)) {
             throw new WasteException(60008);
         }
@@ -553,7 +553,7 @@ class WasteRepository extends CommonRepository
         $wasteInfo = Setting::checkWasteExist($result['waste_name'], Setting::SETTING_WASTE_WATER_TYPE, ['name']);
         $result['waste'] = $wasteInfo['name'];
         $result['type_name'] = Waste::WASTE_WATER_TYPE_MAP[$result['type']] ?? '';
-        $gasTubeInfo = $this->_wasteTubeModel->getOne($tubeWhere, ['item_no']);
+        $gasTubeInfo = $this->_wasteTubeModel->select(['item_no'])->withTrashed()->where($tubeWhere)->first();
         if (is_null($gasTubeInfo)) {
             throw new WasteException(60008);
         }
@@ -1022,7 +1022,7 @@ class WasteRepository extends CommonRepository
         foreach ($this->_wasteGasModel->fillable as $field) {
             $fields[] = 'waste_gas.' . $field;
         }
-        $fields = array_merge($fields, ['waste.name AS waste', 'tube.item_no', 'tube.pics', 'tube.check']);
+        $fields = array_merge($fields, ['waste.name AS waste', 'tube.item_no AS tube_no', 'tube.pics', 'tube.check']);
         $result = DB::table('waste_gas')
             ->select($fields)
             ->where($where)
@@ -1091,7 +1091,7 @@ class WasteRepository extends CommonRepository
         foreach ($this->_wasteWaterModel->fillable as $field) {
             $fields[] = 'waste_water.' . $field;
         }
-        $fields = array_merge($fields, ['waste.name AS waste', 'tube.item_no', 'tube.pics', 'tube.check']);
+        $fields = array_merge($fields, ['waste.name AS waste', 'tube.item_no AS tube_no', 'tube.pics', 'tube.check']);
         $result = DB::table('waste_water')
             ->select($fields)
             ->where($where)
