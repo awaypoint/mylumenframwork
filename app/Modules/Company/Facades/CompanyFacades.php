@@ -22,4 +22,17 @@ class CompanyFacades
     {
         return $this->_companyRepository->addCompany($params);
     }
+
+    /**
+     * 匹配公司
+     * @param $ids
+     * @param array $fields
+     * @param string $indexKey
+     * @param array $replaceWhere
+     * @return array
+     */
+    public function searchCompanyForList($ids, $fields = [], $indexKey = '', $replaceWhere = [])
+    {
+        return $this->_companyRepository->searchForList($ids, $fields, $indexKey, $replaceWhere);
+    }
 }

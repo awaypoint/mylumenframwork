@@ -232,9 +232,19 @@ class WasteController extends Controller
      */
     public function getWasteGasList(Request $request)
     {
-        list($page, $pageSigze, $order) = getPageSuit($request);
+        $result = $this->_wasteRepository->getWasteGasList($request->all());
+        return responseTo($result);
+    }
 
-        $result = $this->_wasteRepository->getWasteGasList($request->all(), $page, $pageSigze, $order);
+    /**
+     *
+     * @param Request $request
+     * @return array
+     */
+    public function getWasteGasAdminList(Request $request)
+    {
+        list($page, $pageSize, $order) = getPageSuit($request);
+        $result = $this->_wasteRepository->getWasteGasAdminList($request->all(), $page, $pageSize, $order);
         return responseTo($result);
     }
 
@@ -289,7 +299,7 @@ class WasteController extends Controller
      */
     public function getWasteWaterList(Request $request)
     {
-        list($page,$pageSigze,$order) = getPageSuit($request);
+        list($page, $pageSigze, $order) = getPageSuit($request);
 
         $result = $this->_wasteRepository->getWasteWaterList($request->all(), $page, $pageSigze, $order);
         return responseTo($result);

@@ -249,20 +249,23 @@ class CommonEloquentModel extends Model
      */
     public function searchForList($ids, $fields = [], $indexKey = '', $replaceWhere = [])
     {
-        $where = [
-            'built_in' => [
-                'whereIn' => ['id', $ids],
-            ]
-        ];
-        if (!empty($replaceWhere)) {
-            $where = $replaceWhere;
-        }
-        if (!empty($fields) && $indexKey) {
-            $fields = array_unique(array_merge($fields, [$indexKey]));
-        }
-        $result = $this->searchData($where, $fields);
-        if ($indexKey) {
-            $result = array_column($result, null, $indexKey);
+        $result = [];
+        if (!empty($ids)){
+            $where = [
+                'built_in' => [
+                    'whereIn' => ['id', $ids],
+                ]
+            ];
+            if (!empty($replaceWhere)) {
+                $where = $replaceWhere;
+            }
+            if (!empty($fields) && $indexKey) {
+                $fields = array_unique(array_merge($fields, [$indexKey]));
+            }
+            $result = $this->searchData($where, $fields);
+            if ($indexKey) {
+                $result = array_column($result, null, $indexKey);
+            }
         }
         return $result;
     }

@@ -3,6 +3,7 @@
 namespace App\Modules\Waste;
 
 use App\Modules\Common\CommonRepository;
+use App\Modules\Company\Facades\Company;
 use App\Modules\Files\Facades\Files;
 use App\Modules\Role\Facades\Role;
 use App\Modules\Setting\Facades\Setting;
@@ -99,18 +100,21 @@ class WasteRepository extends CommonRepository
         }
         $result = $this->_wasteMaterialModel->getList($where, $fileds, $page, $pageSize, $orderBy);
         if (isset($result['rows']) && !empty($result['rows'])) {
-            $wasteTypeIds = [];
+            $companyIds = $wasteTypeIds = [];
             foreach ($result['rows'] as $item) {
                 $wasteTypeIds[] = $item['waste_category'];
                 $wasteTypeIds[] = $item['industry'];
                 $wasteTypeIds[] = $item['waste_code'];
+                $companyIds[] = $item['company_id'];
             }
             $wasteTypeIds = array_unique($wasteTypeIds);
             $wasteTypeInfo = Setting::searchWasteTypeForList($wasteTypeIds, ['name', 'code'], 'id');
+            $companyInfos = Company::searchCompanyForList(array_unique($companyIds), ['name'], 'id');
             foreach ($result['rows'] as &$row) {
                 $row['waste_category_name'] = isset($wasteTypeInfo[$row['waste_category']]) ? $wasteTypeInfo[$row['waste_category']]['name'] : '';
                 $row['industry_name'] = isset($wasteTypeInfo[$row['industry']]) ? $wasteTypeInfo[$row['industry']]['name'] : '';
                 $row['waste_code_name'] = isset($wasteTypeInfo[$row['waste_code']]) ? $wasteTypeInfo[$row['waste_code']]['code'] : '';
+                $row['company_name'] = isset($companyInfos[$row['company_id']]) ? $companyInfos[$row['company_id']]['name'] : '';
             }
         }
         return $result;
@@ -395,7 +399,7 @@ class WasteRepository extends CommonRepository
      * @param $params
      * @return mixed
      */
-    public function getWasteGasList($params, $page = 1, $pageSize = 10, $orderBy = [])
+    public function getWasteGasList($params,$orderBy = ['id','DESC'])
     {
         $where = [
             'type' => Waste::WASTE_GAS_TUBE_TYPE,
@@ -411,7 +415,7 @@ class WasteRepository extends CommonRepository
         }
         $tubeFields = ['id', 'item_no', 'height', 'pics', 'check'];
         $gasFields = ['id', 'type', 'waste_name', 'gas_discharge', 'discharge_level', 'equipment', 'technique', 'installations', 'remark'];
-        $result = $this->_wasteTubeModel->getList($where, $tubeFields, $page, $pageSize, $orderBy);
+        $result = $this->_wasteTubeModel->getList($where, $tubeFields, 0, 0, $orderBy);
         if (isset($result['rows']) && !empty($result['rows'])) {
             $wasteInfo = $wasteIds = $filesInfo = $allFileIds = [];
             foreach ($result['rows'] as &$row) {

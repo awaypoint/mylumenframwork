@@ -168,7 +168,7 @@ class CompanyController extends Controller
      * @param Request $request
      * @return array
      */
-    public function getCompanyCombo(Request $request)
+    public function getCompanyCombo()
     {
         $result = $this->_companyRepository->getCompanyCombo();
         return responseTo($result);
