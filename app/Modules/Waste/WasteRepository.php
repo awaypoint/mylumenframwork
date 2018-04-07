@@ -1060,6 +1060,7 @@ class WasteRepository extends CommonRepository
                     }
                 }
                 $gas->company_name = isset($companyInfo[$gas->company_id]) ? $companyInfo[$gas->company_id]['name'] : '';
+                $gas->type_name = Waste::WASTE_GAS_TYPE_MAP[$gas->type] ?? '未知类型';
             }
         }
         return $result;
@@ -1112,21 +1113,22 @@ class WasteRepository extends CommonRepository
             $companyIds = array_unique($companyIds);
             $fileInfo = Files::searchFilesForList($fileIds, 2);
             $companyInfo = Company::searchCompanyForList($companyIds);
-            foreach ($result as &$gas) {
-                $gas->pics_files = $gas->check_files = [];
-                if (!empty($gas->pics)) {
-                    foreach ($gas->pics as $pic) {
+            foreach ($result as &$water) {
+                $water->pics_files = $water->check_files = [];
+                if (!empty($water->pics)) {
+                    foreach ($water->pics as $pic) {
                         if (isset($fileInfo[$pic])) {
-                            $gas->pics_files[] = $fileInfo[$pic];
+                            $water->pics_files[] = $fileInfo[$pic];
                         }
                     }
-                    foreach ($gas->check as $check) {
+                    foreach ($water->check as $check) {
                         if (isset($fileInfo[$check])) {
-                            $gas->check_files[] = $fileInfo[$check];
+                            $water->check_files[] = $fileInfo[$check];
                         }
                     }
                 }
-                $gas->company_name = isset($companyInfo[$gas->company_id]) ? $companyInfo[$gas->company_id]['name'] : '';
+                $water->company_name = isset($companyInfo[$water->company_id]) ? $companyInfo[$water->company_id]['name'] : '';
+                $water->type_name = Waste::WASTE_WATER_TYPE_MAP[$water->type] ?? '未知类型';
             }
         }
         return $result;
