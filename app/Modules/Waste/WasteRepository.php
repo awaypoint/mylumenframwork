@@ -746,8 +746,11 @@ class WasteRepository extends CommonRepository
                 $checkFiles[$cmpId] = Files::getFileByRelationField($fileParams);
             }
             foreach ($result['rows'] as &$row) {
+                $row['noise_files'] = [];
+                if (isset($checkFiles[$row['company_id']])) {
+                    $row['noise_files'][] = $checkFiles[$row['company_id']];
+                }
                 $row['company_name'] = isset($companyInfo[$row['company_id']]) ? $companyInfo[$row['company_id']]['name'] : '';
-                $row['noise_files'] = isset($checkFiles[$row['company_id']]) ? $checkFiles[$row['company_id']] : [];
             }
         }
         return $result;
@@ -863,8 +866,11 @@ class WasteRepository extends CommonRepository
                 $checkFiles[$cmpId] = Files::getFileByRelationField($fileParams);
             }
             foreach ($result['rows'] as &$row) {
+                $row['noise_files'] = [];
+                if (isset($checkFiles[$row['company_id']])) {
+                    $row['noise_files'][] = $checkFiles[$row['company_id']];
+                }
                 $row['company_name'] = isset($companyInfo[$row['company_id']]) ? $companyInfo[$row['company_id']]['name'] : '';
-                $row['noise_files'] = isset($checkFiles[$row['company_id']]) ? $checkFiles[$row['company_id']] : [];
             }
         }
         return $result;
@@ -1040,11 +1046,13 @@ class WasteRepository extends CommonRepository
             $fields[] = 'waste_gas.' . $field;
         }
         $fields = array_merge($fields, ['waste.name AS waste', 'tube.item_no AS tube_no', 'tube.pics', 'tube.check']);
-        $result = DB::table('waste_gas')
+        $model = DB::table('waste_gas')
             ->select($fields)
             ->where($where)
-            ->whereNull('waste_gas.deleted_at')
-            ->join('tube', 'tube.id', '=', 'waste_gas.tube_id')
+            ->whereNull('waste_gas.deleted_at');
+        $total = $model->count();
+        $totalPage = $pageSize > 0 ? ceil($total / $pageSize) : 0;
+        $result = $model->join('tube', 'tube.id', '=', 'waste_gas.tube_id')
             ->join('waste', 'waste.id', '=', 'waste_gas.waste_name')
 //            ->orderBy($orderBy)
             ->offset(($page - 1) * $pageSize)
@@ -1081,7 +1089,7 @@ class WasteRepository extends CommonRepository
                 $gas->type_name = Waste::WASTE_GAS_TYPE_MAP[$gas->type] ?? '未知类型';
             }
         }
-        return $result;
+        return ['total' => $total, 'total_page' => $totalPage, 'rows' => $result];
     }
 
     /**
@@ -1109,11 +1117,13 @@ class WasteRepository extends CommonRepository
             $fields[] = 'waste_water.' . $field;
         }
         $fields = array_merge($fields, ['waste.name AS waste', 'tube.item_no AS tube_no', 'tube.pics', 'tube.check']);
-        $result = DB::table('waste_water')
+        $model = DB::table('waste_water')
             ->select($fields)
             ->where($where)
-            ->whereNull('waste_water.deleted_at')
-            ->join('tube', 'tube.id', '=', 'waste_water.tube_id')
+            ->whereNull('waste_water.deleted_at');
+        $total = $model->count();
+        $totalPage = $pageSize > 0 ? ceil($total / $pageSize) : 0;
+        $result = $model->join('tube', 'tube.id', '=', 'waste_water.tube_id')
             ->join('waste', 'waste.id', '=', 'waste_water.waste_name')
 //            ->orderBy($orderBy)
             ->offset(($page - 1) * $pageSize)
@@ -1150,6 +1160,6 @@ class WasteRepository extends CommonRepository
                 $water->type_name = Waste::WASTE_WATER_TYPE_MAP[$water->type] ?? '未知类型';
             }
         }
-        return $result;
+        return ['total' => $total, 'total_page' => $totalPage, 'rows' => $result];
     }
 }
