@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Modules\Files\Facades\Files;
 use App\Modules\Files\FilesRepository;
+use function GuzzleHttp\Promise\all;
 use Illuminate\Http\Request;
 
 class FilesController extends Controller
@@ -28,7 +29,7 @@ class FilesController extends Controller
         $files = $request->allFiles();
         $result = new \stdClass();
         foreach ($files as $key => $file) {
-            $result = $this->_filesgRepository->upLoadFile($key, $file);
+            $result = $this->_filesgRepository->upLoadFile($key, $file, $request->all());
         }
         return responseTo($result);
     }

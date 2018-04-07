@@ -147,7 +147,7 @@ class SettingRepository extends CommonRepository
             'province_code' => $params['province_code'],
             'province' => $params['province'],
             'city_code' => $params['city_code'],
-            'citye' => $params['citye'],
+            'city' => $params['city'],
             'area_code' => $params['area_code'],
             'area' => $params['area'],
         ];

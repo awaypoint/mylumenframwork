@@ -77,7 +77,7 @@ class FilesRepository extends CommonRepository
      * @return array
      * @throws FilesException
      */
-    public function upLoadFile($relationField, $file)
+    public function upLoadFile($relationField, $file, $params = [])
     {
         $this->setFile($file);
         $userInfo = getUserInfo(['company_id']);
@@ -93,7 +93,9 @@ class FilesRepository extends CommonRepository
         }
         $url = $this->getPublicObjectURL($prefix . $ossKey);
         $previewUrl = $url;
-        $fileLogId = $this->addFilesLog($userInfo['company_id'], $relationField, $ossKey, $url, $previewUrl);
+        $companyId = $params['company_id'] ?? $userInfo['company_id'];
+        checkCompanyPermission($companyId);
+        $fileLogId = $this->addFilesLog($companyId, $relationField, $ossKey, $url, $previewUrl);
         $returnData = [
             'id' => $fileLogId,
             'file_name' => $this->_originalName,
