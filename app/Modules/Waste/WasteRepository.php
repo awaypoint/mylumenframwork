@@ -915,7 +915,7 @@ class WasteRepository extends CommonRepository
         if (isset($params['end_time']) && $params['end_time'] > 0) {
             $where[] = ['created_at', '<=', $params['end_time']];
         }
-        $fieldStr = 'SUM(discharge_level) as installations, COUNT(DISTINCT company_id) AS company_num,waste_name';
+        $fieldStr = 'SUM(gas_discharge) as installations, COUNT(DISTINCT company_id) AS company_num,waste_name';
         $result = $this->_wasteGasModel->select(DB::raw($fieldStr))
             ->where($where)
             ->whereNull('waste_gas.deleted_at')
@@ -948,7 +948,7 @@ class WasteRepository extends CommonRepository
             $where[] = ['protect_waste_gas.created_at', '<=', $params['end_time']];
         }
         $where[] = ['company.industry_category', '>', 0];
-        $fieldStr = 'SUM(protect_waste_gas.installations) as installations,protect_company.industry_category';
+        $fieldStr = 'SUM(protect_waste_gas.gas_discharge) as installations,protect_company.industry_category';
         $result = DB::table('waste_gas')
             ->select(DB::raw($fieldStr))
             ->where($where)
