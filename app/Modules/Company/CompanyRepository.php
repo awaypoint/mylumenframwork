@@ -139,7 +139,7 @@ class CompanyRepository extends CommonRepository
         $updateData = [];
         $returnData = ['company_id' => $model->id];
         //不可编辑名单
-        $guardFillble = ['id'];
+        $guardFillble = ['id', 'name'];
         foreach ($params as $field => $value) {
             if (in_array($field, $guardFillble)) {
                 continue;
