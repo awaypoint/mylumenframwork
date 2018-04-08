@@ -455,6 +455,20 @@ class CompanyRepository extends CommonRepository
     }
 
     /**
+     * 获取公司信息
+     * @param $id
+     * @param array $fields
+     * @return mixed
+     */
+    public function getCompanyInfo($id, $fields = [])
+    {
+        $where = [
+            'id' => $id,
+        ];
+        return $this->_companyModel->getOne($where, $fields);
+    }
+
+    /**
      * 添加企业信息参数验证
      * @param $params
      * @throws CompanyException

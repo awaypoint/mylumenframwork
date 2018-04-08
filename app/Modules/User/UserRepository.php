@@ -155,15 +155,15 @@ class UserRepository extends CommonRepository
             'hide_menu_ids' => '[]',
         ];
         DB::beginTransaction();
+        $companyParams = [
+            'name' => $params['username'],
+        ];
+        $companyResult = Company::addCompany($companyParams);
+        if (!$companyResult) {
+            DB::rollBack();
+            throw new UserException(10010);
+        }
         try {
-            $companyParams = [
-                'name' => $params['username'],
-            ];
-            $companyResult = Company::addCompany($companyParams);
-            if (!$companyResult) {
-                DB::rollBack();
-                throw new UserException(10010);
-            }
             $addData['company_id'] = $companyResult['id'];
             $result = $this->_userModel->add($addData);
             if (!$result) {

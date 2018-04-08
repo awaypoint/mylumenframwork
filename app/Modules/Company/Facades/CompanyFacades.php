@@ -35,4 +35,15 @@ class CompanyFacades
     {
         return $this->_companyRepository->searchForList($ids, $fields, $indexKey, $replaceWhere);
     }
+
+    /**
+     * 获取公司信息
+     * @param $id
+     * @param array $fields
+     * @return mixed
+     */
+    public function getCopmanyInfo($id, $fields = [])
+    {
+        return $this->_companyRepository->getCompanyInfo($id, $fields);
+    }
 }
