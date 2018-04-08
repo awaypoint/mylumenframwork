@@ -320,6 +320,9 @@ class WasteRepository extends CommonRepository
      */
     public function getWasteGasTubeCombo($params)
     {
+        if (getUserInfo()['role_type'] != Role::ROLE_COMMON_TYPE && !isset($params['company_id'])) {
+            throw new WasteException(60020);
+        }
         $companyId = isset($params['company_id']) && $params['company_id'] ? $params['company_id'] : getUserInfo()['company_id'];
         checkCompanyPermission($companyId);
         $where = [
