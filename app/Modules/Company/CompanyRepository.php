@@ -83,7 +83,7 @@ class CompanyRepository extends CommonRepository
     public function getCompanyDetail($params)
     {
         $userInfo = getUserInfo();
-        $companyId = $params['company_id'] ?? $userInfo['company_id'];
+        $companyId = isset($params['company_id']) ? $params['company_id'] : $userInfo['company_id'];
         checkCompanyPermission($companyId);
         $where = [
             'id' => $companyId,
@@ -282,16 +282,14 @@ class CompanyRepository extends CommonRepository
      */
     public function getProductDetail($params, $id, $fields = [])
     {
-        $companyId = isset($params['company_id']) && $params['company_id'] ? $params['company_id'] : getUserInfo()['company_id'];
-        checkCompanyPermission($companyId);
         $where = [
-            'company_id' => $companyId,
             'id' => $id,
         ];
         $result = $this->_productModel->getOne($where, $fields);
         if (is_null($result)) {
             throw new CompanyException(40011);
         }
+        checkCompanyPermission($result['company_id']);
         $result['process_flow'] = json_decode($result['process_flow'], true);
         $result['process_flow_files'] = [];
         if ($result['process_flow'] && $result['process_flow'] != '[]') {
