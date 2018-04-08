@@ -1021,7 +1021,7 @@ class WasteRepository extends CommonRepository
         if (isset($params['end_time']) && $params['end_time'] > 0) {
             $where[] = ['created_at', '<=', $params['end_time']];
         }
-        $fieldStr = 'SUM(annual_scale) as installations,waste_category';
+        $fieldStr = 'SUM(annual_scale) as installations,COUNT(DISTINCT company_id) as company_num,waste_category';
         $result = $this->_wasteMaterialModel->select(DB::raw($fieldStr))->where($where)->groupBy('waste_category')->get()->toArray();
         if (!empty($result)) {
             $wasteCategoryIds = array_column($result, 'waste_category');
