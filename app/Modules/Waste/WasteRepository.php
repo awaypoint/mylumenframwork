@@ -910,6 +910,7 @@ class WasteRepository extends CommonRepository
         $fieldStr = 'SUM(installations) as installations, COUNT(DISTINCT company_id) AS company_num,waste_name';
         $result = $this->_wasteGasModel->select(DB::raw($fieldStr))
             ->where($where)
+            ->whereNull('waste_gas.deleted_at')
             ->groupBy('waste_name')
             ->get()->toArray();
         if (!empty($result)) {
@@ -942,6 +943,7 @@ class WasteRepository extends CommonRepository
         $result = DB::table('waste_gas')
             ->select(DB::raw($fieldStr))
             ->where($where)
+            ->whereNull('waste_gas.deleted_at')
             ->join('company', 'company.id', '=', 'waste_gas.company_id')
             ->groupBy('company.industry_category')
             ->get()->toArray();
@@ -965,6 +967,7 @@ class WasteRepository extends CommonRepository
         $fieldStr = 'SUM(water_discharge) as installations, COUNT(DISTINCT company_id) AS company_num,waste_name';
         $result = $this->_wasteWaterModel->select(DB::raw($fieldStr))
             ->where($where)
+            ->whereNull('waste_water.deleted_at')
             ->groupBy('waste_name')
             ->get()->toArray();
         if (!empty($result)) {
@@ -997,6 +1000,7 @@ class WasteRepository extends CommonRepository
         $result = DB::table('waste_water')
             ->select(DB::raw($fieldStr))
             ->where($where)
+            ->whereNull('waste_water.deleted_at')
             ->join('company', 'company.id', '=', 'waste_water.company_id')
             ->groupBy('company.industry_category')
             ->get()->toArray();
