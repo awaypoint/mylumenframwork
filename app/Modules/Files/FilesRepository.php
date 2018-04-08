@@ -93,7 +93,7 @@ class FilesRepository extends CommonRepository
         }
         $url = $this->getPublicObjectURL($prefix . $ossKey);
         $previewUrl = $url;
-        $companyId = $params['company_id'] ?? $userInfo['company_id'];
+        $companyId = isset($params['company_id']) && $params['company_id'] ? $params['company_id'] : $userInfo['company_id'];
         checkCompanyPermission($companyId);
         $fileLogId = $this->addFilesLog($companyId, $relationField, $ossKey, $url, $previewUrl);
         $returnData = [
