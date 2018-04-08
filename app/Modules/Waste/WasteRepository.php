@@ -1012,18 +1012,20 @@ class WasteRepository extends CommonRepository
     {
         $where = [];
         if (isset($params['start_time']) && $params['start_time'] > 0) {
-            $where[] = ['protect_waste_material.created_at', '>=', $params['start_time']];
+            $where[] = ['created_at', '>=', $params['start_time']];
         }
         if (isset($params['end_time']) && $params['end_time'] > 0) {
-            $where[] = ['protect_waste_material.created_at', '<=', $params['end_time']];
+            $where[] = ['created_at', '<=', $params['end_time']];
         }
-        $fieldStr = 'SUM(protect_waste_material.annual_scale) as installations,protect_company.industry_category';
-        $result = DB::table('waste_material')
-            ->select(DB::raw($fieldStr))
-            ->where($where)
-            ->join('company', 'company.id', '=', 'waste_material.company_id')
-            ->groupBy('company.industry_category')
-            ->get()->toArray();
+        $fieldStr = 'SUM(annual_scale) as installations,waste_category';
+        $result = $this->_wasteMaterialModel->select(DB::raw($fieldStr))->where($where)->groupBy('waste_category')->get()->toArray();
+        if (!empty($result)) {
+            $wasteCategoryIds = array_column($result, 'waste_category');
+            $wasteCategoryInfo = Setting::searchWasteTypeForList($wasteCategoryIds, ['name'], 'id');
+            foreach ($result as &$item) {
+                $item['waste_category_name'] = isset($wasteCategoryInfo[$item['waste_category']]) ? $wasteCategoryInfo[$item['waste_category']]['name'] : '';
+            }
+        }
         return $result;
     }
 
