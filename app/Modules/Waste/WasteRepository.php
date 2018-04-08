@@ -255,6 +255,8 @@ class WasteRepository extends CommonRepository
         }
         Setting::checkWasteExist($params['waste_name'], Setting::SETTING_WASTE_GAS_TYPE, ['id']);
         $userInfo = getUserInfo();
+        //检查排放口
+        $this->_checkWasteTube($params['tube_id'], Waste::WASTE_GAS_TUBE_TYPE);
         $addData = [
             'company_id' => $userInfo['company_id'],
             'tube_id' => $params['tube_id'],
@@ -294,6 +296,8 @@ class WasteRepository extends CommonRepository
         if (isset($params['waste_name']) && $params['waste_name']) {
             Setting::checkWasteExist($params['waste_name'], Setting::SETTING_WASTE_GAS_TYPE, ['id']);
         }
+        //检查排放口
+        $this->_checkWasteTube($params['tube_id'], Waste::WASTE_GAS_TUBE_TYPE);
         $fileFields = ['technique_pic'];
         dealFileFields($fileFields, $params);
         return $this->_wasteGasModel->up($id, $params);
@@ -494,6 +498,8 @@ class WasteRepository extends CommonRepository
         }
         Setting::checkWasteExist($params['waste_name'], Setting::SETTING_WASTE_WATER_TYPE, ['id']);
         $userInfo = getUserInfo();
+        //检查排放口
+        $this->_checkWasteTube($params['tube_id'], Waste::WASTE_WATER_TUBE_TYPE);
         $addData = [
             'company_id' => $userInfo['company_id'],
             'tube_id' => $params['tube_id'],
@@ -530,6 +536,8 @@ class WasteRepository extends CommonRepository
         if (isset($params['type']) && !isset(Waste::WASTE_WATER_TYPE_MAP[$params['type']])) {
             throw new WasteException(60013);
         }
+        //检查排放口
+        $this->_checkWasteTube($params['tube_id'], Waste::WASTE_WATER_TUBE_TYPE);
         if (isset($params['waste_name']) && $params['waste_name']) {
             Setting::checkWasteExist($params['waste_name'], Setting::SETTING_WASTE_WATER_TYPE, ['id']);
         }
@@ -1195,5 +1203,22 @@ class WasteRepository extends CommonRepository
         $companyCount = Company::getCompanyCount();
         $nucleusCompnayCount = $this->_nucleusModel->select(DB::raw('count(DISTINCT company_id) as count'))->first()->count;
         return ['all_company' => $companyCount, 'nucleus_company' => $nucleusCompnayCount];
+    }
+
+    /**
+     * 检查排放口类型
+     * @param $tubeId
+     * @param $type
+     * @throws WasteException
+     */
+    private function _checkWasteTube($tubeId, $type)
+    {
+        $tubeInfo = $this->_wasteTubeModel->select(['type'])->where(['id' => $tubeId])->first();
+        if (is_null($tubeInfo)) {
+            throw new WasteException(60008);
+        }
+        if ($tubeInfo->type != $type) {
+            throw new WasteException(60012);
+        }
     }
 }
