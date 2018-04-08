@@ -469,6 +469,15 @@ class CompanyRepository extends CommonRepository
     }
 
     /**
+     * 获取公司总数
+     * @return int
+     */
+    public function getCompanyCount()
+    {
+        return $this->_companyModel->count('id');
+    }
+
+    /**
      * 添加企业信息参数验证
      * @param $params
      * @throws CompanyException

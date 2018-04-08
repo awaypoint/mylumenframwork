@@ -111,4 +111,6 @@ $app->group(['prefix' => 'waste', 'middleware' => 'auth'], function () use ($app
     $app->get('getWasteGasReportByIndustry', 'WasteController@getWasteGasReportByIndustry');
     $app->get('getWasteWaterReportByIndustry', 'WasteController@getWasteWaterReportByIndustry');
     $app->get('getWasteMaterialReport', 'WasteController@getWasteMaterialReport');
+    $app->get('getNoiseCount', 'WasteController@getNoiseCount');
+    $app->get('getNucleusCount', 'WasteController@getNucleusCount');
 });

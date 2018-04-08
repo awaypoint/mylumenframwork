@@ -46,4 +46,13 @@ class CompanyFacades
     {
         return $this->_companyRepository->getCompanyInfo($id, $fields);
     }
+
+    /**
+     * 获取公司总数
+     * @return int
+     */
+    public function getCompanyCount()
+    {
+        return $this->_companyRepository->getCompanyCount();
+    }
 }

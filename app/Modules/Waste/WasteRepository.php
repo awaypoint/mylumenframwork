@@ -132,7 +132,7 @@ class WasteRepository extends CommonRepository
             'id' => $id,
         ];
         $result = $this->_wasteMaterialModel->getOne($where);
-        if (is_null($result)){
+        if (is_null($result)) {
             throw new WasteException(60003);
         }
         checkCompanyPermission($result['company_id']);
@@ -1167,5 +1167,27 @@ class WasteRepository extends CommonRepository
             }
         }
         return ['total' => $total, 'total_page' => $totalPage, 'rows' => $result];
+    }
+
+    /**
+     * 获取噪音公司总数
+     * @return array
+     */
+    public function getNoiseCount()
+    {
+        $companyCount = Company::getCompanyCount();
+        $noiseCompnayCount = $this->_noiseModel->select(DB::raw('count(DISTINCT company_id) as count'))->first()->count;
+        return ['all_company' => $companyCount, 'noise_company' => $noiseCompnayCount];
+    }
+
+    /**
+     * 获取噪音公司总数
+     * @return array
+     */
+    public function getNucleusCount()
+    {
+        $companyCount = Company::getCompanyCount();
+        $nucleusCompnayCount = $this->_nucleusModel->select(DB::raw('count(DISTINCT company_id) as count'))->first()->count;
+        return ['all_company' => $companyCount, 'nucleus_company' => $nucleusCompnayCount];
     }
 }

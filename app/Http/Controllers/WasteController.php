@@ -525,4 +525,21 @@ class WasteController extends Controller
         $result = $this->_wasteRepository->getWasteMaterialReport($request->all());
         return responseTo($result);
     }
+
+    /**
+     * 获取噪音总数
+     * @return array
+     */
+    public function getNoiseCount()
+    {
+        return responseTo($this->_wasteRepository->getNoiseCount());
+    }
+    /**
+     * 获取核公司总数
+     * @return array
+     */
+    public function getNucleusCount()
+    {
+        return responseTo($this->_wasteRepository->getNucleusCount());
+    }
 }
