@@ -947,6 +947,7 @@ class WasteRepository extends CommonRepository
         if (isset($params['end_time']) && $params['end_time'] > 0) {
             $where[] = ['protect_waste_gas.created_at', '<=', $params['end_time']];
         }
+        $where[] = ['company.industry_category', '>', 0];
         $fieldStr = 'SUM(protect_waste_gas.installations) as installations,protect_company.industry_category';
         $result = DB::table('waste_gas')
             ->select(DB::raw($fieldStr))
@@ -1004,6 +1005,7 @@ class WasteRepository extends CommonRepository
         if (isset($params['end_time']) && $params['end_time'] > 0) {
             $where[] = ['protect_waste_water.created_at', '<=', $params['end_time']];
         }
+        $where[] = ['company.industry_category', '>', 0];
         $fieldStr = 'SUM(protect_waste_water.water_discharge) as installations,protect_company.industry_category';
         $result = DB::table('waste_water')
             ->select(DB::raw($fieldStr))
