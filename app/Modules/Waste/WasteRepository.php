@@ -1044,8 +1044,8 @@ class WasteRepository extends CommonRepository
         } elseif (isset($params['company_id']) && $params['company_id']) {
             $where['waste_gas.company_id'] = $params['company_id'];
         }
-        if (isset($params['waste']) && $params['waste']) {
-            $where[] = ['waste_gas.waste_name', 'LIKE', '%' . $params['waste'] . '%'];
+        if (isset($params['waste_name']) && $params['waste_name']) {
+            $where[] = ['waste_gas.waste_name', 'LIKE', '%' . $params['waste_name'] . '%'];
         }
         $fields = [];
         foreach ($this->_wasteGasModel->fillable as $field) {
