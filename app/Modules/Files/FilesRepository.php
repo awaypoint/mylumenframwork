@@ -138,7 +138,7 @@ class FilesRepository extends CommonRepository
      */
     public function getPublicObjectURL($ossKey)
     {
-        return $this->ossClient->getPublicUrl($ossKey);
+        return env('FILE_URL') . $ossKey;
     }
 
     /**
