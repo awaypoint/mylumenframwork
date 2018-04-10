@@ -127,7 +127,7 @@ class CompanyRepository extends CommonRepository
     public function updateCompany($params)
     {
         $userInfo = getUserInfo();
-        $companyId = $params['company_id'] ?? $userInfo['company_id'];
+        $companyId = isset($params['company_id']) ? $params['company_id'] : $userInfo['company_id'];
         checkCompanyPermission($companyId);
         $this->_validate($params, $companyId);
         $where = [
@@ -141,9 +141,7 @@ class CompanyRepository extends CommonRepository
         if (isset($params['industrial_park_code']) && $params['industrial_park_code']) {
             $combine .= $params['industrial_park_code'];
         }
-        $updateData = [
-            'combine' => $combine,
-        ];
+        $updateData = [];
         $returnData = ['company_id' => $model->id];
         //不可编辑名单
         $guardFillble = ['id', 'name'];
@@ -158,6 +156,7 @@ class CompanyRepository extends CommonRepository
                 $updateData[$field] = $params[$field];
             }
         }
+        $updateData['combine'] = $combine;
         DB::beginTransaction();
         try {
             if (!empty($updateData)) {
