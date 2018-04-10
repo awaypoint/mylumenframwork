@@ -5,6 +5,7 @@ namespace App\Modules\Company;
 use App\Modules\Common\CommonRepository;
 use App\Modules\Company\Exceptions\CompanyException;
 use App\Modules\Files\Facades\Files;
+use App\Modules\Role\Facades\Role;
 use App\Modules\User\Facades\User;
 use Illuminate\Support\Facades\DB;
 
@@ -136,7 +137,13 @@ class CompanyRepository extends CommonRepository
         if (is_null($model)) {
             throw new CompanyException(40004);
         }
-        $updateData = [];
+        $combine = $params['province_code'] | $params['city_code'] | $params['area_code'];
+        if (isset($params['industrial_park_code']) && $params['industrial_park_code']) {
+            $combine .= $params['industrial_park_code'];
+        }
+        $updateData = [
+            'combine' => $combine,
+        ];
         $returnData = ['company_id' => $model->id];
         //不可编辑名单
         $guardFillble = ['id', 'name'];
@@ -473,6 +480,37 @@ class CompanyRepository extends CommonRepository
     public function getCompanyCount()
     {
         return $this->_companyModel->count('id');
+    }
+
+    /**
+     * 删除公司
+     * @param $id
+     * @return array
+     * @throws CompanyException
+     */
+    public function delCompany($id)
+    {
+        if (getUserInfo()['role_type'] != Role::ROLE_SUPER_ADMIN_TYPE) {
+            throw new CompanyException(40018);
+        }
+        DB::beginTransaction();
+        try {
+            $companyDelRes = $this->_companyModel->del($id);
+            if (!$companyDelRes) {
+                DB::rollBack();
+                throw new CompanyException(40019);
+            }
+            $userDelRes = User::delUserByCompany($id);
+            if ($userDelRes === false) {
+                DB::rollBack();
+                throw new CompanyException(40019);
+            }
+            DB::commit();
+            return ['id' => $id];
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw new CompanyException(40019);
+        }
     }
 
     /**

@@ -218,4 +218,19 @@ class SettingController extends Controller
         $result = $this->_settingRepository->getWasteCombo($request->all());
         return responseTo($result);
     }
+
+    /**
+     * 设置用户地区权限
+     * @param Request $request
+     * @return array
+     */
+    public function setUserCityPermissions(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required',
+            'permissions' => 'required',
+        ]);
+        $result = $this->_settingRepository->setUserCityPermissions($request->get('id'), $request->get('permissions'));
+        return responseTo($result, '权限设置成功');
+    }
 }

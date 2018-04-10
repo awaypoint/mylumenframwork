@@ -14,5 +14,7 @@ class SettingException extends BaseException
         30005=>['msg'=>'工业园区不存在'],
         30006=>['msg'=>'工业园区更新失败'],
         30007=>['msg'=>'工业园区删除失败'],
+        30008=>['msg'=>'【$field_name】参数错误'],
+        30009=>['msg'=>'权限设置失败'],
     ];
 }

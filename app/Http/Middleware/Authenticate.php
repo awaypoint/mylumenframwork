@@ -42,7 +42,7 @@ class Authenticate
         //}
         $nowTime = time();
         if (env('APP_DEBUG')) {
-            Session::put('uid', 8);
+            Session::put('uid', 59);
             Session::put('lifetime', $nowTime + env('LIFE_SEC', 10800));
         }
         if (!Session::has('lifetime') || Session::get('lifetime') - $nowTime < 0) {

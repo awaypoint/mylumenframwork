@@ -39,6 +39,7 @@ $app->group(['prefix' => '/setting', 'middleware' => 'auth'], function () use ($
     $app->put('updateWaste', 'SettingController@updateWaste');
     $app->delete('delWaste', 'SettingController@delWaste');
     $app->get('getIndustrialParkList', 'SettingController@getIndustrialParkList');
+    $app->post('setUserCityPermissions', 'SettingController@setUserCityPermissions');
 });
 //用户
 $app->group(['prefix' => 'users', 'middleware' => 'auth'], function () use ($app) {
@@ -63,6 +64,7 @@ $app->group(['prefix' => 'company', 'middleware' => 'auth'], function () use ($a
     $app->get('getCompanyList', 'CompanyController@getCompanyList');
     $app->get('getCompanyCombo', 'CompanyController@getCompanyCombo');
     $app->get('getIndustryReport', 'CompanyController@getIndustryReport');
+    $app->delete('delCompany', 'CompanyController@delCompany');
 });
 //文件
 $app->group(['prefix' => 'files', 'middleware' => 'auth'], function () use ($app) {

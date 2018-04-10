@@ -183,4 +183,18 @@ class CompanyController extends Controller
         $result = $this->_companyRepository->getIndustryReport();
         return responseTo($result);
     }
+
+    /**
+     * 删除公司
+     * @param Request $request
+     * @return array
+     */
+    public function delCompany(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required',
+        ]);
+        $result = $this->_companyRepository->delCompany($request->get('id'));
+        return responseTo($result, '公司删除成功');
+    }
 }

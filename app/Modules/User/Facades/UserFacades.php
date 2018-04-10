@@ -46,4 +46,14 @@ class UserFacades
     {
         return $this->_userRepository->updateUserMenu($hideMenuIds);
     }
+
+    /**
+     * 删除公司用户
+     * @param $companyId
+     * @return mixed
+     */
+    public function delUserByCompany($companyId)
+    {
+        return $this->_userRepository->delUserByCompany($companyId);
+    }
 }

@@ -6,7 +6,9 @@ use App\Modules\Common\CommonRepository;
 use App\Modules\Role\Facades\Role;
 use App\Modules\Setting\Exceptions\SettingException;
 use App\Modules\Setting\Facades\Setting;
+use App\Modules\User\EloquentUsersPermissionsModel;
 use App\Modules\User\Facades\User;
+use Illuminate\Support\Facades\DB;
 
 class SettingRepository extends CommonRepository
 {
@@ -14,6 +16,7 @@ class SettingRepository extends CommonRepository
     private $_wasteTypeModel;
     private $_industrialParkModel;
     private $_wasteModel;
+    private $_usersPermissions;
 
     private $_myPermissions = [];
     private $_hideMenuIds = [];
@@ -24,13 +27,15 @@ class SettingRepository extends CommonRepository
         EloquentMenuModel $menuModel,
         EloquentWasteTypeModel $wasteTypeModel,
         EloquentIndustrialParkModel $industrialParkModel,
-        EloquentWasteModel $wasteModel
+        EloquentWasteModel $wasteModel,
+        EloquentUsersPermissionsModel $usersPermissionsModel
     )
     {
         $this->_menuModel = $menuModel;
         $this->_wasteTypeModel = $wasteTypeModel;
         $this->_industrialParkModel = $industrialParkModel;
         $this->_wasteModel = $wasteModel;
+        $this->_usersPermissions = $usersPermissionsModel;
     }
 
     /**
@@ -344,5 +349,73 @@ class SettingRepository extends CommonRepository
             $result = array_column($result, null, $indexKey);
         }
         return $result;
+    }
+
+    /**
+     * 设置用户权限
+     * @param $uid
+     * @param array $permissions
+     * @return array
+     * @throws SettingException
+     */
+    public function setUserCityPermissions($uid, $permissions = [])
+    {
+        $addData = [];
+        if (!empty($permissions)) {
+            $requiredFields = ['province_code'];
+            foreach ($permissions as $permission) {
+                foreach ($requiredFields as $requiredField) {
+                    if (!isset($permission[$requiredField]) || !$permission[$requiredField]) {
+                        throw new SettingException(30008, ['field_name' => $requiredField]);
+                    }
+                }
+                $combine = $permission['province_code'];
+                if (isset($permission['city_code']) && $permission['city_code']){
+                    $combine = $combine & $permission['city_code'];
+                }
+                if (isset($permission['area_code']) && $permission['area_code']){
+                    $combine = $combine | $permission['area_code'];
+                }
+                if (isset($permission['industrial_park_code']) && $permission['industrial_park_code']){
+                    $combine .= $permission['industrial_park_code'];
+                }
+                $tmp = [
+                    'uid' => $uid,
+                    'province_code' => $permission['province_code'],
+                    'province' => $permission['province'] ?? '',
+                    'city_code' => $permission['city_code'] ?? 0,
+                    'city' => $permission['city'] ?? '',
+                    'area_code' => $permission['area_code'] ?? 0,
+                    'area' => $permission['area'] ?? '',
+                    'industrial_park_code' => $permission['industrial_park_code'] ?? 0,
+                    'industrial_park' => $permission['industrial_park'] ?? '',
+                    'combine' => $combine,
+                ];
+                $addData[] = $tmp;
+            }
+        }
+        DB::beginTransaction();
+        try {
+            $where = [
+                'uid' => $uid,
+            ];
+            $delResult = $this->_usersPermissions->deleteByFields($where, true);
+            if ($delResult === false) {
+                DB::rollBack();
+                throw new SettingException(30009);
+            }
+            if (!empty($addData)) {
+                $addResult = $this->_usersPermissions->addBatch($addData);
+                if (!$addResult) {
+                    DB::rollBack();
+                    throw new SettingException(30009);
+                }
+            }
+            DB::commit();
+            return ['id' => $uid];
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw new SettingException(30009);
+        }
     }
 }

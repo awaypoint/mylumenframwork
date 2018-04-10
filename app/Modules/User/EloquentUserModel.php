@@ -5,13 +5,14 @@ namespace App\Modules\User;
 use App\Modules\Common\CommonEloquentModel;
 use App\Modules\User\Exceptions\UserException;
 use Illuminate\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Log;
 use Laravel\Lumen\Auth\Authorizable;
 use Laravel\Passport\HasApiTokens;
 
 class EloquentUserModel extends CommonEloquentModel
 {
-    use HasApiTokens, Authenticatable, Authorizable;
+    use SoftDeletes,HasApiTokens, Authenticatable, Authorizable;
 
     protected $table = 'users';
     protected $dateFormat = 'U';

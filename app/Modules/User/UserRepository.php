@@ -315,4 +315,17 @@ class UserRepository extends CommonRepository
         }
         return $this->_userModel->del($id);
     }
+
+    /**
+     * 通过公司删除用户
+     * @param $companyId
+     * @return mixed
+     */
+    public function delUserByCompany($companyId)
+    {
+        $where = [
+            'company_id' => $companyId,
+        ];
+        return $this->_userModel->deleteByFields($where);
+    }
 }
