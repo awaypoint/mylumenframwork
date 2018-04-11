@@ -118,7 +118,7 @@ class CommonEloquentModel extends Model
     public function getList(array $where, array $fields = [], $page = 0, $pageSize = 0, $orderBy = [], $sortBy = '')
     {
         $model = $this->_createModel($where);
-        $result['total'] = $model->toSql();
+        $result['total'] = $model->count();
         $result['total_page'] = $pageSize > 0 ? ceil($result['total'] / $pageSize) : 0;
         $this->_createCondition($model, $fields, $page, $pageSize, $orderBy, $sortBy);
         $result['rows'] = $model->get()->toArray();
