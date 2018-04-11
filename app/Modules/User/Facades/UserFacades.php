@@ -23,11 +23,6 @@ class UserFacades
         return $this->_userRepository->getUserInfo($fields);
     }
 
-    public function clearUserCache($uid, $type = '')
-    {
-        return $this->_userRepository->clearUserCache($uid, $type);
-    }
-
     /**
      * 更新用户公司
      * @param $companyId
@@ -55,5 +50,15 @@ class UserFacades
     public function delUserByCompany($companyId)
     {
         return $this->_userRepository->delUserByCompany($companyId);
+    }
+
+    /**
+     * 获取用户地区权限
+     * @param $uid
+     * @return mixed
+     */
+    public function getUserCityPermissions($uid, $fields = [])
+    {
+        return $this->_userRepository->getUserCityPermissions($uid, $fields);
     }
 }

@@ -127,6 +127,9 @@ if (!function_exists('checkCompanyPermission')) {
         if ($userInfo['role_type'] == Role::ROLE_COMMON_TYPE && $companyId != $userInfo['company_id']) {
             throw new BaseException(406);
         }
+        if ($userInfo['role_type'] == Role::ROLE_ADMIN_TYPE && !in_array($companyId, $userInfo['companies'])) {
+            throw new BaseException(406);
+        }
     }
 }
 

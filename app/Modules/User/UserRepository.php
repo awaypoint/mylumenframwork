@@ -13,15 +13,18 @@ use Illuminate\Support\Facades\Session;
 class UserRepository extends CommonRepository
 {
     private $_userModel;
+    private $_userPermisionsModel;
     private $_http;
 
     public function __construct(
         Client $guezzClient,
-        EloquentUserModel $userModel
+        EloquentUserModel $userModel,
+        EloquentUsersPermissionsModel $usersPermissionsModel
     )
     {
         $this->_http = $guezzClient;
         $this->_userModel = $userModel;
+        $this->_userPermisionsModel = $usersPermissionsModel;
     }
 
     public function loginByPassword($params)
@@ -83,6 +86,17 @@ class UserRepository extends CommonRepository
             $roleInfo = Role::getRoleInfo($userInfo['role_id'], ['type']);
             $userInfo['role_type'] = is_null($roleInfo) ? Role::ROLE_COMMON_TYPE : $roleInfo['type'];
             $userInfo['hide_menu_ids'] = json_decode($userInfo['hide_menu_ids'], true);
+            $userInfo['companies'] = [];
+            if ($userInfo['role_type'] == Role::ROLE_COMMON_TYPE) {
+                $userInfo['companies'] = [$userInfo['company_id']];
+            }
+            if ($userInfo['role_type'] == Role::ROLE_ADMIN_TYPE) {
+                $companyIds = Company::getPermissionCompanies($userInfo['id']);
+                if (empty($companyIds)) {
+                    $companyIds = [-1];//如果没有权限保证这个有值
+                }
+                $userInfo['companies'] = $companyIds;
+            }
             unset($userInfo['password']);
             setUserCache($userInfo);
         }
@@ -327,5 +341,18 @@ class UserRepository extends CommonRepository
             'company_id' => $companyId,
         ];
         return $this->_userModel->deleteByFields($where);
+    }
+
+    /**
+     * 获取用户城市权限
+     * @param $uid
+     * @return mixed
+     */
+    public function getUserCityPermissions($uid, $fields = [])
+    {
+        $where = [
+            'uid' => $uid,
+        ];
+        return $this->_userPermisionsModel->searchData($where, $fields);
     }
 }

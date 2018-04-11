@@ -55,4 +55,13 @@ class CompanyFacades
     {
         return $this->_companyRepository->getCompanyCount();
     }
+
+    /**
+     * 获取用户权限公司
+     * @param $uid
+     */
+    public function getPermissionCompanies($uid)
+    {
+        return $this->_companyRepository->getPermissionCompanies($uid);
+    }
 }

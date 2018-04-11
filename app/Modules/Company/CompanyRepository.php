@@ -84,7 +84,7 @@ class CompanyRepository extends CommonRepository
     public function getCompanyDetail($params)
     {
         $userInfo = getUserInfo();
-        $companyId = isset($params['company_id']) ? $params['company_id'] : $userInfo['company_id'];
+        $companyId = isset($params['company_id']) && $params['company_id'] ? $params['company_id'] : $userInfo['company_id'];
         checkCompanyPermission($companyId);
         $where = [
             'id' => $companyId,
@@ -231,6 +231,9 @@ class CompanyRepository extends CommonRepository
     {
         $userInfo = getUserInfo();
         $where = [];
+        if ($userInfo['role_type'] == Role::ROLE_ADMIN_TYPE) {
+            $where['built_in'] = ['whereIn' => ['id', $userInfo['companies']]];
+        }
         if ($userInfo['role_type'] == User::USER_COMMON_ROLE_TYPE) {
             $where['company_id'] = $userInfo['company_id'];
         } elseif (isset($params['company_id']) && $params['company_id']) {
@@ -389,10 +392,13 @@ class CompanyRepository extends CommonRepository
     public function getCompanyList($params, $page = 1, $pageSize = 10, $orderBy = [], $fields = [])
     {
         $userInfo = getUserInfo();
+        $where = [];
         if ($userInfo['role_type'] == User::USER_COMMON_ROLE_TYPE) {
             throw new CompanyException(40017);
         }
-        $where = [];
+        if ($userInfo['role_type'] == Role::ROLE_ADMIN_TYPE) {
+            $where['built_in'] = ['whereIn' => ['id', $userInfo['companies']]];
+        }
         if (isset($params['province_code']) && $params['province_code']) {
             $where['province_code'] = $params['province_code'];
         }
@@ -437,8 +443,12 @@ class CompanyRepository extends CommonRepository
      */
     public function getCompanyCombo()
     {
+        $userInfo = getUserInfo();
         $where = [];
         $fields = ['id', 'name'];
+        if ($userInfo['role_type'] == Role::ROLE_ADMIN_TYPE) {
+            $where['built_in'] = ['where_in' => ['id', $userInfo['companies']]];
+        }
         $result = $this->_companyModel->searchData($where, $fields);
         return $result;
     }
@@ -449,12 +459,15 @@ class CompanyRepository extends CommonRepository
      */
     public function getIndustryReport()
     {
+        $userInfo = getUserInfo();
         $where = [];
         $fieldStr = 'COUNT(DISTINCT id) AS company_num,industry_category';
         $result = $this->_companyModel->select(DB::raw($fieldStr))
-            ->where($where)
-            ->groupBy('industry_category')
-            ->get()->toArray();
+            ->where($where);
+        if ($userInfo['role_type'] == Role::ROLE_ADMIN_TYPE) {
+            $result->whereIn('id', $userInfo['companies']);
+        }
+        $result = $result->groupBy('industry_category')->get()->toArray();
         return $result;
     }
 
@@ -478,7 +491,12 @@ class CompanyRepository extends CommonRepository
      */
     public function getCompanyCount()
     {
-        return $this->_companyModel->count('id');
+        $userInfo = getUserInfo();
+        $model = $this->_companyModel;
+        if ($userInfo['role_type'] == Role::ROLE_ADMIN_TYPE) {
+            $model->whereIn('id', $userInfo['companies']);
+        }
+        return $model->count('id');
     }
 
     /**
@@ -511,6 +529,29 @@ class CompanyRepository extends CommonRepository
             throw new CompanyException(40019);
         }
     }
+
+    /**
+     * 获取用户有权限的公司ids
+     * @param $uid
+     * @return array
+     */
+    public function getPermissionCompanies($uid)
+    {
+        $cityPermissions = User::getUserCityPermissions($uid, ['combine']);
+        if (empty($cityPermissions)) {
+            return [];
+        }
+        $model = $this->_companyModel->select(['id']);
+        foreach ($cityPermissions as $combines) {
+            $model->orWhere('combine', 'LIKE', $combines['combine'] . '%');
+        }
+        $result = $model->whereNull('deleted_at')->get()->toArray();
+        if (!empty($result)) {
+            $result = array_column($result, 'id');
+        }
+        return $result;
+    }
+
 
     /**
      * 添加企业信息参数验证

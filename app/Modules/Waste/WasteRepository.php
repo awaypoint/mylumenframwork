@@ -87,6 +87,9 @@ class WasteRepository extends CommonRepository
     {
         $userInfo = getUserInfo();
         $where = [];
+        if ($userInfo['role_type'] == Role::ROLE_ADMIN_TYPE) {
+            $where['built_in'] = ['whereIn' => ['id', $userInfo['companies']]];
+        }
         if ($userInfo['role_type'] == Role::ROLE_COMMON_TYPE) {
             $where['company_id'] = $userInfo['company_id'];
         } elseif (isset($params['company_id']) && $params['company_id']) {
@@ -419,6 +422,9 @@ class WasteRepository extends CommonRepository
             ]
         ];
         $userInfo = getUserInfo();
+        if ($userInfo['role_type'] == Role::ROLE_ADMIN_TYPE) {
+            $where['built_in'] = ['whereIn' => ['id', $userInfo['companies']]];
+        }
         if ($userInfo['role_type'] == Role::ROLE_COMMON_TYPE) {
             $where['company_id'] = $userInfo['company_id'];
         } elseif (isset($params['company_id']) && $params['company_id']) {
@@ -590,6 +596,9 @@ class WasteRepository extends CommonRepository
             ]
         ];
         $userInfo = getUserInfo();
+        if ($userInfo['role_type'] == Role::ROLE_ADMIN_TYPE) {
+            $where['built_in']['whereIn'] = ['id', $userInfo['companies']];
+        }
         if ($userInfo['role_type'] == Role::ROLE_COMMON_TYPE) {
             $where['company_id'] = $userInfo['company_id'];
         } elseif (isset($params['company_id']) && $params['company_id']) {
@@ -741,6 +750,9 @@ class WasteRepository extends CommonRepository
     {
         $userInfo = getUserInfo();
         $where = [];
+        if ($userInfo['role_type'] == Role::ROLE_ADMIN_TYPE) {
+            $where['built_in'] = ['whereIn' => ['id', $userInfo['companies']]];
+        }
         if ($userInfo['role_type'] == Role::ROLE_COMMON_TYPE) {
             $where['company_id'] = $userInfo['company_id'];
         } elseif (isset($params['company_id']) && $params['company_id']) {
@@ -862,6 +874,9 @@ class WasteRepository extends CommonRepository
     {
         $userInfo = getUserInfo();
         $where = [];
+        if ($userInfo['role_type'] == Role::ROLE_ADMIN_TYPE) {
+            $where['built_in'] = ['whereIn' => ['id', $userInfo['companies']]];
+        }
         if ($userInfo['role_type'] == Role::ROLE_COMMON_TYPE) {
             $where['company_id'] = $userInfo['company_id'];
         } elseif (isset($params['company_id']) && $params['company_id']) {
@@ -911,6 +926,7 @@ class WasteRepository extends CommonRepository
      */
     public function getWasteGasReport($params)
     {
+        $userInfo = getUserInfo();
         $where = [];
         if (isset($params['start_time']) && $params['start_time'] > 0) {
             $where[] = ['created_at', '>=', $params['start_time']];
@@ -921,9 +937,11 @@ class WasteRepository extends CommonRepository
         $fieldStr = 'SUM(gas_discharge) as installations, COUNT(DISTINCT company_id) AS company_num,waste_name';
         $result = $this->_wasteGasModel->select(DB::raw($fieldStr))
             ->where($where)
-            ->whereNull('waste_gas.deleted_at')
-            ->groupBy('waste_name')
-            ->get()->toArray();
+            ->whereNull('waste_gas.deleted_at');
+        if ($userInfo['role_type'] == Role::ROLE_ADMIN_TYPE) {
+            $result->whereIn('company_id', $userInfo['companies']);
+        }
+        $result = $result->groupBy('waste_name')->get()->toArray();
         if (!empty($result)) {
             $wasteId = array_column($result, 'waste_name');
             $wasteInfo = Setting::searchWasteForList($wasteId, ['name'], 'id');
@@ -943,6 +961,7 @@ class WasteRepository extends CommonRepository
      */
     public function getWasteGasReportByIndustry($params)
     {
+        $userInfo = getUserInfo();
         $where = [];
         if (isset($params['start_time']) && $params['start_time'] > 0) {
             $where[] = ['protect_waste_gas.created_at', '>=', $params['start_time']];
@@ -955,8 +974,11 @@ class WasteRepository extends CommonRepository
         $result = DB::table('waste_gas')
             ->select(DB::raw($fieldStr))
             ->where($where)
-            ->whereNull('waste_gas.deleted_at')
-            ->join('company', 'company.id', '=', 'waste_gas.company_id')
+            ->whereNull('waste_gas.deleted_at');
+        if ($userInfo['role_type'] == Role::ROLE_ADMIN_TYPE) {
+            $result->whereIn('company.id', $userInfo['companies']);
+        }
+        $result = $result->join('company', 'company.id', '=', 'waste_gas.company_id')
             ->groupBy('company.industry_category')
             ->get()->toArray();
         return $result;
@@ -969,6 +991,7 @@ class WasteRepository extends CommonRepository
      */
     public function getWasteWaterReport($params)
     {
+        $userInfo = getUserInfo();
         $where = [];
         if (isset($params['start_time']) && $params['start_time'] > 0) {
             $where[] = ['created_at', '>=', $params['start_time']];
@@ -979,9 +1002,11 @@ class WasteRepository extends CommonRepository
         $fieldStr = 'SUM(water_discharge) as installations, COUNT(DISTINCT company_id) AS company_num,waste_name';
         $result = $this->_wasteWaterModel->select(DB::raw($fieldStr))
             ->where($where)
-            ->whereNull('waste_water.deleted_at')
-            ->groupBy('waste_name')
-            ->get()->toArray();
+            ->whereNull('waste_water.deleted_at');
+        if ($userInfo['role_type'] == Role::ROLE_ADMIN_TYPE) {
+            $result->whereIn('company_id', $userInfo['companies']);
+        }
+        $result = $result->groupBy('waste_name')->get()->toArray();
         if (!empty($result)) {
             $wasteId = array_column($result, 'waste_name');
             $wasteInfo = Setting::searchWasteForList($wasteId, ['name'], 'id');
@@ -1001,6 +1026,7 @@ class WasteRepository extends CommonRepository
      */
     public function getWasteWaterReportByIndustry($params)
     {
+        $userInfo = getUserInfo();
         $where = [];
         if (isset($params['start_time']) && $params['start_time'] > 0) {
             $where[] = ['protect_waste_gas.created_at', '>=', $params['start_time']];
@@ -1013,8 +1039,11 @@ class WasteRepository extends CommonRepository
         $result = DB::table('waste_water')
             ->select(DB::raw($fieldStr))
             ->where($where)
-            ->whereNull('waste_water.deleted_at')
-            ->join('company', 'company.id', '=', 'waste_water.company_id')
+            ->whereNull('waste_water.deleted_at');
+        if ($userInfo['role_type'] == Role::ROLE_ADMIN_TYPE) {
+            $result->whereIn('company.id', $userInfo['companies']);
+        }
+        $result = $result->join('company', 'company.id', '=', 'waste_water.company_id')
             ->groupBy('company.industry_category')
             ->get()->toArray();
         return $result;
@@ -1027,6 +1056,7 @@ class WasteRepository extends CommonRepository
      */
     public function getWasteMaterialReport($params)
     {
+        $userInfo = getUserInfo();
         $where = [];
         if (isset($params['start_time']) && $params['start_time'] > 0) {
             $where[] = ['created_at', '>=', $params['start_time']];
@@ -1035,7 +1065,11 @@ class WasteRepository extends CommonRepository
             $where[] = ['created_at', '<=', $params['end_time']];
         }
         $fieldStr = 'SUM(annual_scale) as installations,COUNT(DISTINCT company_id) as company_num,waste_category';
-        $result = $this->_wasteMaterialModel->select(DB::raw($fieldStr))->where($where)->groupBy('waste_category')->get()->toArray();
+        $result = $this->_wasteMaterialModel->select(DB::raw($fieldStr))->where($where);
+        if ($userInfo['role_type'] == Role::ROLE_ADMIN_TYPE) {
+            $result->whereIn('company_id', $userInfo['companies']);
+        }
+        $result = $result->groupBy('waste_category')->get()->toArray();
         if (!empty($result)) {
             $wasteCategoryIds = array_column($result, 'waste_category');
             $wasteCategoryInfo = Setting::searchWasteTypeForList($wasteCategoryIds, ['name'], 'id');
@@ -1075,6 +1109,9 @@ class WasteRepository extends CommonRepository
             ->select($fields)
             ->where($where)
             ->whereNull('waste_gas.deleted_at');
+        if ($userInfo['role_type'] == Role::ROLE_ADMIN_TYPE) {
+            $model->whereIn('waste_gas.id', $userInfo['companies']);
+        }
         $total = $model->count();
         $totalPage = $pageSize > 0 ? ceil($total / $pageSize) : 0;
         $result = $model->join('tube', 'tube.id', '=', 'waste_gas.tube_id')
@@ -1146,6 +1183,9 @@ class WasteRepository extends CommonRepository
             ->select($fields)
             ->where($where)
             ->whereNull('waste_water.deleted_at');
+        if ($userInfo['role_type'] == Role::ROLE_ADMIN_TYPE) {
+            $model->whereIn('waste_water.id', $userInfo['companies']);
+        }
         $total = $model->count();
         $totalPage = $pageSize > 0 ? ceil($total / $pageSize) : 0;
         $result = $model->join('tube', 'tube.id', '=', 'waste_water.tube_id')
@@ -1194,8 +1234,13 @@ class WasteRepository extends CommonRepository
      */
     public function getNoiseCount()
     {
+        $userInfo = getUserInfo();
         $companyCount = Company::getCompanyCount();
-        $noiseCompnayCount = $this->_noiseModel->select(DB::raw('count(DISTINCT company_id) as count'))->first()->count;
+        $noiseCompnayCount = $this->_noiseModel->select(DB::raw('count(DISTINCT company_id) as count'));
+        if ($userInfo['role_type'] == Role::ROLE_ADMIN_TYPE) {
+            $noiseCompnayCount->whereIn('company_id', $userInfo['companies']);
+        }
+        $noiseCompnayCount = $noiseCompnayCount->first()->count;
         return ['all_company' => $companyCount, 'noise_company' => $noiseCompnayCount];
     }
 
@@ -1205,8 +1250,13 @@ class WasteRepository extends CommonRepository
      */
     public function getNucleusCount()
     {
+        $userInfo = getUserInfo();
         $companyCount = Company::getCompanyCount();
-        $nucleusCompnayCount = $this->_nucleusModel->select(DB::raw('count(DISTINCT company_id) as count'))->first()->count;
+        $nucleusCompnayCount = $this->_nucleusModel->select(DB::raw('count(DISTINCT company_id) as count'));
+        if ($userInfo['role_type'] == Role::ROLE_ADMIN_TYPE) {
+            $nucleusCompnayCount->whereIn('company_id', $userInfo['companies']);
+        }
+        $nucleusCompnayCount = $nucleusCompnayCount->first()->count;
         return ['all_company' => $companyCount, 'nucleus_company' => $nucleusCompnayCount];
     }
 
