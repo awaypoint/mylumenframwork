@@ -447,7 +447,7 @@ class CompanyRepository extends CommonRepository
         $where = [];
         $fields = ['id', 'name'];
         if ($userInfo['role_type'] == Role::ROLE_ADMIN_TYPE) {
-            $where['built_in'] = ['where_in' => ['id', $userInfo['companies']]];
+            $where['built_in'] = ['whereIn' => ['id', $userInfo['companies']]];
         }
         $result = $this->_companyModel->searchData($where, $fields);
         return $result;
