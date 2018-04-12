@@ -56,6 +56,7 @@ class CompanyRepository extends CommonRepository
             'area' => $params['area'] ?? '集美区',
             'industrial_park_code' => $params['industrial_park_code'] ?? 0,
             'industrial_park' => $params['industrial_park'] ?? '',
+            'combine' => 350211,
             'address' => $params['address'] ?? '',
             'contacts' => $params['contacts'] ?? '',
             'tel' => $params['tel'] ?? '',
