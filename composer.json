@@ -13,9 +13,7 @@
         "barryvdh/laravel-cors": "^0.9.3",
         "dusterio/lumen-passport": "0.2.4",
         "guzzlehttp/guzzle": "^6.3",
-        "johnlui/aliyun-oss": "^2.2",
-        "phpoffice/phpspreadsheet": "^1.2",
-        "phpoffice/phpword": "^0.14.0"
+        "johnlui/aliyun-oss": "^2.2"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
