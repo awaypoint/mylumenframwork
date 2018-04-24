@@ -116,3 +116,8 @@ $app->group(['prefix' => 'waste', 'middleware' => 'auth'], function () use ($app
     $app->get('getNoiseCount', 'WasteController@getNoiseCount');
     $app->get('getNucleusCount', 'WasteController@getNucleusCount');
 });
+//官网
+$app->group(['prefix' => 'website', 'middleware' => 'auth'], function () use ($app) {
+    $app->post('addCases', 'WebsiteController@addCases');
+    $app->post('addExpert', 'WebsiteController@addExpert');
+});
