@@ -62,4 +62,20 @@ class WebsiteController extends BaseController
         $result = $this->_websiteRepository->addExpert($request->all());
         return responseTo($result, '专家添加成功');
     }
+
+    /**
+     * 添加新闻
+     * @param Request $request
+     * @return array
+     */
+    public function addNews(Request $request)
+    {
+        $this->validate($request, [
+            'type' => 'required',
+            'title' => 'required',
+            'detail' => 'required',
+        ]);
+        $result = $this->_websiteRepository->addNews($request->all());
+        return responseTo($result, '新闻添加成功');
+    }
 }

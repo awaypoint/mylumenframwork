@@ -10,16 +10,19 @@ class WebsiteRepository extends CommonRepository
     private $_websiteModel;
     private $_caseModel;
     private $_expertModel;
+    private $_newsModel;
 
     public function __construct(
         EloquentWebsiteModel $websiteModel,
         EloquentWebsiteCasesModel $casesModel,
-        EloquentWebsiteExpertModel $expertModel
+        EloquentWebsiteExpertModel $expertModel,
+        EloquentWebsiteNewsModel $newsModel
     )
     {
         $this->_websiteModel = $websiteModel;
         $this->_caseModel = $casesModel;
         $this->_expertModel = $expertModel;
+        $this->_newsModel = $newsModel;
     }
 
     /**
@@ -74,12 +77,29 @@ class WebsiteRepository extends CommonRepository
             $result = $this->_expertModel->add($addData);
             return ['id' => $result];
         } catch (\Exception $e) {
-            throw new WebsiteException(70001);
+            throw new WebsiteException(70002);
         }
     }
 
+    /**
+     * 添加新闻
+     * @param $params
+     * @return array
+     * @throws WebsiteException
+     */
     public function addNews($params)
     {
+        $addData = [
+            'type' => $params['type'],
+            'title' => $params['title'],
+            'detail' => $params['detail'],
+        ];
+        try {
+            $result = $this->_newsModel->add($addData);
+            return ['id' => $result];
+        } catch (\Exception $e) {
+            throw new WebsiteException(70003);
+        }
 
     }
 }

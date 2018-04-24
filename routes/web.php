@@ -120,4 +120,5 @@ $app->group(['prefix' => 'waste', 'middleware' => 'auth'], function () use ($app
 $app->group(['prefix' => 'website', 'middleware' => 'auth'], function () use ($app) {
     $app->post('addCases', 'WebsiteController@addCases');
     $app->post('addExpert', 'WebsiteController@addExpert');
+    $app->post('addNews', 'WebsiteController@addNews');
 });
