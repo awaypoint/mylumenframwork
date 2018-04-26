@@ -437,4 +437,17 @@ class SettingRepository extends CommonRepository
         $result = $this->_usersPermissions->searchData($where);
         return $result;
     }
+
+    /**
+     * 工业园区匹配
+     * @param $ids
+     * @param array $fields
+     * @param string $indexKey
+     * @param array $replaceWhere
+     * @return array
+     */
+    public function searchParkForList($ids, $fields = [], $indexKey = '', $replaceWhere = [])
+    {
+        return $this->_industrialParkModel->searchForList($ids, $fields, $indexKey, $replaceWhere);
+    }
 }
