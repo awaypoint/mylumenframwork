@@ -435,6 +435,21 @@ class SettingRepository extends CommonRepository
             'uid' => $adminUid,
         ];
         $result = $this->_usersPermissions->searchData($where);
+        if (!empty($result)) {
+            $parkInfo = $areaIds = [];
+            foreach ($result as $item) {
+                if ($item['area_code'] > 0) {
+                    $areaIds[] = $item['area_code'];
+                }
+            }
+            if (!empty($areaIds)) {
+                $areaIds = array_unique($areaIds);
+                $parkInfo = $this->getParkByAreas($areaIds, ['id', 'name'], true);
+            }
+            foreach ($result as &$newItem) {
+                $newItem['industrial_park_combo'] = $parkInfo[$newItem['area_code']] ?? [];
+            }
+        }
         return $result;
     }
 
@@ -449,5 +464,37 @@ class SettingRepository extends CommonRepository
     public function searchParkForList($ids, $fields = [], $indexKey = '', $replaceWhere = [])
     {
         return $this->_industrialParkModel->searchForList($ids, $fields, $indexKey, $replaceWhere);
+    }
+
+    /**
+     * 通过地区获取工业园区
+     * @param $areaCodes
+     * @param array $fields
+     * @param bool $indexBool
+     * @return array|mixed
+     */
+    public function getParkByAreas($areaCodes, $fields = [], $indexBool = false)
+    {
+        $where = [
+            'built_in' => [
+                'whereIn' => ['area_code', $areaCodes],
+            ]
+        ];
+        if ($indexBool) {
+            $fields[] = 'area_code';
+            $fields = array_unique($fields);
+        }
+        $result = $data = $this->_industrialParkModel->searchData($where, $fields);
+        if ($indexBool) {
+            $result = [];
+            foreach ($data as $datum) {
+                $key = $datum['area_code'];
+                if (!isset($result[$key])) {
+                    $result[$key] = [];
+                }
+                $result[$key][] = $datum;
+            }
+        }
+        return $result;
     }
 }
