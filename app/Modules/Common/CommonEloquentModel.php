@@ -137,7 +137,7 @@ class CommonEloquentModel extends Model
     {
         $model = $this->_createModel($where);
         $this->_createCondition($model, $fields, 0, 0, $orderBy, $sortBy);
-        //echo $model->toSql();die;
+//        echo $model->toSql();die;
         return $model->get()->toArray();
     }
 

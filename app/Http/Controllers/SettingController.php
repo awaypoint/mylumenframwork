@@ -233,4 +233,18 @@ class SettingController extends Controller
         $result = $this->_settingRepository->setUserCityPermissions($request->get('id'), $request->get('permissions'));
         return responseTo($result, '权限设置成功');
     }
+
+    /**
+     * 获取用户地区权限
+     * @param Request $request
+     * @return array
+     */
+    public function getUserCityPermissions(Request $request)
+    {
+        $this->validate($request,[
+            'admin_uid'=>'required',
+        ]);
+        $result = $this->_settingRepository->getUserCityPermissions($request->get('admin_uid'));
+        return responseTo($result);
+    }
 }

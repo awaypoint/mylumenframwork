@@ -370,13 +370,13 @@ class SettingRepository extends CommonRepository
                     }
                 }
                 $combine = $permission['province_code'];
-                if (isset($permission['city_code']) && $permission['city_code']){
+                if (isset($permission['city_code']) && $permission['city_code']) {
                     $combine = $combine & $permission['city_code'];
                 }
-                if (isset($permission['area_code']) && $permission['area_code']){
+                if (isset($permission['area_code']) && $permission['area_code']) {
                     $combine = $combine | $permission['area_code'];
                 }
-                if (isset($permission['industrial_park_code']) && $permission['industrial_park_code']){
+                if (isset($permission['industrial_park_code']) && $permission['industrial_park_code']) {
                     $combine .= $permission['industrial_park_code'];
                 }
                 $tmp = [
@@ -417,5 +417,24 @@ class SettingRepository extends CommonRepository
             DB::rollBack();
             throw new SettingException(30009);
         }
+    }
+
+    /**
+     * 获取用户权限
+     * @param $adminUid
+     * @return mixed
+     * @throws SettingException
+     */
+    public function getUserCityPermissions($adminUid)
+    {
+        $userInfo = getUserInfo();
+        if ($userInfo['role_type'] != Role::ROLE_SUPER_ADMIN_TYPE) {
+            throw new SettingException(30010);
+        }
+        $where = [
+            'uid' => $adminUid,
+        ];
+        $result = $this->_usersPermissions->searchData($where);
+        return $result;
     }
 }

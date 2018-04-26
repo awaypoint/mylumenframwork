@@ -40,6 +40,7 @@ $app->group(['prefix' => '/setting', 'middleware' => 'auth'], function () use ($
     $app->delete('delWaste', 'SettingController@delWaste');
     $app->get('getIndustrialParkList', 'SettingController@getIndustrialParkList');
     $app->post('setUserCityPermissions', 'SettingController@setUserCityPermissions');
+    $app->get('getUserCityPermissions', 'SettingController@getUserCityPermissions');
 });
 //用户
 $app->group(['prefix' => 'users', 'middleware' => 'auth'], function () use ($app) {

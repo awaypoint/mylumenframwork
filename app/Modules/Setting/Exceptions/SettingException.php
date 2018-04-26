@@ -16,5 +16,6 @@ class SettingException extends BaseException
         30007=>['msg'=>'工业园区删除失败'],
         30008=>['msg'=>'【$field_name】参数错误'],
         30009=>['msg'=>'权限设置失败'],
+        30010=>['msg'=>'您不是超级管理员'],
     ];
 }
