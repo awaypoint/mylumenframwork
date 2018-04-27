@@ -228,7 +228,6 @@ class SettingController extends Controller
     {
         $this->validate($request, [
             'id' => 'required',
-            'permissions' => 'required',
         ]);
         $result = $this->_settingRepository->setUserCityPermissions($request->get('id'), $request->get('permissions'));
         return responseTo($result, '权限设置成功');
