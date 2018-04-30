@@ -145,7 +145,7 @@ if (!function_exists('dealFileFields')) {
                     throw new BaseException(00003, ['field' => $field]);
                 }
                 if (!empty($params[$field])) {
-                    $params[$field] = json_encode($params[$field], JSON_UNESCAPED_UNICODE);
+                    $params[$field] = json_encode($params[$field], JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
                 } else {
                     $params[$field] = '[]';
                 }

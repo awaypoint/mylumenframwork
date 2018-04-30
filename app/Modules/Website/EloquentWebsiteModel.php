@@ -12,5 +12,5 @@ class EloquentWebsiteModel extends CommonEloquentModel
     protected $table = 'website';
     protected $dateFormat = 'U';
     //采用白名单模式
-    public $fillable = ['id', 'logo', 'banners', 'category_num'];
+    public $fillable = ['id', 'logo', 'banners', 'category_num', 'longitude', 'latitude'];
 }

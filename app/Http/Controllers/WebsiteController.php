@@ -24,9 +24,26 @@ class WebsiteController extends BaseController
      */
     public function upBaseSet(Request $request)
     {
-        $setId = env('SETTING_ID', 1);
+        $this->validate($request,[
+            'logo'=>'required',
+            'banners'=>'required|array',
+            'longitude'=>'required',
+            'latitude'=>'required',
+        ]);
+        $setId = env('WEBSITE_SETTING_ID', 1);
         $result = $this->_websiteRepository->upBaseSet($setId, $request->all());
         return responseTo($result, '基础设置修改成功');
+    }
+
+    /**
+     * 获取基础设置详情
+     * @return array
+     */
+    public function getBaseSetDetail()
+    {
+        $setId = env('WEBSITE_SETTING_ID', 1);
+        $result = $this->_websiteRepository->getBaseSetDetail($setId);
+        return responseTo($result);
     }
 
     /**

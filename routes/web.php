@@ -134,4 +134,6 @@ $app->group(['prefix' => 'website', 'middleware' => 'auth'], function () use ($a
     $app->put('updateNews', 'WebsiteController@updateNews');
     $app->delete('delNews', 'WebsiteController@delNews');
     $app->get('getNewsList', 'WebsiteController@getNewsList');
+    $app->put('upBaseSet', 'WebsiteController@upBaseSet');
+    $app->get('getBaseSetDetail', 'WebsiteController@getBaseSetDetail');
 });

@@ -33,7 +33,22 @@ class WebsiteRepository extends CommonRepository
      */
     public function upBaseSet($setId, $params)
     {
+        dealFileFields(['banners'], $params);
         return $this->_websiteModel->up($setId, $params);
+    }
+
+    /**
+     * 获取基础设置详情
+     * @param $setId
+     * @return mixed
+     */
+    public function getBaseSetDetail($setId)
+    {
+        $where = [
+            'id' => $setId,
+        ];
+        $result = $this->_websiteModel->getOne($where);
+        return $result;
     }
 
     /**
