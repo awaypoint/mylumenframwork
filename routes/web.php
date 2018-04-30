@@ -119,7 +119,19 @@ $app->group(['prefix' => 'waste', 'middleware' => 'auth'], function () use ($app
 });
 //官网
 $app->group(['prefix' => 'website', 'middleware' => 'auth'], function () use ($app) {
-    $app->post('addCases', 'WebsiteController@addCases');
+    $app->post('addCase', 'WebsiteController@addCase');
+    $app->put('updateCase', 'WebsiteController@updateCase');
+    $app->delete('delCase', 'WebsiteController@delCase');
+    $app->get('getCasesList', 'WebsiteController@getCasesList');
+    $app->get('getCaseDetail', 'WebsiteController@getCaseDetail');
     $app->post('addExpert', 'WebsiteController@addExpert');
+    $app->get('getExertDetail', 'WebsiteController@getExertDetail');
+    $app->put('updateExpert', 'WebsiteController@updateExpert');
+    $app->delete('delExpert', 'WebsiteController@delExpert');
+    $app->get('getExpertsList', 'WebsiteController@getExpertsList');
     $app->post('addNews', 'WebsiteController@addNews');
+    $app->get('getNewsDetail', 'WebsiteController@getNewsDetail');
+    $app->put('updateNews', 'WebsiteController@updateNews');
+    $app->delete('delNews', 'WebsiteController@delNews');
+    $app->get('getNewsList', 'WebsiteController@getNewsList');
 });

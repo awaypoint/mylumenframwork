@@ -34,7 +34,7 @@ class WebsiteController extends BaseController
      * @param Request $request
      * @return array
      */
-    public function addCases(Request $request)
+    public function addCase(Request $request)
     {
         $this->validate($request, [
             'category_id' => 'required',
@@ -43,8 +43,68 @@ class WebsiteController extends BaseController
             'desc' => 'required',
             'detail' => 'required',
         ]);
-        $result = $this->_websiteRepository->addCases($request->all());
+        $result = $this->_websiteRepository->addCase($request->all());
         return responseTo($result, '案例添加成功');
+    }
+
+    /**
+     * 获取案例详情
+     * @param Request $request
+     * @return array
+     */
+    public function getCaseDetail(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required',
+        ]);
+        $result = $this->_websiteRepository->getCaseDetail($request->get('id'));
+        return responseTo($result);
+    }
+
+    /**
+     * 更新案例
+     * @param Request $request
+     * @return array
+     */
+    public function updateCase(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required',
+            'category_id' => 'required',
+            'title' => 'required',
+            'img' => 'required',
+            'desc' => 'required',
+            'detail' => 'required',
+        ]);
+        $result = $this->_websiteRepository->updateCase($request->get('id'), $request->all());
+        return responseTo($result, '案例修改成功');
+    }
+
+    /**
+     * 刪除案例
+     * @param Request $request
+     * @return array
+     */
+    public function delCase(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required',
+        ]);
+        $result = $this->_websiteRepository->delCase($request->get('id'));
+        return responseTo($result, '案例刪除成功');
+    }
+
+    /**
+     * 获取案例列表
+     * @param Request $request
+     * @return array
+     */
+    public function getCasesList(Request $request)
+    {
+        list($page, $pageSize, $order) = getPageSuit($request);
+
+        $result = $this->_websiteRepository->getCasesList($request->all(), $page, $pageSize, $order);
+        return responseTo($result);
     }
 
     /**
@@ -64,6 +124,64 @@ class WebsiteController extends BaseController
     }
 
     /**
+     * 获取专家详情
+     * @param Request $request
+     * @return array
+     */
+    public function getExertDetail(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required',
+        ]);
+        $result = $this->_websiteRepository->getExpertDetail($request->get('id'));
+        return responseTo($result);
+    }
+
+    /**
+     * 修改专家
+     * @param Request $request
+     * @return array
+     */
+    public function updateExpert(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required',
+            'category_id' => 'required',
+            'expert' => 'required',
+            'img' => 'required',
+        ]);
+        $result = $this->_websiteRepository->updateExpert($request->get('id'), $request->all());
+        return responseTo($result, '专家修改成功');
+    }
+
+    /**
+     * 删除专家
+     * @param Request $request
+     * @return array
+     */
+    public function delExpert(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required',
+        ]);
+        $result = $this->_websiteRepository->delExpert($request->get('id'));
+        return responseTo($result, '专家删除成功');
+    }
+
+    /**
+     * 获取专家列表
+     * @param Request $request
+     * @return array
+     */
+    public function getExpertsList(Request $request)
+    {
+        list($page, $pageSize, $order) = getPageSuit($request);
+
+        $result = $this->_websiteRepository->getExpertsList($request->all(), $page, $pageSize, $order);
+        return responseTo($result);
+    }
+
+    /**
      * 添加新闻
      * @param Request $request
      * @return array
@@ -77,5 +195,63 @@ class WebsiteController extends BaseController
         ]);
         $result = $this->_websiteRepository->addNews($request->all());
         return responseTo($result, '新闻添加成功');
+    }
+
+    /**
+     * 获取新闻详情
+     * @param Request $request
+     * @return array
+     */
+    public function getNewsDetail(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required',
+        ]);
+        $result = $this->_websiteRepository->getNewsDetail($request->get('id'));
+        return responseTo($result);
+    }
+
+    /**
+     * 修改新闻
+     * @param Request $request
+     * @return array
+     */
+    public function updateNews(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required',
+            'type' => 'required',
+            'title' => 'required',
+            'detail' => 'required',
+        ]);
+        $result = $this->_websiteRepository->updateNews($request->get('id'), $request->all());
+        return responseTo($result, '新闻修改成功');
+    }
+
+    /**
+     * 删除新闻
+     * @param Request $request
+     * @return array
+     */
+    public function delNews(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required',
+        ]);
+        $result = $this->_websiteRepository->delNews($request->get('id'));
+        return responseTo($result, '新闻删除成功');
+    }
+
+    /**
+     * 获取新闻列表
+     * @param Request $request
+     * @return array
+     */
+    public function getNewsList(Request $request)
+    {
+        list($page, $pageSize, $order) = getPageSuit($request);
+
+        $result = $this->_websiteRepository->getNewsList($request->all(), $page, $pageSize, $order);
+        return responseTo($result);
     }
 }
