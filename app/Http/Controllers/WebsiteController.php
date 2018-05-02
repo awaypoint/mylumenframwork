@@ -24,11 +24,11 @@ class WebsiteController extends BaseController
      */
     public function upBaseSet(Request $request)
     {
-        $this->validate($request,[
-            'logo'=>'required',
-            'banners'=>'required|array',
-            'longitude'=>'required',
-            'latitude'=>'required',
+        $this->validate($request, [
+            'logo' => 'required',
+            'banners' => 'required|array',
+            'longitude' => 'required',
+            'latitude' => 'required',
         ]);
         $setId = env('WEBSITE_SETTING_ID', 1);
         $result = $this->_websiteRepository->upBaseSet($setId, $request->all());
@@ -269,6 +269,80 @@ class WebsiteController extends BaseController
         list($page, $pageSize, $order) = getPageSuit($request);
 
         $result = $this->_websiteRepository->getNewsList($request->all(), $page, $pageSize, $order);
+        return responseTo($result);
+    }
+
+    /**
+     * 添加常见问题
+     * @param Request $request
+     * @return array
+     */
+    public function addQuestion(Request $request)
+    {
+        $this->validate($request, [
+            'category_id' => 'required',
+            'question' => 'required',
+            'answer' => 'required',
+        ]);
+        $result = $this->_websiteRepository->addQuestion($request->all());
+        return responseTo($result, '常见问题添加成功');
+    }
+
+    /**
+     * 添加常见问题
+     * @param Request $request
+     * @return array
+     */
+    public function updateQuestion(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required',
+            'category_id' => 'required',
+            'question' => 'required',
+            'answer' => 'required',
+        ]);
+        $result = $this->_websiteRepository->updateQuestion($request->get('id'), $request->all());
+        return responseTo($result, '常见问题修改成功');
+    }
+
+    /**
+     * 修改问题
+     * @param Request $request
+     * @return array
+     */
+    public function delQuestion(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required',
+        ]);
+        $result = $this->_websiteRepository->delQuestion($request->get('id'));
+        return responseTo($result, '新闻修改成功');
+    }
+
+    /**
+     * 获取问题详情
+     * @param Request $request
+     * @return array
+     */
+    public function getQuestionDetail(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required',
+        ]);
+        $result = $this->_websiteRepository->getQuestionDetail($request->get('id'));
+        return responseTo($result);
+    }
+
+    /**
+     * 获取问题列表
+     * @param Request $request
+     * @return array
+     */
+    public function getQuestionsList(Request $request)
+    {
+        list($page, $pageSize, $order) = getPageSuit($request);
+
+        $result = $this->_websiteRepository->getQuestionsList($request->all(), $page, $pageSize, $order);
         return responseTo($result);
     }
 }

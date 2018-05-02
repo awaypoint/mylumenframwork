@@ -136,4 +136,9 @@ $app->group(['prefix' => 'website', 'middleware' => 'auth'], function () use ($a
     $app->get('getNewsList', 'WebsiteController@getNewsList');
     $app->put('upBaseSet', 'WebsiteController@upBaseSet');
     $app->get('getBaseSetDetail', 'WebsiteController@getBaseSetDetail');
+    $app->post('addQuestion', 'WebsiteController@addQuestion');
+    $app->put('updateQuestion', 'WebsiteController@updateQuestion');
+    $app->delete('delQuestion', 'WebsiteController@delQuestion');
+    $app->get('getQuestionsList', 'WebsiteController@getQuestionsList');
+    $app->get('getQuestionDetail', 'WebsiteController@getQuestionDetail');
 });

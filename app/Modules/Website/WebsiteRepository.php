@@ -11,18 +11,21 @@ class WebsiteRepository extends CommonRepository
     private $_caseModel;
     private $_expertModel;
     private $_newsModel;
+    private $_questionsModel;
 
     public function __construct(
         EloquentWebsiteModel $websiteModel,
         EloquentWebsiteCasesModel $casesModel,
         EloquentWebsiteExpertModel $expertModel,
-        EloquentWebsiteNewsModel $newsModel
+        EloquentWebsiteNewsModel $newsModel,
+        EloquentWebsiteQuestionsModel $questionsModel
     )
     {
         $this->_websiteModel = $websiteModel;
         $this->_caseModel = $casesModel;
         $this->_expertModel = $expertModel;
         $this->_newsModel = $newsModel;
+        $this->_questionsModel = $questionsModel;
     }
 
     /**
@@ -293,6 +296,88 @@ class WebsiteRepository extends CommonRepository
         }
         $fields = ['id', 'title', 'detail'];
         $result = $this->_newsModel->getList($where, $fields, $page, $pageSize, $orderBy);
+        return $result;
+    }
+
+    /**
+     * 添加常见问题
+     * @param $params
+     * @return array
+     * @throws WebsiteException
+     */
+    public function addQuestion($params)
+    {
+        $addData = [
+            'category_id' => $params['category_id'],
+            'question' => $params['question'],
+            'answer' => $params['answer'],
+        ];
+        try {
+            $result = $this->_questionsModel->add($addData);
+            return ['id' => $result];
+        } catch (\Exception $e) {
+            throw new WebsiteException(70007);
+        }
+    }
+
+    /**
+     * 更新问题
+     * @param $id
+     * @param $params
+     * @return array
+     * @throws \App\Exceptions\BaseException
+     */
+    public function updateQuestion($id, $params)
+    {
+        return $this->_questionsModel->up($id, $params);
+    }
+
+    /**
+     * 删除问题
+     * @param $id
+     * @return bool|null
+     * @throws \App\Exceptions\BaseException
+     */
+    public function delQuestion($id)
+    {
+        return $this->_questionsModel->del($id);
+    }
+
+    /**
+     * 获取问题详情
+     * @param $id
+     * @param array $fields
+     * @return mixed
+     * @throws WebsiteException
+     */
+    public function getQuestionDetail($id, $fields = [])
+    {
+        $where = [
+            'id' => $id,
+        ];
+        $result = $this->_questionsModel->getOne($where, $fields);
+        if (is_null($result)) {
+            throw new WebsiteException(70008);
+        }
+        return $result;
+    }
+
+    /**
+     * 获取问题列表
+     * @param $params
+     * @param int $page
+     * @param int $pageSize
+     * @param array $orderBy
+     * @return mixed
+     */
+    public function getQuestionsList($params, $page = 0, $pageSize = 0, $orderBy = [])
+    {
+        $where = [];
+        if (isset($params['category_id']) && $params['category_id']) {
+            $where['category_id'] = $params['category_id'];
+        }
+        $fields = ['id', 'question', 'answer'];
+        $result = $this->_questionsModel->getList($where, $fields, $page, $pageSize, $orderBy);
         return $result;
     }
 }
