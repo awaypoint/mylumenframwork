@@ -125,7 +125,7 @@ $app->group(['prefix' => 'website', 'middleware' => 'auth'], function () use ($a
     $app->get('getCasesList', 'WebsiteController@getCasesList');
     $app->get('getCaseDetail', 'WebsiteController@getCaseDetail');
     $app->post('addExpert', 'WebsiteController@addExpert');
-    $app->get('getExertDetail', 'WebsiteController@getExertDetail');
+    $app->get('getExpertDetail', 'WebsiteController@getExpertDetail');
     $app->put('updateExpert', 'WebsiteController@updateExpert');
     $app->delete('delExpert', 'WebsiteController@delExpert');
     $app->get('getExpertsList', 'WebsiteController@getExpertsList');
