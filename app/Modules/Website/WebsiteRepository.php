@@ -132,6 +132,9 @@ class WebsiteRepository extends CommonRepository
         if (isset($params['category_id']) && $params['category_id']) {
             $where['category_id'] = $params['category_id'];
         }
+        if (isset($params['category_id']) && $params['category_id']) {
+            $where['category_id'] = $params['category_id'];
+        }
         $fields = ['id', 'title', 'desc'];
         $result = $this->_caseModel->getList($where, $fields, $page, $pageSize, $orderBy);
         return $result;
@@ -212,6 +215,9 @@ class WebsiteRepository extends CommonRepository
         $where = [];
         if (isset($params['category_id']) && $params['category_id']) {
             $where['category_id'] = $params['category_id'];
+        }
+        if (isset($params['name']) && $params['name']) {
+            $where['expert'] = $params['name'];
         }
         $fields = ['id', 'expert', 'img'];
         $result = $this->_expertModel->getList($where, $fields, $page, $pageSize, $orderBy);

@@ -145,7 +145,7 @@ class WebsiteController extends BaseController
      * @param Request $request
      * @return array
      */
-    public function getExertDetail(Request $request)
+    public function getExpertDetail(Request $request)
     {
         $this->validate($request, [
             'id' => 'required',
