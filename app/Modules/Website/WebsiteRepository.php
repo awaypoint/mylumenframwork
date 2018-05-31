@@ -217,7 +217,7 @@ class WebsiteRepository extends CommonRepository
             $where['category_id'] = $params['category_id'];
         }
         if (isset($params['name']) && $params['name']) {
-            $where['expert'] = $params['name'];
+            $where[] = ['expert', 'LIKE', '%' . $params['name'] . '%'];
         }
         $fields = ['id', 'expert', 'img'];
         $result = $this->_expertModel->getList($where, $fields, $page, $pageSize, $orderBy);

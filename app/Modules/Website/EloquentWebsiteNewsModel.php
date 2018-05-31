@@ -13,4 +13,6 @@ class EloquentWebsiteNewsModel extends CommonEloquentModel
     protected $dateFormat = 'U';
     //采用白名单模式
     public $fillable = ['id', 'type', 'title', 'detail', 'updated_at'];
+
+    public $guardFillable = ['updated_at'];
 }
