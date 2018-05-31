@@ -35,6 +35,22 @@ class FilesController extends Controller
     }
 
     /**
+     * 多图上次，用于富文本
+     * @param Request $request
+     * @return array
+     */
+    public function multUploadFiles(Request $request)
+    {
+        $files = $request->allFiles();
+        $result = [];
+        foreach ($files as $key => $file) {
+            $upRes = $this->_filesgRepository->upLoadFile($key, $file, $request->all());
+            $result[] = $upRes['url'];
+        }
+        return response2($result);
+    }
+
+    /**
      * 更新文件额外字段
      * @param Request $request
      * @return array

@@ -21,6 +21,20 @@ if (!function_exists('responseTo')) {
 }
 
 /**
+ * 统一返回
+ */
+if (!function_exists('response2')) {
+    function response2($content = [], string $msg = '', int $code = 0)
+    {
+        $response = [
+            'errno' => 0,
+            'data' => $content,
+        ];
+        return $response;
+    }
+}
+
+/**
  * 页面跳转统一
  */
 if (!function_exists('redirectTo')) {
