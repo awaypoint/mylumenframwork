@@ -66,7 +66,7 @@ class WebsiteRepository extends CommonRepository
             'category_id' => $params['category_id'],
             'title' => $params['title'],
             'img' => $params['img'],
-            'desc' => $params['desc'],
+//            'desc' => $params['desc'],
             'detail' => $params['detail'],
         ];
         try {

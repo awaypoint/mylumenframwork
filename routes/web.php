@@ -70,7 +70,7 @@ $app->group(['prefix' => 'company', 'middleware' => 'auth'], function () use ($a
 //文件
 $app->group(['prefix' => 'files', 'middleware' => 'auth'], function () use ($app) {
     $app->post('upLoadFile', 'FilesController@upLoadFile');
-    $app->post('multUpLoadFile', 'FilesController@multUploadFiles');
+    $app->post('multUploadFiles', 'FilesController@multUploadFiles');
     $app->put('updateFileExtraFields', 'FilesController@updateFileExtraFields');
     $app->delete('delFile', 'FilesController@delFile');
     $app->get('getFileByRelationField', 'FilesController@getFileByRelationField');
