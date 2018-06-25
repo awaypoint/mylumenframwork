@@ -51,6 +51,10 @@ class WebsiteRepository extends CommonRepository
             'id' => $setId,
         ];
         $result = $this->_websiteModel->getOne($where);
+        $result['banners'] = json_decode($result['banners'], true);
+        if (is_null($result['banners'])){
+            $result['banners'] = [];
+        }
         return $result;
     }
 
