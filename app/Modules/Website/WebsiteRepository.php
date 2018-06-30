@@ -52,7 +52,7 @@ class WebsiteRepository extends CommonRepository
         ];
         $result = $this->_websiteModel->getOne($where);
         $result['banners'] = json_decode($result['banners'], true);
-        if (is_null($result['banners'])){
+        if (is_null($result['banners'])) {
             $result['banners'] = [];
         }
         return $result;
@@ -238,8 +238,10 @@ class WebsiteRepository extends CommonRepository
     {
         $addData = [
             'type' => $params['type'],
+            'img' => $params['img'],
             'title' => $params['title'],
             'detail' => $params['detail'],
+            'short' => mb_substr(strip_tags($params['detail']), 0, 300),
         ];
         try {
             $result = $this->_newsModel->add($addData);
@@ -277,6 +279,7 @@ class WebsiteRepository extends CommonRepository
      */
     public function updateNews($id, $params)
     {
+        $params['short'] = mb_substr(strip_tags($params['detail']), 0, 300);
         return $this->_newsModel->up($id, $params);
     }
 

@@ -207,6 +207,7 @@ class WebsiteController extends BaseController
     {
         $this->validate($request, [
             'type' => 'required',
+            'img' => 'required',
             'title' => 'required',
             'detail' => 'required',
         ]);
