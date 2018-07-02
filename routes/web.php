@@ -143,3 +143,11 @@ $app->group(['prefix' => 'website', 'middleware' => 'auth'], function () use ($a
     $app->get('getQuestionsList', 'WebsiteController@getQuestionsList');
     $app->get('getQuestionDetail', 'WebsiteController@getQuestionDetail');
 });
+
+//用户
+$app->group(['prefix' => 'book', 'middleware' => 'auth'], function () use ($app) {
+    $app->get('getBookList', 'BookController@getBookList');
+    $app->get('getBookDetail', 'BookController@getBookDetail');
+    $app->put('dealBook', 'BookController@dealBook');
+    $app->delete('dealBook', 'BookController@dealBook');
+});
