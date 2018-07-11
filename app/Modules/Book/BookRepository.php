@@ -37,6 +37,9 @@ class BookRepository extends CommonRepository
         if (isset($params['end_time']) && $params['end_time']) {
             $where['created_at <= '] = strtotime($params['end_time']) + 86400 - 1;
         }
+        if (isset($params['status']) && in_array($params['status'], [0, 1])){
+            $where['status'] = $params['status'];
+        }
         $result = $this->_bookModel->getList($where, [], $page, $pageSize, $orderBy);
         if (isset($result['rows']) && !empty($result['rows'])) {
             $expertIds = array_column($result['rows'], 'expert_id');
