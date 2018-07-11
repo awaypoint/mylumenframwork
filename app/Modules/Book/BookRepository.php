@@ -37,7 +37,7 @@ class BookRepository extends CommonRepository
         if (isset($params['end_time']) && $params['end_time']) {
             $where['created_at <= '] = strtotime($params['end_time']) + 86400 - 1;
         }
-        if (isset($params['status']) && in_array($params['status'], [0, 1])){
+        if (isset($params['status']) && in_array($params['status'], [0, 1]) && $params['status'] !== '') {
             $where['status'] = $params['status'];
         }
         $result = $this->_bookModel->getList($where, [], $page, $pageSize, $orderBy);
@@ -95,7 +95,7 @@ class BookRepository extends CommonRepository
      */
     public function dealBook($id, $params)
     {
-        $params['status'] = 1;
+        $params['status'] = $params['status'] ?? 1;
         return $this->_bookModel->up($id, $params);
     }
 
