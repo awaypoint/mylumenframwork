@@ -149,5 +149,5 @@ $app->group(['prefix' => 'book', 'middleware' => 'auth'], function () use ($app)
     $app->get('getBookList', 'BookController@getBookList');
     $app->get('getBookDetail', 'BookController@getBookDetail');
     $app->put('dealBook', 'BookController@dealBook');
-    $app->delete('deaBook', 'BookController@delBook');
+    $app->delete('delBook', 'BookController@delBook');
 });
