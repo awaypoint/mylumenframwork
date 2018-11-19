@@ -9,6 +9,8 @@ use JohnLui\AliyunOSS;
 use Exception;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Writer\Html;
+use Upload\File;
+use Upload\Storage\FileSystem;
 
 class FilesRepository extends CommonRepository
 {
@@ -27,6 +29,7 @@ class FilesRepository extends CommonRepository
     private $_originalExtension;
     private $_mimeType;
     private $_pathname;
+    private $_fileUp = null;//上传本地新model
 
     const FILES_COMPANY_RELATION_FIELDS = [
         'eia' => '环评资料',
@@ -44,7 +47,8 @@ class FilesRepository extends CommonRepository
     )
     {
         $this->_fileModel = $filesModel;
-        if ($this->networkType == 'VPC' && !$isInternal) {
+
+       /* if ($this->networkType == 'VPC' && !$isInternal) {
             throw new Exception("VPC 网络下不提供外网上传、下载等功能");
         }
 
@@ -55,7 +59,7 @@ class FilesRepository extends CommonRepository
             env('OSS_ACCESSKEY_ID'),
             env('OSS_ACCESSKEY_SECRET')
         );
-        $this->ossClient->setBucket($this->bucketName);
+        $this->ossClient->setBucket($this->bucketName);*/
     }
 
     private function setFile($file)
@@ -252,13 +256,46 @@ class FilesRepository extends CommonRepository
         return $result;
     }
 
-    public function excel2Html($file)
+    /**
+     * 上传文件到本地
+     * @param $relationField
+     * @param array $params
+     * @throws FilesException
+     */
+    public function upLoadFile2Local($relationField, $file, $params = [])
     {
+        $userInfo = getUserInfo(['company_id']);
+        $prefix = env('OSS_ENVIRONMENT', '') . DIRECTORY_SEPARATOR . $userInfo['company_id'] . DIRECTORY_SEPARATOR;
+        $dir = env('ROOT_FILE_PATH', '') . $prefix;
+
+        if (!is_dir($dir)) {
+            @mkdir($dir);
+        }
+
         $this->setFile($file);
-        $objReader = IOFactory::createReader('Xls');
-        $objExcel = $objReader->load($this->_pathname);
-        $htmlWrite = new Html($objExcel);
-        $htmlWrite->save('D:\test.htm');
+        $storage = new  FileSystem($dir);
+        $this->_fileUp = new File($relationField, $storage);
+
+        $ossKey = uniqid() . date('YmdHis');
+        $this->_fileUp->setName($ossKey);
+        $ossKey .=  '.' . $this->_fileUp->getExtension();
+        try {
+            $this->_fileUp->upload();
+
+            $previewUrl = $url = $this->getPublicObjectURL($prefix . $ossKey);
+
+            $companyId = isset($params['company_id']) && $params['company_id'] ? $params['company_id'] : $userInfo['company_id'];
+            $fileLogId = $this->addFilesLog($companyId, $relationField, $ossKey, $url, $previewUrl);
+            $returnData = [
+                'id' => $fileLogId,
+                'file_name' => $this->_originalName,
+                'url' => $url,
+                'preview_url' => $previewUrl,
+            ];
+            return $returnData;
+        } catch (\Exception $e) {
+            throw new FilesException(50001);
+        }
     }
 
     /**
