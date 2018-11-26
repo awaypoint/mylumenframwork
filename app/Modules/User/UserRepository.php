@@ -37,7 +37,6 @@ class UserRepository extends CommonRepository
         if ($userInfo['password'] != $params['password']) {
             throw new UserException(10007);
         }
-        log::info('日志测试', ['user' => $userInfo]);
         //本地访问直接查询数据库
         /*
          try {
