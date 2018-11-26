@@ -19,7 +19,7 @@ try {
 |
 */
 define('APP_PATH', realpath(__DIR__ . '/../'));
-$app = new Laravel\Lumen\Application(
+$app = new App\Application(
     APP_PATH
 );
 
@@ -66,6 +66,7 @@ $app->singleton(
 $app->middleware([
     \Illuminate\Session\Middleware\StartSession::class,
     \Barryvdh\Cors\HandleCors::class,
+    \App\Http\Middleware\RequestLogMiddleware::class,
 ]);
 
 $app->routeMiddleware([

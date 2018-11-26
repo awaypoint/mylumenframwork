@@ -182,3 +182,19 @@ if (!function_exists('getPageSuit')) {
         return [$page, $pageSize, $order];
     }
 }
+
+/**
+ * 获取控制器分页信息
+ */
+if (!function_exists('doLog')) {
+    function doLog($dirname, string $content)
+    {
+        if (!is_dir($dirname)) {
+            @mkdir($dirname, 0777);
+        }
+        if (empty($filename)) {
+            $filename = date('Ymd') . '.log';
+        }
+        @file_put_contents($dirname . $filename, date("Y-m-d H:i:s") . $content . "\r\n\n\r", FILE_APPEND);
+    }
+}

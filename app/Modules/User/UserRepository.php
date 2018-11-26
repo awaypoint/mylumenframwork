@@ -9,6 +9,7 @@ use GuzzleHttp\Client;
 use App\Modules\User\Exceptions\UserException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Log;
 
 class UserRepository extends CommonRepository
 {
@@ -36,6 +37,7 @@ class UserRepository extends CommonRepository
         if ($userInfo['password'] != $params['password']) {
             throw new UserException(10007);
         }
+        log::info('日志测试', ['user' => $userInfo]);
         //本地访问直接查询数据库
         /*
          try {
