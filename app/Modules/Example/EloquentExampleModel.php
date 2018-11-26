@@ -9,8 +9,8 @@ class Eloquent_bigname_Model extends CommonEloquentModel
 {
     use SoftDeletes;
 
-    protected $table = '_smallname_';
+    protected $table = '_table_';
     protected $dateFormat = 'U';
     //采用白名单模式
-    public $fillable = [];
+    public $fillable = [_fields_];
 }
