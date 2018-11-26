@@ -29,7 +29,16 @@ class UserRepository extends CommonRepository
 
     public function loginByPassword($params)
     {
-        try {
+        $userInfo = $this->getUserInfoByUsername($params['username']);
+        if (is_null($userInfo)) {
+            throw new UserException(10006);
+        }
+        if ($userInfo['password'] != $params['password']) {
+            throw new UserException(10007);
+        }
+        //本地访问直接查询数据库
+        /*
+         try {
             $response = $this->_http->post(env('SERVER_REQUEST_URL') . 'oauth/token', [
                 'form_params' => [
                     'grant_type' => 'password',
@@ -44,8 +53,12 @@ class UserRepository extends CommonRepository
             throw new UserException(10001);
         }
         $result = json_decode((string)$response->getBody(), true);
+        */
+        $result['token_type'] = 'Bearer';
+        $result['expires_in'] = '100000';
+        $result['access_token'] = 'Bearer';
+        $result['refresh_token'] = 'Bearer';
         //获取用户信息
-        $userInfo = $this->getUserInfoByUsername($params['username']);
         $roleInfo = Role::getRoleInfo($userInfo['role_id'], ['type']);
         Session::put('uid', $userInfo['id']);
         Session::put('lifetime', time() + env('LIFE_SEC', 10800));
