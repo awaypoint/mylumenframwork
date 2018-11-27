@@ -3,7 +3,8 @@
 
 Exceptions、Log、Facades、artisan
 
-###安装
+### 安装
+
 1、 环境变量配置
 
     cp .env_example .env
@@ -16,7 +17,8 @@ Exceptions、Log、Facades、artisan
 
     chmod 777 storage
 
-###使用
+### 使用
+
 1、创建model命令
 
     php artisan make:modules {moduleName} [tableName]
