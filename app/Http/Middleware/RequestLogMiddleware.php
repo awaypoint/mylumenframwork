@@ -2,10 +2,20 @@
 
 namespace App\Http\Middleware;
 
+use App\Logs;
 use Closure;
 
 class RequestLogMiddleware
 {
+    private $_logModel;
+
+    public function __construct(
+        Logs $logs
+    )
+    {
+        $this->_logModel = $logs;
+    }
+
     /**
      * Handle an incoming request.
      *
@@ -15,14 +25,12 @@ class RequestLogMiddleware
      */
     public function handle($request, Closure $next)
     {
-        $dirname = env('REQUEST_LOG_DIR', '/Users/away/Documents/another/requestLog/');
-        $data = [
-            'method' => $request->getMethod(),
-            'client_ip' => $request->getClientIp(),
-            'params' => $request->all(),
-            'uri' => $request->getPathInfo(),
-        ];
-        doLog($dirname, json_encode($data));
+        $this->_logModel->host = $request->getHost();
+        $this->_logModel->method = $request->getMethod();
+        $this->_logModel->client_ip = $request->getClientIp();
+        $this->_logModel->params = json_encode($request->all());
+        $this->_logModel->uri = $request->getPathInfo();
+        $this->_logModel->save();
         return $next($request);
     }
 }

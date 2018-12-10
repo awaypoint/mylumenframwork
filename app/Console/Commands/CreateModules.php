@@ -16,7 +16,7 @@ class CreateModules extends Command
      *
      * @var string
      */
-    protected $signature = 'make:modules {name}';
+    protected $signature = 'make:modules {name} {table}';
 
     /**
      * 控制台命令描述

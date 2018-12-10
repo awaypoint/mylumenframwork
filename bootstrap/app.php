@@ -26,6 +26,8 @@ $app = new App\Application(
 $app->configure('cors');
 $app->configure('auth');
 $app->configure('session');
+$app->configure('database');
+$app->register(\Jenssegers\Mongodb\MongodbServiceProvider::class);
 
 $app->withFacades();
 

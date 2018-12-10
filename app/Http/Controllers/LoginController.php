@@ -59,4 +59,11 @@ class LoginController extends BaseController
         Session::flush();
         return responseTo('退出成功');
     }
+
+
+    public function combo()
+    {
+        $result = $this->_userRepository->getUserInfo([]);
+        dd($result);
+    }
 }
