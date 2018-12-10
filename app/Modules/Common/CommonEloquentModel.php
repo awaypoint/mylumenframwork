@@ -13,6 +13,7 @@ class CommonEloquentModel extends Model
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
+        DB::connection()->enableQueryLog();
         $this::saving(function ($model) {
             if ($model->table == 'users' || $model->table == 'company') {
                 return true;

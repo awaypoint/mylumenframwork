@@ -79,7 +79,7 @@ class Handler extends ExceptionHandler
             $_trace['line'] = $e->getLine();
             $_trace['type'] = get_class($e);
             $_trace['file'] = $e->getFile();
-            $_trace['sql'] = DB::getQuerylog();
+            $_trace['sql'] = DB::connection('mysql')->getQuerylog();
             if ($e->getPrevious()) {
                 $_trace['file'] = $e->getPrevious()->getFile();
                 $_trace['file_line'] = $e->getPrevious()->getLine();
