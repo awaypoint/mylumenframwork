@@ -22,6 +22,7 @@ class LoginController extends BaseController
      * 登录
      * @param Request $request
      * @return array
+     * @throws \App\Modules\User\Exceptions\UserException
      */
     public function login(Request $request)
     {
@@ -38,6 +39,7 @@ class LoginController extends BaseController
      * 注册
      * @param Request $request
      * @return array
+     * @throws \App\Modules\User\Exceptions\UserException
      */
     public function register(Request $request)
     {

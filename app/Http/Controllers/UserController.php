@@ -9,6 +9,11 @@ class UserController extends Controller
 {
     private $_userRepository;
 
+    /**
+     * UserController constructor.
+     * @param UserRepository $userRepository
+     * @throws \App\Exceptions\BaseException
+     */
     public function __construct(
         UserRepository $userRepository
     )
@@ -31,6 +36,7 @@ class UserController extends Controller
      * 修改密码
      * @param Request $request
      * @return array
+     * @throws \App\Modules\User\Exceptions\UserException
      */
     public function modifyPassword(Request $request)
     {
@@ -47,6 +53,7 @@ class UserController extends Controller
      * 添加管理员帐号
      * @param Request $request
      * @return array
+     * @throws \App\Modules\User\Exceptions\UserException
      */
     public function addAdminUser(Request $request)
     {
@@ -61,6 +68,7 @@ class UserController extends Controller
      * 重置密码
      * @param Request $request
      * @return array
+     * @throws \App\Modules\User\Exceptions\UserException
      */
     public function resetPassword(Request $request)
     {
@@ -90,6 +98,7 @@ class UserController extends Controller
      * 删除用户
      * @param Request $request
      * @return array
+     * @throws \App\Modules\User\Exceptions\UserException
      */
     public function delUser(Request $request)
     {
